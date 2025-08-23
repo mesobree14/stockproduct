@@ -169,7 +169,7 @@ class modelCreateRatePrice extends HTMLElement {
                   </div>
               </div>
               <div class="modal-footer">
-                <button type="submit" class="btn btn-sm btn-success ml-auto mr-4">บันทึกข้อมูล</button>
+                <button type="submit" class="btn btn-primary ml-auto mr-4">บันทึกข้อมูล</button>
               </div>
             </form>
             

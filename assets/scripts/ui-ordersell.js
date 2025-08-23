@@ -1,44 +1,3 @@
-const setImagePriviews = (
-  getImage,
-  setDefaultFile,
-  setCustomBtn,
-  btnCancle,
-  getImgNames,
-  setWrapper
-) => {
-  let setwrapper = document.querySelector(setWrapper);
-  let setImgName = document.querySelector(getImgNames);
-  let setBtncancle = document.querySelector(btnCancle);
-  let typeImg = document.querySelector(getImage);
-  let defaultInput = document.querySelector(setDefaultFile);
-  let CustomButton = document.querySelector(setCustomBtn);
-  let setExp = /[0-9a-zA-Z\^\&\'\@\{\}\[\]\,\$\=\!\-\#\(\)\.\%\+\~\_ ]+$/;
-
-  CustomButton.onclick = function () {
-    defaultInput.click();
-  };
-  defaultInput.addEventListener("change", function () {
-    const file = this.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function () {
-        const result = reader.result;
-        typeImg.src = result;
-        setwrapper.classList.add("active");
-      };
-      setBtncancle.addEventListener("click", function () {
-        typeImg.src = "";
-        setwrapper.classList.remove("active");
-      });
-      reader.readAsDataURL(file);
-    }
-    if (this.value) {
-      let valueStore = this.value.match(setExp);
-      setImgName.textContent = valueStore;
-    }
-  });
-};
-
 class AddImage extends HTMLElement {
   constructor() {
     super();
@@ -66,6 +25,40 @@ class AddImage extends HTMLElement {
   }
   connectedCallback() {
     this.renderImage();
+    this.setImagePriviews();
+  }
+  setImagePriviews() {
+    let setwrapper = document.querySelector(`.${this.wrapper}`);
+    let setImgName = document.querySelector(`.${this.filenames}`);
+    let setBtncancle = document.querySelector(`.${this.cancle}`);
+    let typeImg = document.querySelector(`.${this.id}`);
+    let defaultInput = document.querySelector(`.${this.defaultbtn}`);
+    let CustomButton = document.querySelector(`#${this.custom}`);
+    let setExp = /[0-9a-zA-Z\^\&\'\@\{\}\[\]\,\$\=\!\-\#\(\)\.\%\+\~\_ ]+$/;
+
+    CustomButton.onclick = function () {
+      defaultInput.click();
+    };
+    defaultInput.addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const result = reader.result;
+          typeImg.src = result;
+          setwrapper.classList.add("active");
+        };
+        setBtncancle.addEventListener("click", function () {
+          typeImg.src = "";
+          setwrapper.classList.remove("active");
+        });
+        reader.readAsDataURL(file);
+      }
+      if (this.value) {
+        let valueStore = this.value.match(setExp);
+        setImgName.textContent = valueStore;
+      }
+    });
   }
   renderImage() {
     this.innerHTML = `
@@ -92,32 +85,46 @@ class AddImage extends HTMLElement {
   }
 }
 
-// function updateData(data) {
-//   console.log({ data });
-//   let selectedCountry = data.innerText;
-//   console.log({ selectedCountry });
-//   selectedDatas.value = selectedCountry;
+let data = [];
 
-//   for (const li of document.querySelectorAll("li.selected")) {
-//     li.classList.remove("selected");
-//   }
-//   data.classList.add("selected");
-//   customInputContainer.classList.toggle("show");
-//   console.log(selectedCountry);
-// }
 customElements.define("mian-add-image", AddImage);
-class modelSetOrderSell extends HTMLElement {
-  stockdata = [];
 
+function updateGrandTotal() {
+  const results = document.querySelectorAll("span[id^='price_result-']");
+  let totalOrder = results.length;
+  document.getElementById("totalOrder").textContent = `${totalOrder} ชิ้น`;
+  let totalPrice = 0;
+  results.forEach((span) => {
+    const value = parseFloat(span.textContent.trim()) || 0;
+    totalPrice += value;
+  });
+  document.getElementById("totalPrice").textContent = totalPrice;
+  document.getElementById("is_totalprice").value = totalPrice;
+}
+
+class formOrDerSell extends HTMLElement {
   constructor() {
     super();
-    this.countries = ["Thailand", "Japan", "USA"];
   }
 
+  static get observedAttributes() {
+    return ["numbers"];
+  }
+  get numbers() {
+    return this.getAttribute("numbers");
+  }
+  input_prodcutname = "";
+  input_cutommer = "";
+  stockdata = [];
+  type_price = 0;
   async connectedCallback() {
     await this.loadDataStock();
     this.renderCreateOrderSell();
     this.loadOption();
+    this.updateData();
+    this.scriptjs();
+    this.isSelectPrice();
+    this.removeform();
   }
 
   async loadDataStock() {
@@ -137,40 +144,147 @@ class modelSetOrderSell extends HTMLElement {
     }
   }
 
+  isSelectPrice(productname, customer) {
+    const price_customer_frontstores = this.querySelector(
+      `#price_customer_frontstore-${this.numbers}`
+    );
+    const price_custommer_vips = this.querySelector(
+      `#price_custommer_vip-${this.numbers}`
+    );
+    const price_customer_dealers = this.querySelector(
+      `#price_customer_dealer-${this.numbers}`
+    );
+    const price_customer_delivers = this.querySelector(
+      `#price_customer_deliver-${this.numbers}`
+    );
+
+    const frontstore_price = this.querySelector(
+      `#frontstore_price-${this.numbers}`
+    );
+    const vip_price = this.querySelector(`#vip_price-${this.numbers}`);
+    const dealer_price = this.querySelector(`#dealer_price-${this.numbers}`);
+    const deliver_price = this.querySelector(`#deliver_price-${this.numbers}`);
+
+    const tatolproduct = this.querySelector(`#tatolproduct-${this.numbers}`);
+    const res_price = this.querySelector(`#is_count-${this.numbers}`);
+    const is_totals = this.querySelector(`#is_totals-${this.numbers}`);
+    const price_result = this.querySelector(`#price_result-${this.numbers}`);
+    const distotal = this.querySelector(".distotal");
+    const dropdown = this.querySelector(`.dropdown-${this.numbers}`);
+    const selectSpan = dropdown.querySelector(`.select-${this.numbers} span`);
+    let input_result = this.querySelector(`#resutl_${this.numbers}`);
+    distotal.disabled = true;
+    if (!productname) {
+      console.log("not data");
+      return;
+    }
+    const filtered = this.stockdata.filter((item) =>
+      item.product_name.includes(productname)
+    );
+
+    if (filtered[0].price_customer_frontstore) {
+      frontstore_price.innerHTML = `ชิ้นละ ${filtered[0].price_customer_frontstore} บาท`;
+      price_customer_frontstores.classList.remove("disabledLi");
+    } else {
+      frontstore_price.innerHTML = "";
+      price_customer_frontstores.classList.add("disabledLi");
+      selectSpan.innerText = "เลือก เรทราคา";
+      res_price.innerHTML = "";
+      price_result.innerHTML = "";
+    }
+    if (filtered[0].price_custommer_vip) {
+      vip_price.innerHTML = `ชิ้นละ ${filtered[0].price_custommer_vip} บาท`;
+      price_custommer_vips.classList.remove("disabledLi");
+    } else {
+      vip_price.innerHTML = "";
+      price_custommer_vips.classList.add("disabledLi");
+      selectSpan.innerText = "เลือก เรทราคา";
+      res_price.innerHTML = "";
+      price_result.innerHTML = "";
+    }
+    if (filtered[0].price_customer_dealer) {
+      dealer_price.innerHTML = `ชิ้นละ ${filtered[0].price_customer_dealer} บาท`;
+      price_customer_dealers.classList.remove("disabledLi");
+    } else {
+      price_customer_dealers.classList.add("disabledLi");
+      dealer_price.innerHTML = "";
+      selectSpan.innerText = "เลือก เรทราคา";
+      res_price.innerHTML = "";
+      price_result.innerHTML = "";
+    }
+    if (filtered[0].price_customer_deliver) {
+      deliver_price.innerHTML = `ชิ้นละ ${filtered[0].price_customer_deliver} บาท`;
+      price_customer_delivers.classList.remove("disabledLi");
+    } else {
+      deliver_price.innerHTML = "";
+      price_customer_delivers.classList.add("disabledLi");
+      selectSpan.innerText = "เลือก เรทราคา";
+      res_price.innerHTML = "";
+      price_result.innerHTML = "";
+    }
+    if (productname && customer) {
+      this.type_price = filtered[0][customer.replace(/-\d+$/, "")];
+      res_price.innerHTML = filtered[0][customer.replace(/-\d+$/, "")];
+      distotal.disabled = false;
+      tatolproduct.addEventListener("input", function () {
+        is_totals.textContent = this.value;
+        let result =
+          Number(this.value) *
+          Number(filtered[0][customer.replace(/-\d+$/, "")]);
+        price_result.innerHTML = result;
+        price_result.textContent = result;
+        input_result.value = result;
+        this.dispatchEvent(new CustomEvent("update", { bubbles: true }));
+        updateGrandTotal();
+      });
+    }
+  }
+
   updateData(data) {
-    console.log({ data });
-    let selectedCountry = data.innerText;
-    console.log({ selectedCountry });
-    selectedDatas.value = selectedCountry;
+    let selectedData = document.querySelector(`.selectedData-${this.numbers}`);
+    let customInputContainer = document.querySelector(
+      `.customInputContainer-${this.numbers}`
+    );
+    const ul = document.querySelector("ul");
+    const dropdown = this.querySelector(`.dropdown-${this.numbers}`);
+    if (data) {
+      dropdown.classList.remove("disableds");
+      this.isSelectPrice(data, this.type_price);
+    } else {
+      dropdown.classList.add("disableds");
+    }
+
+    selectedData.value = data ?? "";
 
     for (const li of document.querySelectorAll("li.selected")) {
       li.classList.remove("selected");
     }
-    data.classList.add("selected");
+    const clickedLi = [...ul.children].find((li) => li.innerText === data);
+    if (clickedLi) clickedLi.classList.add("selected");
     customInputContainer.classList.toggle("show");
-    console.log(selectedCountry);
   }
 
   loadOption() {
-    console.log("f=", this.stockdata);
-    var productname = this.stockdata.map((item) => item.product_name);
-    //var countries = ["Custom Input", "Afghanistan", "Aland Islands", "Albania"];
-    console.log({ x: productname[0] });
-    let customInput = document.querySelector(".customInput");
-    let selectedData = document.querySelector(".selectedData");
-    let searchInput = document.querySelector(".searchInput input");
-
-    let ul = document.querySelector(".options ul");
-    let customInputContainer = document.querySelector(".customInputContainer");
+    let customInput = document.querySelector(`.customInput-${this.numbers}`);
+    let selectedData = document.querySelector(`.selectedData-${this.numbers}`);
+    let searchInput = document.querySelector(
+      `.searchInput-${this.numbers} input`
+    );
+    const dropdown = this.querySelector(`.dropdown-${this.numbers}`);
+    let ul = document.querySelector(`.options-${this.numbers} ul`);
+    let customInputContainer = document.querySelector(
+      `.customInputContainer-${this.numbers}`
+    );
     window.addEventListener("click", (e) => {
-      //updateData(e.target);
-      if (document.querySelector(".searchInput").contains(e.target)) {
-        document.querySelector(".searchInput").classList.add("focus");
-      } else {
-        document.querySelector(".searchInput").classList.remove("focus");
+      const searchInputEl = document.querySelector(
+        `.searchInput-${this.numbers}`
+      );
+      if (searchInputEl && searchInputEl.contains(e.target)) {
+        searchInputEl.classList.add("focus");
+      } else if (searchInputEl) {
+        searchInputEl.classList.remove("focus");
       }
-
-      if (!customInputContainer.contains(e.target)) {
+      if (customInputContainer && !customInputContainer.contains(e.target)) {
         customInputContainer.classList.remove("show");
       }
     });
@@ -179,66 +293,267 @@ class modelSetOrderSell extends HTMLElement {
       customInputContainer.classList.toggle("show");
     });
 
-    let countriesLength = productname.length; //co.length;
+    let productLength = this.stockdata.length;
 
-    for (let i = 0; i < countriesLength; i++) {
-      let country = productname[i];
+    for (let i = 0; i < productLength; i++) {
+      let products = this.stockdata[i];
+
       const li = document.createElement("li");
-      const countryName = document.createTextNode(country);
-      li.appendChild(countryName);
+      li.classList.add("block");
+      const row = document.createElement("div");
+      row.classList.add("row");
+      let span = document.createElement("span");
+      let small = document.createElement("small");
+      span.textContent = products.product_name;
+      small.textContent = `เหลืออีก ${products.total_count} ชิ้น`;
+      small.classList.add("ml-auto");
+      row.appendChild(span);
+      row.appendChild(small);
+      li.appendChild(row);
       ul.appendChild(li);
     }
 
     ul.querySelectorAll("li").forEach((li) => {
       li.addEventListener("click", (e) => {
-        let selectdItem = e.target.innerText;
-        selectedData.value = selectdItem;
+        let spanTxt = li.querySelector("span").innerText;
+        selectedData.value = spanTxt;
 
         for (const li of document.querySelectorAll("li.selected")) {
           li.classList.remove("selected");
         }
-        e.target.classList.add("selected");
+        li.classList.add("selected");
         customInputContainer.classList.toggle("show");
       });
     });
     searchInput.addEventListener("keyup", (e) => {
       let searchedVal = searchInput.value.toLowerCase();
-      let searched_country = productname.filter((data) =>
-        data.toLowerCase().startsWith(searchedVal)
+      let searched_product = this.stockdata.filter((data) =>
+        data.product_name.toLowerCase().startsWith(searchedVal)
       );
+
       ul.innerHTML = "";
-      if (searched_country.length === 0) {
+      if (searched_product.length === 0) {
+        dropdown.classList.add("disableds");
         ul.innerHTML = `<p style='margin-top: 1rem;'>
-                          Opps can't find any result 
-                          <p style='margin-top: .2rem; font-size: .9rem;'>Try searching something else.</p>
+                          ไม่มีข้อมูล
                         </p>`;
         return;
       }
-      searched_country.forEach((contry) => {
+      const logg = searched_product;
+      searched_product.forEach((product) => {
         const li = document.createElement("li");
-        li.textContent = contry;
-        li.addEventListener("click", () => this.updateData(contry));
+        li.textContent = product.product_name;
+        this.input_prodcutname = product.product_name;
+
+        li.addEventListener("click", (e) => {
+          this.input_prodcutname = e.target.textContent;
+          this.updateData(e.target.textContent);
+        });
         ul.appendChild(li);
       });
     });
+  }
+  scriptjs() {
+    const dropdown = this.querySelector(`.dropdown-${this.numbers}`);
+    const dropdownMenu = dropdown.querySelector(
+      `.dropdown-menu-${this.numbers}`
+    );
 
-    // searchInput.addEventListener("keyup", (e) => {
-    //   let searchedVal = searchInput.value.toLowerCase();
-    //   let searched_country = [];
+    let ul = document.querySelector(`.options-${this.numbers} ul`);
 
-    //   //searched_country = response.data //countries
-    //   searched_country = countries
-    //     .filter((data) => {
-    //       return data.toLocaleLowerCase().startsWith(searchedVal);
-    //     })
-    //     .map((data) => {
-    //       return `<li onClick="updateData(this)">${data}</li>`;
-    //     })
-    //     .join("");
-    //   ul.innerHTML = searched_country
-    //     ? searched_country
-    //     : "<p style='margin-top: 1rem;'>Opps can't find any result <p style='margin-top: .2rem; font-size: .9rem;'>Try searching something else.</p></p>";
-    // });
+    dropdown.classList.add("disableds");
+
+    ul.querySelectorAll("li").forEach((li) => {
+      li.addEventListener("click", (e) => {
+        let spanTxt = li.querySelector("span").innerText;
+        this.input_prodcutname = spanTxt;
+        if (spanTxt === "") {
+          dropdown.classList.add("disableds");
+        } else {
+          dropdown.classList.remove("disableds");
+        }
+        this.isSelectPrice(this.input_prodcutname, this.input_cutommer);
+      });
+    });
+    dropdownMenu.querySelectorAll("li").forEach((li) => {
+      li.addEventListener("click", () => {
+        const smallValue = li.querySelector("small")?.textContent.trim();
+        const hiddenInput = dropdown.querySelector(
+          `#costommerd-${this.numbers}`
+        );
+        if (hiddenInput && smallValue) {
+          hiddenInput.value = smallValue.replace(/\D/g, "");
+        }
+
+        this.input_cutommer = li.id;
+        dropdownMenu.classList.remove("show");
+        this.isSelectPrice(this.input_prodcutname, this.input_cutommer);
+        console.log("hidden value:", hiddenInput.value);
+        this.dispatchEvent(
+          new CustomEvent("priceSelected", {
+            detail: { numbers: this.numbers, selectId: li.id },
+            bubbles: true,
+          })
+        );
+      });
+    });
+  }
+
+  removeform() {
+    if (this.numbers > 0) {
+      let div = this.querySelector(".btn-remove");
+      const btn = document.createElement("button");
+      btn.textContent = "delete";
+      btn.classList.add("ml-auto");
+      btn.addEventListener("click", () => {
+        this.remove();
+        updateGrandTotal();
+        document.dispatchEvent(new Event("recalculate"));
+      });
+      div.appendChild(btn);
+    }
+  }
+  renderCreateOrderSell() {
+    this.innerHTML = `
+            <div class="col-md-12 row mb-3" id="formGroup-${this.numbers}">
+              <div class="btn-remove col-md-12 row"></div>
+              <div class="col-xl-4 col-lg-7">
+                <div class="form-group mb-2">
+                  <label class="mt-0 mb-0 font-weight-bold text-dark col-12">รายการสินค้าที่ 
+                  <span data-role="index">${
+                    Number(this.numbers) + 1
+                  }</span></label>
+                    <div class="customInputContainer customInputContainer-${
+                      this.numbers
+                    }">
+                      <div class="customInput-${this.numbers} searchInput-${
+      this.numbers
+    } customInput searchInput">
+                          <input class="selectedData form-control selectedData-${
+                            this.numbers
+                          }"  type="text" name="product[]" id="name_procts-${
+      this.numbers
+    }" name="product_name[]" required/>
+                      </div>
+                      <div class="options-${this.numbers} options">
+                          <ul></ul>
+                      </div>
+                  </div> 
+                   
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-5">
+                <div class="form-group mb-2">
+                    <label class="m-0 font-weight-bold text-dark col-12">เรทราคา</label>
+                      <div class="dropdown dropdown-${this.numbers}">
+                        <div class="select select-${this.numbers}">
+                          <span>เลือก เรทราคา</span>
+                          <i class="fa fa-chevron-left"></i>
+                        </div>
+                        
+                        <ul class="dropdown-menu-${this.numbers} dropdown-menu">
+                          <li id="price_customer_frontstore-${
+                            this.numbers
+                          }" class="row mx-0">
+                              ราคาหน้าร้าน
+                              <small id="frontstore_price-${
+                                this.numbers
+                              }" class="ml-auto"></small>
+                          </li>
+                          <li id="price_custommer_vip-${
+                            this.numbers
+                          }" class="row mx-0">
+                             ราคา วีไอพี่
+                           <small id="vip_price-${
+                             this.numbers
+                           }" class="ml-auto"></small>
+                          </li>
+                          <li id="price_customer_dealer-${
+                            this.numbers
+                          }" class="row mx-0">
+                              ราคา ตัวแทนจำหน่าย
+                              <small id="dealer_price-${
+                                this.numbers
+                              }" class="ml-auto"></small>
+                          </li>
+                          <li id="price_customer_deliver-${
+                            this.numbers
+                          }" class="row mx-0">
+                             ราคา จัดส่ง
+                            <small id="deliver_price-${
+                              this.numbers
+                            }" class="ml-auto"></small>
+                          </li>
+                        </ul>
+                        <input type="text" name="costommerds[]" id="costommerd-${
+                          this.numbers
+                        }" style="display:none;">
+                      </div>
+                </div>
+              </div>
+              <div class="col-xl-2 col-lg-4">
+                <div class="form-group mb-2">
+                  <label class="m-0 font-weight-bold text-dark col-12">จำนวนขายกี่ชิ้น</label>
+                  <div class="d-flex">
+                    <input type="number" class="form-control mr-2 distotal" name="tatol_product[]" id="tatolproduct-${
+                      this.numbers
+                    }" placeholder="กรอกจำนวนขาย" required>ชิ้น
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-8">
+                  <div class="form-group mb-2">
+                    <label class="m-0 font-weight-bold text-dark col-12">จำนวนชิ้น x ราคาต่อชิ้น = ผลลัพธ์ </label>
+                    <div class="form-control">
+                      <span id="is_totals-${
+                        this.numbers
+                      }" class="px-3">&nbsp;</span>
+                        <i class="fas fa-times mt-1"></i>
+                      <span id="is_count-${
+                        this.numbers
+                      }" class="px-3" >&nbsp;</span>
+                      <i class="fa fa-equals mt-1">=</i> 
+                      <span id="price_result-${
+                        this.numbers
+                      }" class="px-3" >&nbsp;</span> บาทถ้วน
+                    </div>
+                    <input type="hidden" name="resutl_price[]" id="resutl_${
+                      this.numbers
+                    }"  />
+                  </div>
+              </div>
+            </div>
+    `;
+  }
+}
+
+customElements.define("mian-input-ordersell", formOrDerSell);
+class modelSetOrderSell extends HTMLElement {
+  connectedCallback() {
+    this.selectedLiId = [];
+    this.renderCreateOrderSell();
+    this.addProductForm();
+    this.setIdCostomer();
+  }
+  setIdCostomer() {
+    this.addEventListener("priceSelected", (e) => {
+      const { numbers, selectId } = e.detail;
+      this.selectedLiId[numbers] = selectId.replace(/-\d+$/, "");
+    });
+  }
+
+  addProductForm() {
+    const container = this.querySelector("#create-form-order");
+    const addForm = this.querySelector("#add-form");
+
+    addForm.addEventListener("click", () => {
+      const divIn = this.querySelector("mian-input-ordersell");
+      const clone = divIn.cloneNode(true);
+      const index =
+        container.querySelectorAll("mian-input-ordersell").length + 1;
+      clone.setAttribute("numbers", index);
+      container.appendChild(clone);
+    });
   }
 
   renderCreateOrderSell() {
@@ -252,37 +567,102 @@ class modelSetOrderSell extends HTMLElement {
                       <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                <form id="myForm" method="POST" action="../backend/product_stock.php">
+                <form id="myForm" method="POST" action="backend/order_sell.php" enctype="multipart/form-data">
                   <input type="hidden" name="status_form" value="create" />
-                  <div class="modal-body">
-                      <div class="col-md-12 row mb-3">
-                        <div class="col-md-8">
-                          <div class="form-group mb-2">
-                            <label class="mt-0 mb-0 font-weight-bold text-dark col-12">รายการสินค้า</label>
+                    <div class="modal-body">
+                      <mian-input-ordersell numbers="0"></mian-input-ordersell>
+                      <div class="" id="create-form-order">
+                      </div>
+                      <div class="row col-12 mt-2 mb-4">
+                        <button type="button" class="btn btn-sm btn-success ml-auto mr-4" id="add-form">เพิ่ม สินค้า</button>
+                      </div>
+                      <div class="col-12 row mb-3 border mt-4 py-3">
+                        <div class="col-xl-9 col-lg-7 col-md-7 col-sm-12">
+                            
+                          <div class="row">
 
-                              <div class="customInputContainer">
-                                <div class="customInput searchInput">
-                                    <input class="selectedData form-control"  type="text" />
+                                <div class="col-xl-6 col-lg-8 col-sm-12">
+                                  <div class="form-group mb-2">
+                                    <label class="mt-0 mb-0 font-weight-bold text-dark">รายการขาย</label>
+                                    <input type="text" class="form-control" name="ordersell_name" id="ordersell_name" placeholder="รายการขาย" required>
+                                  </div> 
                                 </div>
-                                <div class="options">
-                                    <ul></ul>
+                                <div class="col-xl-6 col-lg-4 col-sm-12">
+                                <div class="form-group mb-2">
+                                      <label class="m-0 font-weight-bold text-dark col-12">ราคาที่ต้องจ่าย </label>
+                                      <div class="row">
+                                        <div class="form-control col-7 mr-3">
+                                          <span id="totalPrice">0</span>
+                                          <input type="hidden" name="is_totalprice" id="is_totalprice"/>
+                                        </div>
+                                        <div class="col-4 align-self-center">
+                                          <span class="font-weight-bold" id="totalOrder">0 ชิ้น</span>
+                                        </div>
+                                      </div>
+                                    </div>
                                 </div>
-                            </div>  
+
+                                <div class="col-xl-5 col-md-7">
+                                  <div class="form-group mb-2">
+                                    <label class="mt-0 mb-0 font-weight-bold text-dark">ชื่อลูกค้า</label>
+                                    <input type="text" class="form-control" name="custome_name" id="custome_name" placeholder="ชื่อ" required>
+                                  </div> 
+                                </div>
+
+                              <div class="col-xl-4 col-md-5">
+                                <div class="form-group mb-2">
+                                  <label class="mt-0 mb-0 font-weight-bold text-dark">เบอร์โทร</label>
+                                  <input type="text" class="form-control" name="tell_custome" id="tell_custome" placeholder="เบอร์โทร" required>
+                                </div> 
+                              </div>
+
+                              <div class="col-xl-3 col-md-5">
+                                <div class="form-group mb-2">
+                                  <label class="mt-0 mb-0 font-weight-bold text-dark">วันที่และเวลา</label>
+                                  <input type="datetime-local" class="form-control" name="date_time_sell" id="date_time_sell" placeholder="วันที่และเวลา" required>
+                                </div> 
+                              </div>
+                              <div class="col-xl-8 col-md-12">
+                                <div class="form-group mb-2">
+                                  <label class="mt-0 mb-0 font-weight-bold text-dark">หมายเหตุการจัดส่ง</label>
+                                  <div class="row">
+                                    <input type="text" class=" form-control col-lg-6 col-sm-12" name="shipping_note" id="shipping_note" placeholder="หมายเหตุ" required>
+                                    <input type="text" class="mx-2 form-control col-lg-3 col-sm-6" name="sender" id="sender" placeholder="ผู้ส่ง" required>
+                                    <input type="text" class="col form-control col-lg-2 col-sm-5" name="wages" id="wages" placeholder="ค่าจ้าง" required>
+                                  </div>
+                                </div> 
+                              </div>
+                              <div class="col-xl-4 col-md-12">
+                                <label class="mt-0 mb-0 col-12 font-weight-bold text-dark">ตัวเลือกการจ่าย</label>
+                                <select class="form-control multiple-select" name="payment_option[]" placeholder="ตัวเลือกการจ่าย" multiple="multiple">
+                                    <option value="โอน">โอน</option>
+                                    <option value="จ่ายสด">จ่ายสด</option>
+                                    <option value="ติดค้าง">ติดค้าง</option>
+                                </select>
+                              </div>
+                              <div class="col-12">                         
+                                  <label for="exampleFormControlTextarea1">เหตุผล(ถ้ามี)</label>
+                                  <textarea class="form-control" id="exampleFormControlTextarea1" name="reason" rows="2"></textarea>
+                              </div>
                           </div>
+
                         </div>
-                        <div class="col-md-4"></div>
-                        <div class="col-md-8">
-                              xxxxx
+                        <div class="col-xl-3 col-lg-5 col-md-5 col-sm-12">
+                          <mian-add-image id="slip_orderseller" count="sell_slip" wrapper="ux-wrap" filenames="uimgname" cancles="ux-cancle"
+                            names="รูปโปรไฟล์" custom="btn_custom" setdefault="setDefaultImgSell"></mian-add-image>
                         </div>
                       </div>
-                  </div>
-                </div>
+                      
+                    </div>
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary ml-auto mr-4">บันทึกข้อมูล</button>
+                    </div>
+                </form>
               </div>
           </div>
+      </div>
     `;
   }
 }
 
 customElements.define("mian-form-ordersell", modelSetOrderSell);
-
-var countries2 = ["Custom Input", "Afghanistan", "Aland Islands"];

@@ -9,9 +9,12 @@
     header("Pragma: no-cache");
      date_default_timezone_set("Asia/Bangkok");
      if($_SERVER['REQUEST_METHOD'] === "GET"){
-         $order_id = $_GET['order_id'];
-          $sql = "SELECT product_name, COUNT(*) total,SUM(product_count * product_price) AS resutl_price, SUM(product_count) AS total_count FROM stock_product GROUP BY product_name";
-          $query = mysqli_query($conn, $sql)or die(mysqli_error($conn));
+          $sql_stock = "SELECT stock_product.product_name, rate_price.price_custommer_vip, 
+                rate_price.price_customer_frontstore,rate_price.price_customer_deliver, rate_price.price_customer_dealer,
+                COUNT(*) total,SUM(product_count * product_price) AS resutl_price, SUM(product_count) AS total_count
+                
+                FROM stock_product LEFT JOIN rate_price ON stock_product.product_name = rate_price.product_name GROUP BY stock_product.product_name";
+          $query = mysqli_query($conn, $sql_stock)or die(mysqli_error($conn));
           $num_row = mysqli_num_rows($query);
           
           if($num_row > 0){

@@ -116,9 +116,7 @@ function tablelistStock ($number, $product_name, $total_order, $total_count, $to
     <tr>
       <td class=\"font-weight-bold\">$number</td>
       <td class=\"font-weight-bold\">$product_name</td>
-      <td class=\"font-weight-bold\">$total_order ชิ้น</td>
       <td class=\"font-weight-bold\">$total_count บาท</td> 
-      <td class=\"font-weight-bold\">$total_price</td> 
       <td class=\"font-weight-bold\">ขาย</td> 
       <td class=\"font-weight-bold\">เหลือ</td> 
       <td class='text-center'>
@@ -241,6 +239,39 @@ function listRatePrice($rate_id="",$rate_storefront_price="",$rate_vip_price="",
 
     echo $list;
 
+}
+
+function listOrderSell($number, $ordersell_id, $ordersell_name,$count_item, $price_total,$customer_name,$date_sell){
+  $listorder = "
+    
+      <tr>
+        <td class=\"font-weight-bold\">$number</td>
+        <td class=\"font-weight-bold\">$ordersell_name</td>
+        <td class=\"font-weight-bold\">$count_item รายการ</td> 
+        <td class=\"font-weight-bold\">$price_total บาท</td> 
+        <td class=\"font-weight-bold\">$customer_name</td> 
+        <td class=\"font-weight-bold\">status</td> 
+        <td class=\"font-weight-bold\">$date_sell</td> 
+        <td class='text-center'>
+            <div class=\"table-data-feature\" >
+              <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"details/detail_stock.php?ordersell_id=".$ordersell_id." \">
+                <i class=\"fas fa-list-alt\"></i>
+              </a>
+              <button type=\"button\" id=\"update_order_sell\" data-target=\"#modalFormUpdateOrderSell\" data-toggle=\"modal\"  
+                       class=\"item\" data-id=\"$ordersell_id\" data-ordersellname=\"$ordersell_name\" data-pricetotal=\"$price_total\" 
+                       data-customername=\"$customer_name\" data-datesell=\"$date_sell\"
+                    >
+                        <i class=\"fas fa-pencil-alt text-warning\"></i>
+                    </button>
+                    <button type=\"button\" class=\"item\" id=\"falseTrashBtnProject\" data-id=\"$ordersell_id\">
+                      <i class=\"fas fa-trash-alt text-danger\"></i>
+                    </button>
+            </div>
+        </td>
+      </tr>
+
+  ";
+  echo $listorder;
 }
 
 ?>

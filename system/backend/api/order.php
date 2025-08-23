@@ -10,7 +10,7 @@
      date_default_timezone_set("Asia/Bangkok");
      if($_SERVER['REQUEST_METHOD'] === "GET"){
          $order_id = $_GET['order_id'];
-          $sqlList = "SELECT * FROM stock_product WHERE id_order='$order_id'";
+          
           $query = mysqli_query($conn, "SELECT * FROM stock_product WHERE id_order='$order_id'")or die(mysqli_error($conn));
           $num_row = mysqli_num_rows($query);
           

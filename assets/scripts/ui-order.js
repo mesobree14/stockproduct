@@ -203,11 +203,11 @@ class modelCreateOrder extends HTMLElement {
                 </div>
                 </div>
                 <div class="col-md-12 row mt-4">
-                  <button type="button" class="col-md-5 btn btn-sm btn-success ml-auto mr-4" id="add-form">เพิ่ม สินค้า</button>
+                  <button type="button" class="btn btn-sm btn-success ml-auto mr-4" id="add-form">เพิ่ม สินค้า</button>
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="submit" class="btn btn-sm btn-success ml-auto mr-4">บันทึกข้อมูล</button>
+                <button type="submit" class="btn btn-sm btn-primary ml-auto mr-4">บันทึกข้อมูล</button>
               </div>
             </form>
             
@@ -381,11 +381,11 @@ class modelUpdateOrder extends HTMLElement {
                 <div id="formupdateorder"></div>
                 
                 <div class="col-md-12 row mt-4">
-                  <button type="button" class="col-md-5 btn btn-sm btn-success ml-auto mr-4" id="add-form-update">เพิ่ม สินค้า</button>
+                  <button type="button" class="btn btn-sm btn-success ml-auto mr-4" id="add-form-update">เพิ่ม สินค้า</button>
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="submit" class="btn btn-sm btn-success ml-auto mr-4">บันทึกข้อมูล</button>
+                <button type="submit" class="btn btn-primary ml-auto mr-4">บันทึกข้อมูล</button>
               </div>
             </form>
             
