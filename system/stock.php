@@ -60,14 +60,18 @@ if(!isset($_SESSION['users_order'])){
                             </thead>
                             <tbody>
                                 <?php
-                                    $sql = "SELECT product_name, 
-                                     COUNT(*) total,SUM(product_count * product_price) AS resutl_price, SUM(product_count) AS total_count FROM stock_product GROUP BY product_name";
+                                    $sql = "SELECT SP.product_name, 
+                                     SUM(SP.product_count * SP.product_price) AS resutl_price, SUM(SP.product_count) AS total_count,
+                                     COALESCE(PS.tatol_product, 0) AS total_product, COALESCE(PS.price_to_pay, 0) AS total_pay
+                                     FROM stock_product SP LEFT JOIN (
+                                     SELECT productname, SUM(tatol_product) AS tatol_product, SUM(price_to_pay) AS price_to_pay FROM list_productsell GROUP BY productname) PS 
+                                     ON SP.product_name = PS.productname GROUP BY SP.product_name";
                                      $selectStockProduct = mysqli_query($conn,$sql) or die(mysqli_error($conn));
                                      $num_rows = mysqli_num_rows($selectStockProduct);
                                      if($num_rows > 0){
                                       foreach($selectStockProduct as $key => $res){
                                           tablelistStock(
-                                              ($key+1), $res['product_name'], $res['total'],$res['total_count'],$res['resutl_price'],
+                                              ($key+1), $res['product_name'], 0,$res['total_count'],$res['resutl_price'],$res['total_product'] ?? 0,
                                             );
                                       }
                                     }

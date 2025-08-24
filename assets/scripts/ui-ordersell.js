@@ -85,9 +85,9 @@ class AddImage extends HTMLElement {
   }
 }
 
-let data = [];
-
 customElements.define("mian-add-image", AddImage);
+let data = [];
+const originalPush = data.push;
 
 function updateGrandTotal() {
   const results = document.querySelectorAll("span[id^='price_result-']");
@@ -339,7 +339,6 @@ class formOrDerSell extends HTMLElement {
                         </p>`;
         return;
       }
-      const logg = searched_product;
       searched_product.forEach((product) => {
         const li = document.createElement("li");
         li.textContent = product.product_name;
@@ -386,9 +385,18 @@ class formOrDerSell extends HTMLElement {
         }
 
         this.input_cutommer = li.id;
+        // let indexkey = data.findIndex((obj) =>
+        //  obj.hasOwnProperty(`custom-${this.numbers}`)
+        // );
+        //if (indexkey !== -1) {
+        // data[indexkey][`custom-${this.numbers}`] = li.id;
+        //} else {
+        //console.log()
+        data.push({ [`custom-${this.numbers}`]: li.id });
+        //}
+
         dropdownMenu.classList.remove("show");
         this.isSelectPrice(this.input_prodcutname, this.input_cutommer);
-        console.log("hidden value:", hiddenInput.value);
         this.dispatchEvent(
           new CustomEvent("priceSelected", {
             detail: { numbers: this.numbers, selectId: li.id },
@@ -415,7 +423,9 @@ class formOrDerSell extends HTMLElement {
   }
   renderCreateOrderSell() {
     this.innerHTML = `
-            <div class="col-md-12 row mb-3" id="formGroup-${this.numbers}">
+            <div class="col-md-12 row mb-3 formGroups" id="formGroup-${
+              this.numbers
+            }">
               <div class="btn-remove col-md-12 row"></div>
               <div class="col-xl-4 col-lg-7">
                 <div class="form-group mb-2">
@@ -528,12 +538,15 @@ class formOrDerSell extends HTMLElement {
 }
 
 customElements.define("mian-input-ordersell", formOrDerSell);
+//const divIn = this.querySelectorAll("mian-input-ordersell");
+
 class modelSetOrderSell extends HTMLElement {
   connectedCallback() {
     this.selectedLiId = [];
     this.renderCreateOrderSell();
     this.addProductForm();
     this.setIdCostomer();
+    this.checkCustomer();
   }
   setIdCostomer() {
     this.addEventListener("priceSelected", (e) => {
@@ -554,6 +567,32 @@ class modelSetOrderSell extends HTMLElement {
       clone.setAttribute("numbers", index);
       container.appendChild(clone);
     });
+  }
+  checkCustomer() {
+    let typecustom = [];
+    //const originalPush = data.push;
+    const div = this.querySelector(".shipping-state");
+    div.style.display = "none";
+    data.push = function (...args) {
+      let keys = Object.keys(args[0])[0];
+      let values = Object.values(args[0])[0];
+
+      let indexkey = typecustom.findIndex((obj) => obj.hasOwnProperty(keys));
+      if (indexkey !== -1) {
+        typecustom[indexkey][keys] = values.replace(/-\d+$/, "");
+      } else {
+        typecustom.push({ [keys]: values.replace(/-\d+$/, "") });
+      }
+      let status = typecustom.some((obj) =>
+        Object.values(obj).includes("price_customer_deliver")
+      );
+      if (status) {
+        div.style.display = "block";
+      } else {
+        div.style.display = "none";
+      }
+      return this.length;
+    };
   }
 
   renderCreateOrderSell() {
@@ -623,7 +662,7 @@ class modelSetOrderSell extends HTMLElement {
                                 </div> 
                               </div>
                               <div class="col-xl-8 col-md-12">
-                                <div class="form-group mb-2">
+                                <div class="form-group mb-2 shipping-state">
                                   <label class="mt-0 mb-0 font-weight-bold text-dark">หมายเหตุการจัดส่ง</label>
                                   <div class="row">
                                     <input type="text" class=" form-control col-lg-6 col-sm-12" name="shipping_note" id="shipping_note" placeholder="หมายเหตุ" required>

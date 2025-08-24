@@ -110,15 +110,16 @@ function tablelistsetOrder ($number, $orderid, $ordername, $totalcost_order, $pr
   echo $listOrder;
 }
 
-function tablelistStock ($number, $product_name, $total_order, $total_count, $total_price){
+function tablelistStock ($number, $product_name, $total_order, $total_count, $total_price, $total_sell){
+  $remaining_amount = $total_count - $total_sell;
   $listStock = "
   <form>
     <tr>
       <td class=\"font-weight-bold\">$number</td>
       <td class=\"font-weight-bold\">$product_name</td>
       <td class=\"font-weight-bold\">$total_count บาท</td> 
-      <td class=\"font-weight-bold\">ขาย</td> 
-      <td class=\"font-weight-bold\">เหลือ</td> 
+      <td class=\"font-weight-bold\">$total_sell ชิ้น</td> 
+      <td class=\"font-weight-bold\">$remaining_amount ชิ้น</td> 
       <td class='text-center'>
           <div class=\"table-data-feature\" >
             <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"details/detail_stock.php?product_name=".$product_name." \">
@@ -163,8 +164,10 @@ function tableDetailStock($number, $product_id,$productname,$productcount,$produ
     echo $list_stock;
 }
 
-function detailStock($productname,$total_count,$total_price,$product_price, $count_sell, $income_price, $total_profit, $number_of_timessold){
+function detailStock($productname,$total_count,$total_price,$product_price, $count_sell, $income_price, $number_of_timessold){
     $remaining_products = $total_count - $count_sell;
+    $cost_price = $product_price * $count_sell;
+    $total_profit = $income_price - $cost_price;
     $detail = "
     
         <div class=\"rounded row mt-4 p-4\">
@@ -190,11 +193,12 @@ function detailStock($productname,$total_count,$total_price,$product_price, $cou
           </div>
           <div class=\"col-lg-3 col-md-4 col-sm-6 col-12 m-2 p-3 bg-white info-box rounded\">
             <span>ราคาที่ขายได้</span>
+            <small class=\"text-danger\">ต้นทุน $cost_price บาท</small>
            <p class=\"font-weight-bold res_text\"> $income_price บาท</p>
           </div>
           <div class=\"col-lg-2 col-md-3 col-sm-6 col-12 m-2 p-3 bg-white info-box rounded\">
                 <span>ยอดกำไร</span>
-                <p class=\"font-weight-bold res_text\"> $total_profit  บาท</p>
+                <p class=\"font-weight-bold res_text\">$total_profit  บาท</p>
           </div>
           <div class=\"col-lg-3 col-md-4 col-sm-6 col-12 m-2 p-3 bg-white info-box rounded\">
             <span>จำนวนครั้งที่ขายได้</span>

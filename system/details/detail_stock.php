@@ -34,21 +34,18 @@ if(!isset($_SESSION['users_order'])){
        <main class="page-content mt-0">
       <?php navbar("รายละเอียด / ".$product_name."", "../"); ?>
       <div class="container-fluid row">
-          <!-- <div class="ml-auto border">
-            <button class="bd-none au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" 
-                data-target="#modal"
-            >
-                <i class="fas fa-plus"></i>
-                  rate
-            </button>
-          </div> -->
           <div class="col-md-12">
             <?php
               $sql = "SELECT product_name, product_price,
                COUNT(*) total,SUM(product_count * product_price) AS resutl_price, SUM(product_count) AS total_count FROM stock_product WHERE product_name='$product_name' GROUP BY product_name";
                $selectStockProduct = mysqli_query($conn,$sql) or die(mysqli_error($conn));
                $acc_fetch = mysqli_fetch_assoc($selectStockProduct);
-               detailStock($acc_fetch['product_name'],$acc_fetch['total_count'], $acc_fetch['resutl_price'],$acc_fetch['product_price'], 6,7,2355,5);
+
+              $sql_sell = "SELECT productname,COUNT(*) AS counts, SUM(tatol_product) AS total_products, SUM(price_to_pay) AS prices FROM list_productsell WHERE productname='$product_name' GROUP BY productname";
+              $quer_sell = mysqli_query($conn,$sql_sell) or die(mysqli_error($conn));
+              $acc_sell = mysqli_fetch_assoc($quer_sell);
+ 
+               detailStock($acc_fetch['product_name'],$acc_fetch['total_count'], $acc_fetch['resutl_price'],$acc_fetch['product_price'], $acc_sell['total_products'] ?? 0,$acc_sell['prices'] ?? 0,$acc_sell['counts'] ?? 0);
             ?>
           </div>
           <div class="col-md-12 mt-4">
