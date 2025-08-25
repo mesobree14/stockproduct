@@ -78,6 +78,7 @@ if(!isset($_SESSION['users_order'])){
                       ?>
                     </tbody>
                   </table>
+                </div>
           </div>
           <div class="col-md-12 mt-4">
             <div class="table-responsive table-responsive-data2 mt-2">

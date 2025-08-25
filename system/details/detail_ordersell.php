@@ -1,0 +1,116 @@
+<?php
+session_start();
+include_once("../../backend/config.php");
+include_once("../../link/link-2.php");
+include_once("../../components/component.php");
+$ordersell_id = $_GET['ordersell_id'];
+  error_reporting(E_ALL);
+  ini_set('display_errors', 1);
+if(!isset($_SESSION['users_order'])){
+  echo "
+          <script>
+              alert('pless your login');
+              window.location = '../index.php';
+          </script>
+      ";
+}
+// $sql = "SELECT OS.id_ordersell, OS.ordersell_name, OS.is_totalprice, OS.custome_name, OS.tell_custome,OS.date_time_sell,OS.shipping_note,OS.sender,OS.wages,OS.reason,OS.slip_ordersell,
+//   OS.adder_id, OS.create_at
+// FROM orders_sell OS LEFT JOIN sell_typepay ST ON OS.id_ordersell = ST.ordersell_id WHERE id_ordersell='$ordersell_id'";
+$sql = "SELECT * FROM orders_sell LEFT JOIN sell_typepay ON orders_sell.id_ordersell = sell_typepay.ordersell_id WHERE id_ordersell='$ordersell_id'";
+$sql_query = mysqli_query($conn,$sql) or die(mysqli_error($conn));
+
+$count_query = mysqli_query($conn, "SELECT COUNT(*) AS total FROM list_productsell WHERE ordersell_id='$ordersell_id'");
+$count_row = mysqli_fetch_assoc($count_query);
+
+$res_acc = [];
+while($row = mysqli_fetch_assoc($sql_query)){
+  $res_acc[] = $row;
+}
+$order = null;
+$sell_type = [];
+
+foreach($res_acc as $rows){
+  if(!$order){
+    $order = [
+      'id_ordersell' => $rows['id_ordersell'],
+      'ordersell_name' => $rows['ordersell_name'],
+      'is_totalprice' => $rows['is_totalprice'],
+      'custome_name' => $rows['custome_name'],
+      'tell_custome' => $rows['tell_custome'],
+      'date_time_sell' => $rows['date_time_sell'],
+      'shipping_note' => $rows['shipping_note'],
+      'sender' => $rows['sender'],
+      'wages' => $rows['wages'],
+      'reason' => $rows['reason'],
+      'slip_ordersell' => $rows['slip_ordersell'],
+      'adder_id' => $rows['adder_id'],
+      'create_at' => $rows['create_at'],
+    ];
+  }
+  $sell_type[] = [
+    'typepay_id' => $rows['typepay_id'],
+    'ordersell_id' => $rows['ordersell_id'],
+    'list_typepay' => $rows['list_typepay'],
+  ];
+}
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.20/css/uikit.css">
+    <link rel="stylesheet" href="../../assets/scripts/module/jquery.Thailand.js/jquery.Thailand.js/dist/jquery.Thailand.min.css">
+    <link rel="stylesheet" href="../../assets/scss/navigationTrue-a-j.scss">
+    <link rel="stylesheet" href="../../assets/scss/revenue.scss">
+    
+    <script src="../../assets/scripts/script-bash.js"></script>
+  <title>Document</title>
+</head>
+<body>
+  <div class="page-wrapper chiller-theme toggled">
+      <?php  navigationOfiicer("../"); ?>
+       <main class="page-content mt-0">
+      <?php navbar("รายละเอียด / ".$order['ordersell_name']."", "../"); ?>
+      <div class="container-fluid row">
+          <div class="col-md-12 mt-4 card shadow-lg rounded">
+            
+              <?php 
+                
+                detailOrderSell(
+                  $order['ordersell_name'],$order['is_totalprice'],$order['custome_name'],$order['tell_custome'],$order['date_time_sell'],$count_row['total'],
+                  $order['shipping_note'],$order['sender'],$order['wages'],$order['reason'],$order['slip_ordersell'],$order['adder_id'],$order['create_at'],$sell_type
+                ); 
+              ?>
+          </div>
+
+          <div class="col-md-12 mt-4">
+            <div class="table-responsive table-responsive-data2 mt-2">
+                  <table class="table table-data2 mydataTablePatron">
+                      <thead>
+                          <tr>
+                              <th>ลำดับ</th> 
+                              <th>ชื่อ</th>
+                              <th>จากคำสั่งซื้อ</th>
+                              <th>ราคาต่อชิ้น</th>
+                              <th>จำนวน</th>
+                              <th>ราคารวม</th>
+                              <th>เวลา</th>
+                              <th>จัดการ</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+
+                      </tbody>
+                  </table> 
+            </div>
+          </div>
+      </div>
+      <main-rate-price></main-rate-price>
+    </main>
+  </div>
+  <script src="../../assets/scripts/ui-stock.js"></script>
+</body>
+</html>

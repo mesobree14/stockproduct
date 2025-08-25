@@ -62,17 +62,47 @@ if(!isset($_SESSION['users_order'])){
                     </thead>
                     <tbody>
                       <?php 
-                          $sql = "SELECT O.id_ordersell, O.ordersell_name, O.is_totalprice, O.custome_name,O.date_time_sell, COUNT(P.list_sellid) AS item_count
-                                  FROM orders_sell O
-                                  LEFT JOIN list_productsell P ON P.ordersell_id = O.id_ordersell
-                                  GROUP BY O.id_ordersell";
+                          $sql = "SELECT  O.id_ordersell, O.ordersell_name, O.is_totalprice, O.custome_name, O.date_time_sell,
+                                    COUNT(DISTINCT P.list_sellid) AS item_count,
+                                    GROUP_CONCAT(DISTINCT ST.list_typepay SEPARATOR ', ') AS list_typepay
+                                    FROM orders_sell O
+                                    LEFT JOIN sell_typepay ST ON ST.ordersell_id = O.id_ordersell
+                                    LEFT JOIN list_productsell P ON P.ordersell_id = O.id_ordersell
+                                    GROUP BY O.id_ordersell";
+                                  
                           $query_data = mysqli_query($conn,$sql) or die(mysqli_error($conn));
-                          $num_rows = mysqli_num_rows($query_data);
-                          if($num_rows > 0){
-                            foreach($query_data as $key =>$res){
-                              listOrderSell(($key+1), $res['id_ordersell'],$res['ordersell_name'],$res['item_count'],$res['is_totalprice'],$res['custome_name'],$res['date_time_sell']);
-                            }
+                          $orders_ass = [];
+                          while($rows = mysqli_fetch_assoc($query_data)){
+                            $orders_ass[] = $rows;
                           }
+                          
+                          function status_pay($list_typepay){
+                              if(is_string($list_typepay)){
+                                  $list_typepay = explode(",", str_replace(' ', '', $list_typepay));
+                              }
+                              $hasMandatory = in_array("ติดค้าง", $list_typepay);
+                              $hasOption = !empty(array_intersect(["โอน", "จ่ายสด"], $list_typepay));
+                              if($hasMandatory && $hasOption){
+                                  return "<span class='text-danger'>จ่ายแล้วแต่ยังติดค้างอยู่</span>";
+                              } else if(in_array("โอน", $list_typepay)){
+                                  return "<span class='text-success'>โอนจ่ายแล้ว</span>";
+                              } else if(in_array("จ่ายสด", $list_typepay)){
+                                  return "<span class='text-success'>จ่ายสดแล้ว</span>";
+                              } else if(in_array("ติดค้าง", $list_typepay)){
+                                  return "<span class='text-danger'>ติดค้าง</span>";
+                              } else {
+                                  return "<span class='text-secondary'>ไม่มีข้อมูล</span>";
+                              }
+                          }
+                          foreach($orders_ass as $key =>$res){
+                                $method = explode(",",str_replace(' ','', $res['list_typepay']));
+ 
+                                status_pay($method);
+                              listOrderSell(
+                                ($key+1), $res['id_ordersell'],$res['ordersell_name'],$res['item_count'],
+                                $res['is_totalprice'],$res['custome_name'],$res['date_time_sell'],status_pay($res['list_typepay'])
+                              );
+                            }
                       ?>
                     </tbody>
                 </table> 

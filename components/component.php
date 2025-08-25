@@ -245,20 +245,20 @@ function listRatePrice($rate_id="",$rate_storefront_price="",$rate_vip_price="",
 
 }
 
-function listOrderSell($number, $ordersell_id, $ordersell_name,$count_item, $price_total,$customer_name,$date_sell){
+function listOrderSell($number, $ordersell_id, $ordersell_name,$count_item, $price_total,$customer_name,$date_sell,$list_typepays){
+
   $listorder = "
-    
       <tr>
         <td class=\"font-weight-bold\">$number</td>
         <td class=\"font-weight-bold\">$ordersell_name</td>
         <td class=\"font-weight-bold\">$count_item รายการ</td> 
         <td class=\"font-weight-bold\">$price_total บาท</td> 
         <td class=\"font-weight-bold\">$customer_name</td> 
-        <td class=\"font-weight-bold\">status</td> 
+        <td class=\"font-weight-bold\">$list_typepays</td> 
         <td class=\"font-weight-bold\">$date_sell</td> 
         <td class='text-center'>
             <div class=\"table-data-feature\" >
-              <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"details/detail_stock.php?ordersell_id=".$ordersell_id." \">
+              <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"details/detail_ordersell.php?ordersell_id=".$ordersell_id." \">
                 <i class=\"fas fa-list-alt\"></i>
               </a>
               <button type=\"button\" id=\"update_order_sell\" data-target=\"#modalFormUpdateOrderSell\" data-toggle=\"modal\"  
@@ -276,6 +276,73 @@ function listOrderSell($number, $ordersell_id, $ordersell_name,$count_item, $pri
 
   ";
   echo $listorder;
+}
+function detailOrderSell($ordersell_name,$is_totalprice,$custome_name,$tell_custome,$date_time_sell,$total,$shipping_note,$sender,$wages,$reason,$slip_ordersell,$adder_id,$create_at,$sell_type){
+  function set_type($sell_types){
+    $list = "<tr>";
+      foreach($sell_types as $type){
+        $list .= '<td>'. htmlspecialchars($type['list_typepay'], ENT_QUOTES) .'</td>';
+      }
+    $list.="</tr>";
+    return $list;
+  }
+
+  function slip($img_slip){
+    if($img_slip !==""){ 
+      return "<img src=\"http://localhost/stockproduct/db/slip-sellorder/$img_slip \" class=\"img-sell\"/> ";
+    }else{ 
+      return "<span>ไม่มี</span>";
+    }
+  }
+  $list_detail = "
+      <div class=\"col-12\">
+        <div class=\"col-12 row\">
+          <div class=\"row \">
+            <h3 class=\"fs-3 font-thi\">รายการ : </h3>
+              <h3 class=\"fs-3 font-thi\">$ordersell_name</h3>
+          </div>
+          <div class=\"ml-auto row\">
+            <h3 class=\"fs-3 font-thi\"></h3>
+            <h3 class=\"fs-3 font-thi\">ราคาที่ต้องจ่าย $is_totalprice บาท</h3>
+          </div>
+          <div class=\"ml-auto row\">
+            <h3 class=\"fs-3 font-thi\"></h3>
+            <h3 class=\"fs-3 font-thi\">วันที่ขาย $date_time_sell</h3>
+          </div>
+        </div>
+        <div class=\"col-12 row\">
+          <div class=\"\">
+              <h3 class=\"fs-3 font-thi\">จำนวนสินค้า $total รายการ</h3>
+          </div>
+          <div class=\"ml-auto \">
+            <h3 class=\"fs-3 font-thi\">ผู้ซื้อ $custome_name</h3>
+          </div>
+          <div class=\"ml-auto \">
+            
+            <h3 class=\"fs-3 font-thi\">เบอรืโทร $tell_custome</h3>
+          </div>
+        </div>
+        <div class=\"col-12 row pb-4\">
+          <div class=\"col-5\">
+            <span>ตัวเลือกการจ่าย</span>
+            <table class=\"table table-data2 mydataTablePatron\">
+              <tbody>
+                ". set_type($sell_type) ."
+              </tbody>
+            </table>
+          </div>
+          <div class=\"col-7\">
+            <label for=\"exampleFormControlTextarea1\">เหตุผล</label>
+            <textarea class=\"form-control\" id=\"exampleFormControlTextarea1\" rows=\"2\">$reason</textarea>
+          </div>
+        </div>
+        <div class=\"col-12 text-center div-img\">
+        <span>หลักฐานการโอน</span>
+        ". slip($slip_ordersell) ."
+        </div>
+      </div>
+  ";
+  echo $list_detail;
 }
 
 ?>
