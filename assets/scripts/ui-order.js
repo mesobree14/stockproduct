@@ -25,7 +25,42 @@ class AddImage extends HTMLElement {
   }
   connectedCallback() {
     this.renderImage();
+    this.isSetImagePriviews();
   }
+  isSetImagePriviews() {
+    let setwrapper = document.querySelector(`.${this.wrapper}`);
+    let setImgName = document.querySelector(`.${this.filenames}`);
+    let setBtncancle = document.querySelector(`.${this.cancle}`);
+    let typeImg = document.querySelector(`.${this.id}`);
+    let defaultInput = document.querySelector(`.${this.defaultbtn}`);
+    let CustomButton = document.querySelector(`#${this.custom}`);
+    let setExp = /[0-9a-zA-Z\^\&\'\@\{\}\[\]\,\$\=\!\-\#\(\)\.\%\+\~\_ ]+$/;
+
+    CustomButton.onclick = function () {
+      defaultInput.click();
+    };
+    defaultInput.addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const result = reader.result;
+          typeImg.src = result;
+          setwrapper.classList.add("active");
+        };
+        setBtncancle.addEventListener("click", function () {
+          typeImg.src = "";
+          setwrapper.classList.remove("active");
+        });
+        reader.readAsDataURL(file);
+      }
+      if (this.value) {
+        let valueStore = this.value.match(setExp);
+        setImgName.textContent = valueStore;
+      }
+    });
+  }
+
   renderImage() {
     this.innerHTML = `
               <div class="container">
@@ -52,47 +87,6 @@ class AddImage extends HTMLElement {
 }
 customElements.define("mian-add-image", AddImage);
 
-const setImagePriviews = (
-  getImage,
-  setDefaultFile,
-  setCustomBtn,
-  btnCancle,
-  getImgNames,
-  setWrapper
-) => {
-  let setwrapper = document.querySelector(setWrapper);
-  let setImgName = document.querySelector(getImgNames);
-  let setBtncancle = document.querySelector(btnCancle);
-  let typeImg = document.querySelector(getImage);
-  let defaultInput = document.querySelector(setDefaultFile);
-  let CustomButton = document.querySelector(setCustomBtn);
-  let setExp = /[0-9a-zA-Z\^\&\'\@\{\}\[\]\,\$\=\!\-\#\(\)\.\%\+\~\_ ]+$/;
-
-  CustomButton.onclick = function () {
-    defaultInput.click();
-  };
-  defaultInput.addEventListener("change", function () {
-    const file = this.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function () {
-        const result = reader.result;
-        typeImg.src = result;
-        setwrapper.classList.add("active");
-      };
-      setBtncancle.addEventListener("click", function () {
-        typeImg.src = "";
-        setwrapper.classList.remove("active");
-      });
-      reader.readAsDataURL(file);
-    }
-    if (this.value) {
-      let valueStore = this.value.match(setExp);
-      setImgName.textContent = valueStore;
-    }
-  });
-};
-
 const uiForm = `    
       <div class="col-md-12">
         <div class=row col-12">
@@ -100,31 +94,231 @@ const uiForm = `
         </div>
         <div class="form-group mb-2">
           <label class="mt-0 mb-0 font-weight-bold text-dark labelCount"></label>
-          <input type="text" class="form-control" name="product_name[]" id="" placeholder="ชื่อสินค้า" required>
+          <div class="customInputContainer">
+              <div class="customInput searchInput">
+                  <input class="selectedData form-control c_product_name"  type="text" name="product_name[]" required/>
+              </div>
+              <div class="options">
+                  <ul></ul>
+              </div>
+          </div>
         </div>  
       </div>
       <div class="col-md-12 row">
         <div class="col-md-5">
           <div class="form-group mb-2">
             <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวน</label>
-            <input type="text" class="form-control" name="count_product[]" id="" placeholder="ชื่อสินค้า" required>
+            <input type="text" class="c_count_product form-control" name="count_product[]" id="" placeholder="ชื่อสินค้า" required>
           </div>
         </div>
         <div class="col-md-4">
             <div class="form-group mb-2">
-              <label class="mt-0 mb-0 font-weight-bold text-dark">ราคา</label>
-              <input type="text" class="form-control" name="price_product[]" id="" placeholder="ชื่อสินค้า" required>
+              <label class="mt-0 mb-0 font-weight-bold text-dark">ราคาต้นทุน/ชิ้น</label>
+              <input type="text" class="c_price_product form-control" name="price_product[]" id="" placeholder="ชื่อสินค้า" required>
             </div>
         </div>
         <div class="col-md-3 align-self-center">
-            ราคารวม 34500
+            <div class="form-group mb-2">
+              <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าใช้จ่าย</label>
+              <input type="text" class="c_expenses form-control" name="expenses[]" placeholder="ค่าใช้จ่าย" required>
+            </div>
         </div>
       </div>
     `;
 
+const createGrandTotal = () => {
+  const results = document.querySelectorAll("input[id^='expenses-']");
+  let totalPrice = 0;
+  results.forEach((span) => {
+    const value = Number(span.value.trim());
+    if (!isNaN(value)) {
+      totalPrice += value;
+    }
+  });
+  console.log({ totalPrice });
+  document.getElementById("totalcost_order").value = totalPrice;
+};
+
 class modelCreateOrder extends HTMLElement {
-  connectedCallback() {
+  constructor() {
+    super();
+  }
+
+  stockproducts = [];
+  async connectedCallback() {
+    await this.loadProduct();
     this.renderCreateOrder();
+    this.scripts();
+    //this.updateData();
+  }
+
+  async loadProduct() {
+    try {
+      const api_data = await fetch(
+        "http://localhost/stockproduct/system/backend/api/stock.php",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const response = await api_data.json();
+      this.stockproducts.push(...response.data);
+      console.log("stock=", this.stockproducts);
+      return response.data;
+    } catch (e) {
+      throw new Error(`Is Error : ${e}`);
+    }
+  }
+
+  updateData(data_product, index, group) {
+    let selectedData = group.querySelector(`.IsselectedData-${index}`);
+    let customInputContainer = group.querySelector(
+      `.IscustomInputContainer-${index}`
+    );
+    const ul = group.querySelector("ul");
+    selectedData.value = data_product ?? "";
+    for (const li of group.querySelectorAll("li.selected")) {
+      li.classList.remove("selected");
+    }
+    const clickedLi = [...ul.children].find(
+      (li) => li.innerText === data_product
+    );
+    if (clickedLi) clickedLi.classList.add("selected");
+    customInputContainer.classList.toggle("show");
+  }
+
+  scripts() {
+    const container = document.getElementById("formcreateorder");
+
+    const CountForm = () => {
+      console.log("xxl");
+      const group = container.querySelectorAll(".formGroup");
+      group.forEach((group, index) => {
+        let label = group.querySelector("label");
+        label.textContent = `ชื่อสินค้าตัวที่ ${index + 1}`;
+
+        let customInput = group.querySelector(`.customInput`);
+        let customInputContainer = group.querySelector(".customInputContainer");
+        let selectedData = group.querySelector(".selectedData");
+        let serchInput = group.querySelector(".searchInput input");
+        let ul = group.querySelector(`.options ul`);
+
+        customInput.classList.add(`IscustomInput-${index}`);
+        customInputContainer.classList.add(`IscustomInputContainer-${index}`);
+        selectedData.classList.add(`IsselectedData-${index}`);
+        serchInput.classList.add(`IsserchInput-${index}`);
+        ul.classList.add(`Isoptions-${index}`);
+
+        window.addEventListener("click", (e) => {
+          const searchInputEl = group.querySelector(`.IssearchInput-${index}`);
+          if (searchInputEl && searchInputEl.contains(e.target)) {
+            searchInputEl.classList.add("focus");
+          } else if (searchInputEl) {
+            searchInputEl.classList.remove("focus");
+          }
+          if (
+            customInputContainer &&
+            !customInputContainer.contains(e.target)
+          ) {
+            customInputContainer.classList.remove("show");
+          }
+        });
+        customInput.addEventListener("click", () => {
+          customInputContainer.classList.add("show");
+        });
+        for (let i = 0; i < this.stockproducts.length; i++) {
+          let product = this.stockproducts[i];
+          let li = document.createElement("li");
+          li.classList.add("block");
+          const row = document.createElement("div");
+          row.classList.add("row");
+          let span = document.createElement("span");
+          let small = document.createElement("small");
+          span.textContent = product.product_name;
+          small.textContent = `เหลืออีก ${product.remaining_product} ชิ้น`;
+          small.classList.add("ml-auto");
+          row.appendChild(span);
+          row.appendChild(small);
+          li.appendChild(row);
+          ul.appendChild(li);
+        }
+        ul.querySelectorAll("li").forEach((li) => {
+          li.addEventListener("click", () => {
+            let spanTxt = li.querySelector("span").innerText;
+            selectedData.value = spanTxt;
+            for (const li of document.querySelectorAll("li.selected")) {
+              li.classList.remove("selected");
+            }
+            li.classList.add("selected");
+            customInputContainer.classList.toggle("show");
+          });
+        });
+        serchInput.addEventListener("keyup", () => {
+          let searchedVal = serchInput.value.toLowerCase();
+          let searched_product = this.stockproducts.filter((data) =>
+            data.product_name.toLowerCase().includes(searchedVal)
+          );
+          console.log({ searched_product });
+          ul.innerHTML = "";
+          if (searched_product.length === 0) {
+            ul.innerHTML = "";
+            return;
+          }
+          searched_product.forEach((data) => {
+            const li = document.createElement("li");
+            li.textContent = data.product_name;
+            li.addEventListener("click", (e) => {
+              this.input_prodcutname = e.target.textContent;
+              this.updateData(e.target.textContent, index, group);
+            });
+            ul.appendChild(li);
+          });
+        });
+
+        let product_name = group.querySelector(".c_product_name");
+        let count_product = group.querySelector(".c_count_product");
+        let price_product = group.querySelector(".c_price_product");
+        let expenses = group.querySelector(".c_expenses");
+        product_name.id = `product_name-${index}`;
+        count_product.id = `count_product-${index}`;
+        price_product.id = `price_product-${index}`;
+        expenses.id = `expenses-${index}`;
+        count_product.addEventListener("input", (e) => {
+          let value = e.target.value;
+          price_product.value = Number((expenses.value / value).toFixed(2));
+          createGrandTotal();
+        });
+
+        price_product.addEventListener("input", (e) => {
+          let value = e.target.value;
+          expenses.value = Number((count_product.value * value).toFixed(2));
+          createGrandTotal();
+        });
+
+        expenses.addEventListener("input", (e) => {
+          let value = e.target.value;
+          price_product.value = Number(
+            (value / count_product.value).toFixed(2)
+          );
+          createGrandTotal();
+        });
+      });
+    };
+
+    document.getElementById("add-form").addEventListener("click", function () {
+      const div = document.createElement("div");
+      div.className = "formGroup col-md-12 border mb-3";
+      div.innerHTML = uiForm;
+      container.appendChild(div);
+      div.querySelector(".remove-btn").addEventListener("click", function () {
+        div.remove();
+        CountForm();
+        createGrandTotal();
+        document.dispatchEvent(new Event("recalculate"));
+      });
+      CountForm();
+    });
+    CountForm();
   }
   renderCreateOrder() {
     this.innerHTML = `
@@ -152,8 +346,8 @@ class modelCreateOrder extends HTMLElement {
                       <div class="col-md-12 row">
                         <div class="col-md-7">
                           <div class="form-group mb-2">
-                            <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าใช้จ่าย</label>
-                            <input type="text" class="form-control" name="totalcost_order" id="" placeholder="ค่าใช้จ่าย" required>
+                            <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าใช้จ่ายทั้งหมด</label>
+                            <input type="number" class="form-control" name="totalcost_order" id="totalcost_order" placeholder="ค่าใช้จ่าย" required>
                           </div> 
                         </div>
                         <div class="col-md-5">
@@ -180,24 +374,34 @@ class modelCreateOrder extends HTMLElement {
                     <div class="col-md-12">
                       <div class="form-group mb-2">
                         <label class="mt-0 mb-0 font-weight-bold text-dark">ชื่อสินค้าตัวที่1</label>
-                        <input type="text" class="form-control" name="product_name[]" id="" placeholder="ชื่อสินค้า" required>
+                        <div class="customInputContainer">
+                            <div class="customInput searchInput">
+                                <input class="selectedData form-control c_product_name"  type="text" name="product_name[]" required/>
+                            </div>
+                            <div class="options">
+                                <ul></ul>
+                            </div>
+                        </div>
                       </div>  
                     </div>
                     <div class="col-md-12 row">
                       <div class="col-md-5">
                         <div class="form-group mb-2">
                           <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวน</label>
-                          <input type="text" class="form-control" name="count_product[]" id="" placeholder="ชื่อสินค้า" required>
+                          <input type="text" class="c_count_product form-control" name="count_product[]"placeholder="ชื่อสินค้า" required>
                         </div>
                       </div>
                       <div class="col-md-4">
                           <div class="form-group mb-2">
-                            <label class="mt-0 mb-0 font-weight-bold text-dark">ราคา</label>
-                            <input type="text" class="form-control" name="price_product[]" id="" placeholder="ชื่อสินค้า" required>
+                            <label class="mt-0 mb-0 font-weight-bold text-dark">ราคาต้นทุน/ชิ้น</label>
+                            <input type="text" class="c_price_product form-control" name="price_product[]" placeholder="ชื่อสินค้า" required>
                           </div>
                       </div>
                       <div class="col-md-3 align-self-center">
-                          ราคารวม 34500
+                          <div class="form-group mb-2">
+                            <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าใช้จ่าย</label>
+                            <input type="text" class="c_expenses form-control" name="expenses[]" placeholder="ค่าใช้จ่าย" required>
+                          </div>
                       </div>
                     </div>
                 </div>
@@ -218,38 +422,6 @@ class modelCreateOrder extends HTMLElement {
   }
 }
 customElements.define("main-create-order", modelCreateOrder);
-const container = document.getElementById("formcreateorder");
-function CountForm() {
-  const group = container.querySelectorAll(".formGroup");
-
-  group.forEach((group, index) => {
-    let label = group.querySelector("label");
-    label.textContent = `ชื่อสินค้าตัวที่ ${index + 1}`;
-  });
-}
-
-document.getElementById("add-form").addEventListener("click", function () {
-  const div = document.createElement("div");
-  div.className = "formGroup col-md-12 border mb-3";
-  div.innerHTML = uiForm;
-  container.appendChild(div);
-
-  // ผูก event ปุ่มลบ
-  div.querySelector(".remove-btn").addEventListener("click", function () {
-    div.remove();
-    CountForm();
-  });
-  CountForm();
-});
-CountForm();
-setImagePriviews(
-  ".orphanImage",
-  ".setDefaultImgOrphan",
-  "#setbtnCustomX",
-  ".x-cancleX i",
-  ".ximgnameX",
-  ".x-wrapX"
-);
 
 class modelUpdateOrder extends HTMLElement {
   connectedCallback() {
@@ -356,7 +528,7 @@ class modelUpdateOrder extends HTMLElement {
                         <div class="col-md-7">
                           <div class="form-group mb-2">
                             <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าใช้จ่าย</label>
-                            <input type="text" class="form-control" name="totalcost_order" id="totalcost_order" placeholder="ค่าใช้จ่าย" required>
+                            <input type="text" class="form-control" name="totalcost_order" id="totalcost_orders" placeholder="ค่าใช้จ่าย" required>
                           </div> 
                         </div>
                         <div class="col-md-5">
@@ -397,14 +569,6 @@ class modelUpdateOrder extends HTMLElement {
 }
 customElements.define("main-update-order", modelUpdateOrder);
 const containers = document.getElementById("formupdateorder");
-// function CountForm() {
-//   const group = containers.querySelectorAll(".formGroup");
-
-//   group.forEach((group, index) => {
-//     let label = group.querySelector("label");
-//     label.textContent = `ชื่อสินค้าตัวที่ ${index + 1}`;
-//   });
-// }
 document
   .getElementById("add-form-update")
   .addEventListener("click", function () {
@@ -422,22 +586,22 @@ document
   });
 
 $(document).on("click", "#update_order", function (e) {
-  let product_ids = $(this).data("id");
+  let product_id = $(this).data("id");
   let comp = document.querySelector("main-update-order");
-  comp.dispatchEvent(new CustomEvent("setId", { detail: product_ids }));
+  comp.dispatchEvent(new CustomEvent("setId", { detail: product_id }));
   const container = document.querySelector("#formupdateorder");
   if (container) container.innerHTML = "";
-  console.log({ container });
 
-  $product_id = $(this).data("id");
+  $product_ids = $(this).data("id");
   $order_name = $(this).data("ordername");
-  $totalcost = $(this).data("totalcost");
+  $total_cost = $(this).data("totalcost");
+
   $priceorder = $(this).data("priceorder");
   $slipimage = $(this).data("slipimage");
   $dateorder = $(this).data("dateorder");
-  $("#productId").val($product_id);
+  $("#productId").val($product_ids);
   $("#order_name").val($order_name);
-  $("#totalcost_order").val($totalcost);
+  $("#totalcost_orders").val($total_cost);
   $("#priceorder").html($priceorder);
   $("#date_time_order").val($dateorder);
 
@@ -447,12 +611,3 @@ $(document).on("click", "#update_order", function (e) {
   $(".ux-wrap").last().addClass("active");
   $(".uimgname").html($slipimage);
 });
-
-setImagePriviews(
-  ".slipt_order",
-  ".setDefaultImgOrder",
-  "#btn_custom",
-  ".ux-cancle i",
-  ".uimgname",
-  ".ux-wrap"
-);

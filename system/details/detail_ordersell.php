@@ -92,17 +92,21 @@ foreach($res_acc as $rows){
                       <thead>
                           <tr>
                               <th>ลำดับ</th> 
-                              <th>ชื่อ</th>
-                              <th>จากคำสั่งซื้อ</th>
+                              <th>สินค้า</th>
                               <th>ราคาต่อชิ้น</th>
                               <th>จำนวน</th>
                               <th>ราคารวม</th>
-                              <th>เวลา</th>
+                              <th>ประเภทลูกค้า</th>
                               <th>จัดการ</th>
                           </tr>
                       </thead>
                       <tbody>
-
+                          <?php
+                              $query_product = mysqli_query($conn,"SELECT * FROM list_productsell WHERE ordersell_id='$ordersell_id'") or die(mysqli_error($conn));
+                              foreach($query_product as $key=>$res){
+                                listProductSell(($key+1), $res['list_sellid'], $res['productname'],$res['rate_customertype'],$res['type_custom'],$res['tatol_product'],$res['price_to_pay']);
+                              }
+                          ?>
                       </tbody>
                   </table> 
             </div>

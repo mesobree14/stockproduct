@@ -67,13 +67,17 @@
               $product_name = $_POST['product_name'];
               $count_product = $_POST['count_product'];
               $price_product = $_POST['price_product'];
+              $expenses = $_POST['expenses'];
 
               for($i=0; $i< count($product_name); $i++){
                 $is_product_name = mysqli_real_escape_string($conn,trim($product_name[$i]));
                 $is_count_product = mysqli_real_escape_string($conn,trim($count_product[$i]));
                 $is_price_product = mysqli_real_escape_string($conn,trim($price_product[$i]));
+                $is_expenses = mysqli_real_escape_string($conn, trim($expenses[$i]));
                 if($is_product_name !== "" || $is_count_product !== "" || $is_price_product !== ""){
-                  $insertQl = "INSERT INTO stock_product (product_name,product_count,product_price,id_adder,id_order,create_at) VALUES ('$is_product_name','$is_count_product','$is_price_product','$id_user','$id_order','$day_add')";
+                  $insertQl = "INSERT INTO stock_product (product_name,product_count,product_price,expenses,id_adder,id_order,create_at) 
+                      VALUES ('$is_product_name','$is_count_product','$is_price_product','$is_expenses','$id_user','$id_order','$day_add')
+                  ";
                   $queryQl = mysqli_query($conn, $insertQl) or die(mysqli_error($conn));
                   echo $queryQl;
                   if($queryQl){

@@ -56,38 +56,25 @@
           $is_costommerd = $_POST['costommerds'];
           $tatol_products = $_POST['tatol_product'];
           $resutl_prices = $_POST['resutl_price'];
-          
+          $type_custom = $_POST['type_custom'];
 
           $ordersell_name = $_POST['ordersell_name'];
           $is_totalprice = $_POST['is_totalprice'];
           $custome_name = $_POST['custome_name'];
           $tell_custome = $_POST['tell_custome'];
           $date_time_sell = $_POST['date_time_sell'];
-          $shipping_note = $_POST['shipping_note'];
-          $sender = $_POST['sender'];
-          $wages = $_POST['wages'];
+          $shipping_note = $_POST['shipping_note'] ?? "";
+          $sender = $_POST['sender'] ?? "";
+          $wages = $_POST['wages'] ?? null;
+          if(empty($wages)){
+            $wages = 0;
+          }else{
+            $wages = preg_replace('/[^\d.]/','',$wages);
+            $wages = (float)$wages;
+          }
 
           $payment_options = $_POST['payment_option'];
-          $reason = $_POST['reason'];
-
-              //  print json_encode(array(
-                // 'status'=> 201,
-                // 'message'=> 'get data is success',
-                // 'is_product'=> $is_products,
-                // 'is_costommerd'=> $is_costommerd,
-                // 'tatol_product'=> $tatol_products,
-                // 'resutl_price'=> $resutl_prices,
-                // 'ordersell_name'=> $is_product,
-                // 'is_totalprice'=> $is_totalprice,
-                // 'custome_name'=> $custome_name,
-                // 'tell_custome'=> $tell_custome,
-                // 'date_time_sell'=> $date_time_sell,
-                // 'shipping_note'=> $shipping_note,
-                // 'sender'=> $sender,
-                // 'wages'=> $wages,
-                // 'payment_option'=> $payment_option,
-                // 'reason'=> $reason
-              //));
+          $reason = $_POST['reason'] ?? "";
 
 
           $chkstatus = [];
@@ -114,16 +101,16 @@
               $is_costomer = mysqli_real_escape_string($conn, trim($is_costommerd[$i]));
               $tatol_product = mysqli_real_escape_string($conn, trim($tatol_products[$i]));
               $resutl_price = mysqli_real_escape_string($conn, trim($resutl_prices[$i]));
+              $istype_custom = mysqli_real_escape_string($conn,trim($type_custom[$i]));
               if($is_product !== "" || $is_costomer !== "" || $tatol_product !== "" || $resutl_price !== ""){
-                $add_sqls = "INSERT INTO list_productsell (ordersell_id,productname,rate_customertype,tatol_product,price_to_pay,create_at)
-                VALUES ('$id_order_sell','$is_product','$is_costomer','$tatol_product','$resutl_price','$day_add')";
+                $add_sqls = "INSERT INTO list_productsell (ordersell_id,productname,rate_customertype,type_custom,tatol_product,price_to_pay,create_at)
+                VALUES ('$id_order_sell','$is_product','$is_costomer','$istype_custom','$tatol_product','$resutl_price','$day_add')";
                 $query_addsql = mysqli_query($conn,$add_sqls) or die(mysqli_error($conn));
                 if($query_addsql){
                   $chkstatus[] = "success";
                 }
               }
             }
-            //print_r($chkstatus);
             echo "<script type=\"text/javascript\">
                             MySetSweetAlert(\"success\",\"เรียบร้อย\",\"เพิ่มข้อมูลตามที่เลือกเรียบร้อยแล้ว\",\"../ordersell.php\")
                         </script>";

@@ -277,7 +277,22 @@ function listOrderSell($number, $ordersell_id, $ordersell_name,$count_item, $pri
   ";
   echo $listorder;
 }
-function detailOrderSell($ordersell_name,$is_totalprice,$custome_name,$tell_custome,$date_time_sell,$total,$shipping_note,$sender,$wages,$reason,$slip_ordersell,$adder_id,$create_at,$sell_type){
+
+function status_deliver($shippingnote, $sender, $wages){
+  if($wages){
+    $lists = "
+      <div class=\"col-sm-12 col-lg-8\">
+        <h3 class=\"fs-3 font-thi\">สถานะการจัดส่ง </h3>
+        <div class=\"col-12 row\">
+          <span class=\"font-thi font-bold mx-4\">$shippingnote</span>
+          <span class=\"font-thi font-bold mx-4\">$sender</span>
+          <span class=\"font-thi font-bold mx-4\">$wages</span>
+        </div>
+      </div>
+    ";
+    return $lists;
+  }
+}
   function set_type($sell_types){
     $list = "<tr>";
       foreach($sell_types as $type){
@@ -289,11 +304,15 @@ function detailOrderSell($ordersell_name,$is_totalprice,$custome_name,$tell_cust
 
   function slip($img_slip){
     if($img_slip !==""){ 
-      return "<img src=\"http://localhost/stockproduct/db/slip-sellorder/$img_slip \" class=\"img-sell\"/> ";
-    }else{ 
-      return "<span>ไม่มี</span>";
+      return "
+        <div>
+          <span class=\"col-12\">หลักฐานการโอน</span>
+        </div>
+        <img src=\"http://localhost/stockproduct/db/slip-sellorder/$img_slip \" class=\"img-sell\"/> ";
     }
   }
+function detailOrderSell($ordersell_name,$is_totalprice,$custome_name,$tell_custome,$date_time_sell,$total,$shipping_note,$sender,$wages,$reason,$slip_ordersell,$adder_id,$create_at,$sell_type){
+
   $list_detail = "
       <div class=\"col-12\">
         <div class=\"col-12 row\">
@@ -336,13 +355,58 @@ function detailOrderSell($ordersell_name,$is_totalprice,$custome_name,$tell_cust
             <textarea class=\"form-control\" id=\"exampleFormControlTextarea1\" rows=\"2\">$reason</textarea>
           </div>
         </div>
-        <div class=\"col-12 text-center div-img\">
-        <span>หลักฐานการโอน</span>
-        ". slip($slip_ordersell) ."
+        <div class=\"col-12 row mb-4\">
+            ". status_deliver($shipping_note,$sender,$wages) ."
+            <div class=\"col-sm-12 col-lg-4 div-img\">
+            ". slip($slip_ordersell) ."
+            </div>
         </div>
       </div>
   ";
   echo $list_detail;
+}
+
+  function typecustomse($type){
+    if($type === "price_customer_dealer"){
+      return "ตัวแทนจำหน่าย";
+    }else if($type === "price_custommer_vip"){
+      return "ลูกค้า vip";
+    }else if($type === "price_customer_frontstore"){
+      return "ลูกค้าหน้าร้าน";
+    }else if($type === "price_customer_deliver"){
+      return "การจัดส่ง";
+    }else{
+      return $type;
+    }
+  }
+
+function listProductSell($number,$product_id, $product_anme, $rate_customerprice, $type_custom, $lotal_product, $price_topay){
+
+
+  $list = "
+    <tr>
+      <td class=\"font-weight-bold\">$number</td>
+      <td class=\"font-weight-bold\">$product_anme</td>
+      <td class=\"font-weight-bold\">$rate_customerprice</td>
+      <td class=\"font-weight-bold\">$lotal_product</td>
+      <td class=\"font-weight-bold\">$price_topay</td>
+      <td class=\"font-weight-bold\">". typecustomse($type_custom) ."</td>
+      <td class='text-center'>
+            <div class=\"table-data-feature\" >
+              <button type=\"button\" id=\"update_order_sell\" data-target=\"#modalFormUpdateOrderSell\" data-toggle=\"modal\"  
+                 class=\"item\" data-id=\"$product_id\" data-productname=\"$product_anme\" data-customerprice=\"$rate_customerprice\" 
+                 data-totalproduct=\"$lotal_product\" data-pricetopay=\"$price_topay\" data-customtype=\"$type_custom\"
+              >
+                  <i class=\"fas fa-pencil-alt text-warning\"></i>
+              </button>
+              <button type=\"button\" class=\"item\" id=\"falseTrashBtnProject\" data-id=\"$product_id\">
+                <i class=\"fas fa-trash-alt text-danger\"></i>
+              </button>
+          </div>
+        </td>
+    </tr>
+  ";
+  echo $list;
 }
 
 ?>

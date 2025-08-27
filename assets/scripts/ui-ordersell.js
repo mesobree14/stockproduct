@@ -226,6 +226,14 @@ class formOrDerSell extends HTMLElement {
       this.type_price = filtered[0][customer.replace(/-\d+$/, "")];
       res_price.innerHTML = filtered[0][customer.replace(/-\d+$/, "")];
       distotal.disabled = false;
+
+      let response =
+        Number(is_totals.innerHTML) *
+        Number(filtered[0][customer.replace(/-\d+$/, "")]);
+      price_result.innerHTML = response;
+      price_result.textContent = response;
+      input_result.value = response;
+      updateGrandTotal();
       tatolproduct.addEventListener("input", function () {
         is_totals.textContent = this.value;
         let result =
@@ -304,8 +312,21 @@ class formOrDerSell extends HTMLElement {
       row.classList.add("row");
       let span = document.createElement("span");
       let small = document.createElement("small");
+      if (products.remaining_product <= 0) {
+        li.classList.add("disabled");
+        li.style.pointerEvents = "none";
+        li.style.color = "gray";
+        li.style.opacity = "0.6";
+      }
+
       span.textContent = products.product_name;
-      small.textContent = `เหลืออีก ${products.total_count} ชิ้น`;
+      if (products.remaining_product == 0) {
+        small.textContent = "สินค้าหมด";
+      } else if (products.remaining_product < 0) {
+        small.textContent = `สินค้าติดลบ ${products.remaining_product}`;
+      } else {
+        small.textContent = `เหลืออีก ${products.remaining_product} ชิ้น`;
+      }
       small.classList.add("ml-auto");
       row.appendChild(span);
       row.appendChild(small);
@@ -328,7 +349,7 @@ class formOrDerSell extends HTMLElement {
     searchInput.addEventListener("keyup", (e) => {
       let searchedVal = searchInput.value.toLowerCase();
       let searched_product = this.stockdata.filter((data) =>
-        data.product_name.toLowerCase().startsWith(searchedVal)
+        data.product_name.toLowerCase().includes(searchedVal)
       );
 
       ul.innerHTML = "";
@@ -377,6 +398,9 @@ class formOrDerSell extends HTMLElement {
     dropdownMenu.querySelectorAll("li").forEach((li) => {
       li.addEventListener("click", () => {
         const smallValue = li.querySelector("small")?.textContent.trim();
+        const typeCustom = dropdown.querySelector(
+          `#type_custom-${this.numbers}`
+        );
         const hiddenInput = dropdown.querySelector(
           `#costommerd-${this.numbers}`
         );
@@ -385,15 +409,8 @@ class formOrDerSell extends HTMLElement {
         }
 
         this.input_cutommer = li.id;
-        // let indexkey = data.findIndex((obj) =>
-        //  obj.hasOwnProperty(`custom-${this.numbers}`)
-        // );
-        //if (indexkey !== -1) {
-        // data[indexkey][`custom-${this.numbers}`] = li.id;
-        //} else {
-        //console.log()
+        typeCustom.value = li.id.replace(/-\d+$/, "");
         data.push({ [`custom-${this.numbers}`]: li.id });
-        //}
 
         dropdownMenu.classList.remove("show");
         this.isSelectPrice(this.input_prodcutname, this.input_cutommer);
@@ -460,7 +477,9 @@ class formOrDerSell extends HTMLElement {
                           <span>เลือก เรทราคา</span>
                           <i class="fa fa-chevron-left"></i>
                         </div>
-                        
+                        <input type="text" name="type_custom[]" id="type_custom-${
+                          this.numbers
+                        }" style="display:none;"/>
                         <ul class="dropdown-menu-${this.numbers} dropdown-menu">
                           <li id="price_customer_frontstore-${
                             this.numbers
@@ -538,7 +557,6 @@ class formOrDerSell extends HTMLElement {
 }
 
 customElements.define("mian-input-ordersell", formOrDerSell);
-//const divIn = this.querySelectorAll("mian-input-ordersell");
 
 class modelSetOrderSell extends HTMLElement {
   connectedCallback() {
@@ -570,7 +588,6 @@ class modelSetOrderSell extends HTMLElement {
   }
   checkCustomer() {
     let typecustom = [];
-    //const originalPush = data.push;
     const div = this.querySelector(".shipping-state");
     div.style.display = "none";
     data.push = function (...args) {
@@ -665,9 +682,9 @@ class modelSetOrderSell extends HTMLElement {
                                 <div class="form-group mb-2 shipping-state">
                                   <label class="mt-0 mb-0 font-weight-bold text-dark">หมายเหตุการจัดส่ง</label>
                                   <div class="row">
-                                    <input type="text" class=" form-control col-lg-6 col-sm-12" name="shipping_note" id="shipping_note" placeholder="หมายเหตุ" required>
-                                    <input type="text" class="mx-2 form-control col-lg-3 col-sm-6" name="sender" id="sender" placeholder="ผู้ส่ง" required>
-                                    <input type="text" class="col form-control col-lg-2 col-sm-5" name="wages" id="wages" placeholder="ค่าจ้าง" required>
+                                    <input type="text" class=" form-control col-lg-6 col-sm-12" name="shipping_note" id="shipping_note" placeholder="หมายเหตุ">
+                                    <input type="text" class="mx-2 form-control col-lg-3 col-sm-6" name="sender" id="sender" placeholder="ผู้ส่ง">
+                                    <input type="text" class="col form-control col-lg-2 col-sm-5" name="wages" id="wages" placeholder="ค่าจ้าง">
                                   </div>
                                 </div> 
                               </div>
