@@ -49,7 +49,7 @@
     }
       
       if($_SERVER['REQUEST_METHOD'] === "POST"){
-        if($_POST['status_form'] === "create"){
+        
           $issucess = false;
           $countInsert = 0; 
           $day_add = date('Y-m-d H:i:s');
@@ -58,46 +58,62 @@
           $totalcost_order = $_POST['totalcost_order'];
           $date_time_order = $_POST['date_time_order'];
           $count_order = count($_POST['product_name']);
-          $insertOrder = "INSERT INTO order_box (order_name,slip_order,totalcost_order,count_order,id_adder,date_time_order,create_at) 
-          VALUES ('$order_name','".setImgpath("slipt_order")."','$totalcost_order','$count_order','$id_user','$date_time_order','$day_add')";
-          $queryOrder = mysqli_query($conn,$insertOrder) or die(mysqli_error($conn));
-          if($queryOrder){
-            $id_order = mysqli_insert_id($conn);
 
-              $product_name = $_POST['product_name'];
-              $count_product = $_POST['count_product'];
-              $price_product = $_POST['price_product'];
-              $expenses = $_POST['expenses'];
+          $product_name = $_POST['product_name'];
+          $count_product = $_POST['count_product'];
+          $price_product = $_POST['price_product'];
+          $expenses = $_POST['expenses'];
+          if($_POST['status_form'] == "create"){
 
-              for($i=0; $i< count($product_name); $i++){
-                $is_product_name = mysqli_real_escape_string($conn,trim($product_name[$i]));
-                $is_count_product = mysqli_real_escape_string($conn,trim($count_product[$i]));
-                $is_price_product = mysqli_real_escape_string($conn,trim($price_product[$i]));
-                $is_expenses = mysqli_real_escape_string($conn, trim($expenses[$i]));
-                if($is_product_name !== "" || $is_count_product !== "" || $is_price_product !== ""){
-                  $insertQl = "INSERT INTO stock_product (product_name,product_count,product_price,expenses,id_adder,id_order,create_at) 
-                      VALUES ('$is_product_name','$is_count_product','$is_price_product','$is_expenses','$id_user','$id_order','$day_add')
-                  ";
-                  $queryQl = mysqli_query($conn, $insertQl) or die(mysqli_error($conn));
-                  echo $queryQl;
-                  if($queryQl){
-                    $countInsert++;
-                    $issucess = true;
+
+              $insertOrder = "INSERT INTO order_box (order_name,slip_order,totalcost_order,count_order,id_adder,date_time_order,create_at) 
+              VALUES ('$order_name','".setImgpath("slipt_order")."','$totalcost_order','$count_order','$id_user','$date_time_order','$day_add')";
+              $queryOrder = mysqli_query($conn,$insertOrder) or die(mysqli_error($conn));
+              if($queryOrder){
+                $id_order = mysqli_insert_id($conn);
+              
+              
+                  for($i=0; $i< count($product_name); $i++){
+                    $is_product_name = mysqli_real_escape_string($conn,trim($product_name[$i]));
+                    $is_count_product = mysqli_real_escape_string($conn,trim($count_product[$i]));
+                    $is_price_product = mysqli_real_escape_string($conn,trim($price_product[$i]));
+                    $is_expenses = mysqli_real_escape_string($conn, trim($expenses[$i]));
+                    if($is_product_name !== "" || $is_count_product !== "" || $is_price_product !== ""){
+                      $insertQl = "INSERT INTO stock_product (product_name,product_count,product_price,expenses,id_adder,id_order,create_at) 
+                          VALUES ('$is_product_name','$is_count_product','$is_price_product','$is_expenses','$id_user','$id_order','$day_add')
+                      ";
+                      $queryQl = mysqli_query($conn, $insertQl) or die(mysqli_error($conn));
+                      echo $queryQl;
+                      if($queryQl){
+                        $countInsert++;
+                        $issucess = true;
+                      }
+                    }
                   }
+                  if($issucess){
+                       echo "<script type=\"text/javascript\">
+                                MySetSweetAlert(\"success\",\"เรียบร้อย\",\"เพิ่มข้อมูลตามที่เลือกเรียบร้อยแล้ว\",\"../orders.php\")
+                            </script>";
+                  
+                  }else{
+                    echo "<script type=\"text/javascript\">
+                            MySetSweetAlert(\"warning\",\"ล้มเหลว!\",\"ไม่มีข้อมูลอะไรให้เพิ่มเลย!\",\"../orders.php\")
+                          </script>";
+                  }
+              }
+          }elseif($_POST['status_form'] == "update"){
+            $order_id = $_POST['order_id'];
+            $update_order = "UPDATE order_box SET order_name='order_name', slip_order='".setImgpath("slipt_order")."',
+              totalcost_order='$totalcost_order',count_order='$count_order',id_adder='$id_user',date_time_order='$date_time_order' WHERE order_id='$order_id'";
+              $query_update = mysqli_query($conn,$update_order) or die(mysqli_error($conn));
+              if($query_update){
+                $product_id =$_POST['product_id'];
+                for($i=0; $i < count($product_id); $i++){
+                  
                 }
               }
-              if($issucess){
-                   echo "<script type=\"text/javascript\">
-                            MySetSweetAlert(\"success\",\"เรียบร้อย\",\"เพิ่มข้อมูลตามที่เลือกเรียบร้อยแล้ว\",\"../orders.php\")
-                        </script>";
-
-              }else{
-                echo "<script type=\"text/javascript\">
-                        MySetSweetAlert(\"warning\",\"ล้มเหลว!\",\"ไม่มีข้อมูลอะไรให้เพิ่มเลย!\",\"../orders.php\")
-                      </script>";
-              }
           }
-        }
+        
       }elseif($_SERVER['REQUEST_METHOD'] === "GET"){
        
       }

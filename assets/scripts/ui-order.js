@@ -135,7 +135,6 @@ const createGrandTotal = () => {
       totalPrice += value;
     }
   });
-  console.log({ totalPrice });
   document.getElementById("totalcost_order").value = totalPrice;
 };
 
@@ -163,7 +162,6 @@ class modelCreateOrder extends HTMLElement {
       );
       const response = await api_data.json();
       this.stockproducts.push(...response.data);
-      console.log("stock=", this.stockproducts);
       return response.data;
     } catch (e) {
       throw new Error(`Is Error : ${e}`);
@@ -191,7 +189,6 @@ class modelCreateOrder extends HTMLElement {
     const container = document.getElementById("formcreateorder");
 
     const CountForm = () => {
-      console.log("xxl");
       const group = container.querySelectorAll(".formGroup");
       group.forEach((group, index) => {
         let label = group.querySelector("label");
@@ -268,7 +265,6 @@ class modelCreateOrder extends HTMLElement {
             const li = document.createElement("li");
             li.textContent = data.product_name;
             li.addEventListener("click", (e) => {
-              this.input_prodcutname = e.target.textContent;
               this.updateData(e.target.textContent, index, group);
             });
             ul.appendChild(li);
@@ -424,12 +420,138 @@ class modelCreateOrder extends HTMLElement {
 customElements.define("main-create-order", modelCreateOrder);
 
 class modelUpdateOrder extends HTMLElement {
+  stockproductAll = [];
+  stockproducts_id = [];
   connectedCallback() {
     this.addEventListener("setId", (e) => {
       this.productId = e.detail;
       this.loadOrder(this.productId);
+      this.scripts();
     });
+    this.loadProductAll();
+
     this.renderUpdateOrder();
+    this.countterForm();
+  }
+
+  async loadProductAll() {
+    try {
+      const api_data = await fetch(
+        "http://localhost/stockproduct/system/backend/api/stock.php",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      const responsedata = await api_data.json();
+      this.stockproductAll.push(...responsedata.data);
+      return responsedata.data;
+    } catch (e) {
+      throw new Error(`Is Error Get data ${e}`);
+    }
+  }
+
+  updateData(data_product, index, group) {
+    let selectedData = group.querySelector(`.IsselectedData-${index}`);
+    let customInputContainer = group.querySelector(
+      `.IscustomInputContainer-${index}`
+    );
+    const ul = group.querySelector("ul");
+    selectedData.value = data_product ?? "";
+    for (const li of group.querySelectorAll("li.selected")) {
+      li.classList.remove("selected");
+    }
+    const clickedLi = [...ul.children].find(
+      (li) => li.innerText === data_product
+    );
+    if (clickedLi) clickedLi.classList.add("selected");
+    customInputContainer.classList.toggle("show");
+  }
+
+  countterForm() {
+    const container = document.getElementById("formupdateorder");
+    const group = container.querySelectorAll(".formGroup");
+    group.forEach((group, index) => {
+      console.log("ff0=", index);
+      let label = group.querySelector("label");
+      label.textContent = `ชื่อสินค้าตัวที่ ${index + 1}`;
+
+      let customInput = group.querySelector(`.customInput`);
+      let customInputContainer = group.querySelector(".customInputContainer");
+      let selectedData = group.querySelector(".selectedData");
+      let serchInput = group.querySelector(".searchInput input");
+      let ul = group.querySelector(`.options ul`);
+
+      customInput.classList.add(`IscustomInput-${index}`);
+      customInputContainer.classList.add(`IscustomInputContainer-${index}`);
+      selectedData.classList.add(`IsselectedData-${index}`);
+      serchInput.classList.add(`IsserchInput-${index}`);
+      ul.classList.add(`Isoptions-${index}`);
+
+      window.addEventListener("click", (e) => {
+        const searchInputEl = group.querySelector(`.IssearchInput-${index}`);
+        if (searchInputEl && searchInputEl.contains(e.target)) {
+          searchInputEl.classList.add("focus");
+        } else if (searchInputEl) {
+          searchInputEl.classList.remove("focus");
+        }
+        if (customInputContainer && !customInputContainer.contains(e.target)) {
+          customInputContainer.classList.remove("show");
+        }
+      });
+      customInput.addEventListener("click", () => {
+        customInputContainer.classList.add("show");
+      });
+      for (let i = 0; i < this.stockproductAll.length; i++) {
+        let product = this.stockproductAll[i];
+        let li = document.createElement("li");
+        li.classList.add("block");
+        const row = document.createElement("div");
+        row.classList.add("row");
+        let span = document.createElement("span");
+        let small = document.createElement("small");
+        span.textContent = product.product_name;
+        small.textContent = `เหลืออีก ${product.remaining_product} ชิ้น`;
+        small.classList.add("ml-auto");
+        row.appendChild(span);
+        row.appendChild(small);
+        li.appendChild(row);
+        ul.appendChild(li);
+      }
+
+      ul.querySelectorAll("li").forEach((li) => {
+        li.addEventListener("click", () => {
+          let spanTxt = li.querySelector("span").innerText;
+          selectedData.value = spanTxt;
+          for (const li of document.querySelectorAll("li.selected")) {
+            li.classList.remove("selected");
+          }
+          li.classList.add("selected");
+          customInputContainer.classList.toggle("show");
+        });
+      });
+      serchInput.addEventListener("keyup", () => {
+        let searchedVal = serchInput.value.toLowerCase();
+        let searched_product = this.stockproductAll.filter((data) =>
+          data.product_name.toLowerCase().includes(searchedVal)
+        );
+        console.log({ searched_product });
+        ul.innerHTML = "";
+        if (searched_product.length === 0) {
+          ul.innerHTML = "";
+          return;
+        }
+        searched_product.forEach((data) => {
+          const li = document.createElement("li");
+          li.textContent = data.product_name;
+          li.addEventListener("click", (e) => {
+            this.updateData(e.target.textContent, index, group);
+          });
+          ul.appendChild(li);
+        });
+      });
+    });
   }
 
   async loadOrder(productId) {
@@ -443,52 +565,81 @@ class modelUpdateOrder extends HTMLElement {
       );
 
       const data = await response.json();
-
+      this.stockproducts_id.push(...data.data);
       const container = document.getElementById("formupdateorder");
+
       data.data.forEach((stock, index) => {
         const div = document.createElement("div");
         div.className = "formGroup col-md-12 border mb-3";
         div.dataset.index = stock.product_id;
+        this.countterForm();
         div.innerHTML = `
             <div class="col-md-12" >
               <div class=row col-12">
-              <button type="button" class="remove-btn-2 ml-auto" data-index="${
-                stock.product_id
-              }">❌ ลบ</button>
+              <button type="button" class="remove-btn-2 ml-auto" data-index="${stock.product_id}">❌ ลบ</button>
               </div>
+              <input type="hidden" name="product_id" value="${stock.product_id}" />
               <div class="form-group mb-2">
-                <label class="mt-0 mb-0 font-weight-bold text-dark">ชื่อสินค้าตัวที่ ${
-                  index + 1
-                }</label>
-                <input type="text" class="form-control" name="product_name[]" value="${
-                  stock.product_name
-                }" id="" placeholder="ชื่อสินค้า" required>
+                <label class="mt-0 mb-0 font-weight-bold text-dark"></label>
+                <div class="customInputContainer">
+                    <div class="customInput searchInput">
+                        <input class="selectedData form-control u_product_name" value="${stock.product_name}" type="text" name="product_name[]" required/>
+                    </div>
+                    <div class="options">
+                        <ul></ul>
+                    </div>
+                </div
               </div>  
             </div>
             <div class="col-md-12 row">
               <div class="col-md-5">
                 <div class="form-group mb-2">
                   <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวน</label>
-                  <input type="text" class="form-control" name="count_product[]" value="${
-                    stock.product_count
-                  }"  id="" placeholder="ชื่อสินค้า" required>
+                  <input type="text" class="u_count_product form-control" name="count_product[]" value="${stock.product_count}" placeholder="ชื่อสินค้า" required>
                 </div>
               </div>
               <div class="col-md-4">
                   <div class="form-group mb-2">
-                    <label class="mt-0 mb-0 font-weight-bold text-dark">ราคา</label>
-                    <input type="text" class="form-control" name="price_product[]" value="${
-                      stock.product_price
-                    }"  id="" placeholder="ชื่อสินค้า" required>
+                    <label class="mt-0 mb-0 font-weight-bold text-dark">ต้นทุนต่อชิ้น</label>
+                    <input type="text" class="u_price_product form-control" name="price_product[]" value="${stock.product_price}"  placeholder="ต้นทุนต่อชิ้น" required>
                   </div>
               </div>
               <div class="col-md-3 align-self-center">
-                  ราคารวม ${
-                    Number(stock.product_price) * Number(stock.product_count)
-                  }
+                  <div class="form-group mb-2">
+                    <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าใช้จ่าย</label>
+                    <input type="text" class="u_expenses form-control" name="expenses[]" value="${stock.expenses}" placeholder="ค่าใช้จ่าย" required>
+                  </div>
               </div>
             </div>`;
         container.appendChild(div);
+        let product_name = div.querySelector(".u_product_name");
+        let count_product = div.querySelector(".u_count_product");
+        let price_product = div.querySelector(".u_price_product");
+        let expenses = div.querySelector(".u_expenses");
+        product_name.id = `product_name-${index}`;
+        count_product.id = `count_product-${index}`;
+        price_product.id = `price_product-${index}`;
+        expenses.id = `expenses-${index}`;
+
+        count_product.addEventListener("input", (e) => {
+          let value = e.target.value;
+          price_product.value = Number((expenses.value / value).toFixed(2));
+          //createGrandTotal();
+        });
+
+        price_product.addEventListener("input", (e) => {
+          let value = e.target.value;
+          expenses.value = Number((count_product.value * value).toFixed(2));
+          //createGrandTotal();
+        });
+
+        expenses.addEventListener("input", (e) => {
+          let value = e.target.value;
+          price_product.value = Number(
+            (value / count_product.value).toFixed(2)
+          );
+          //createGrandTotal();
+        });
         container.addEventListener("click", (e) => {
           if (e.target.classList.contains("remove-btn-2")) {
             const index = e.target.dataset.index;
@@ -500,6 +651,24 @@ class modelUpdateOrder extends HTMLElement {
     } catch (e) {
       console.error(`"Error loading orders:, ${e}`);
     }
+  }
+
+  scripts() {
+    const containers = document.getElementById("formupdateorder");
+
+    document.getElementById("add-form-update").addEventListener("click", () => {
+      const divs = document.createElement("div");
+      divs.className = "formGroup col-md-12 border mb-3";
+
+      divs.innerHTML = uiForm;
+      containers.appendChild(divs);
+
+      divs.querySelector(".remove-btn").addEventListener("click", () => {
+        divs.remove();
+        this.countterForm();
+      });
+      this.countterForm();
+    });
   }
   renderUpdateOrder() {
     this.innerHTML = `
@@ -514,6 +683,7 @@ class modelUpdateOrder extends HTMLElement {
             </div>
             <form id="form_update" method="post" action="backend/create_order.php" enctype="multipart/form-data">
               <input type="hidden" name="status_form" value="update" />
+              <input type="hidden" name="order_id" id="order_id" value="update" />
               <div class="modal-body">
                 <div class="mt-2 row border">
                   <div class="col-md-8">
@@ -568,22 +738,6 @@ class modelUpdateOrder extends HTMLElement {
   }
 }
 customElements.define("main-update-order", modelUpdateOrder);
-const containers = document.getElementById("formupdateorder");
-document
-  .getElementById("add-form-update")
-  .addEventListener("click", function () {
-    const divs = document.createElement("div");
-    divs.className = "formGroup col-md-12 border mb-3";
-    divs.innerHTML = uiForm;
-    containers.appendChild(divs);
-
-    // ผูก event ปุ่มลบ
-    divs.querySelector(".remove-btn").addEventListener("click", function () {
-      divs.remove();
-      CountForm();
-    });
-    CountForm();
-  });
 
 $(document).on("click", "#update_order", function (e) {
   let product_id = $(this).data("id");
@@ -599,7 +753,7 @@ $(document).on("click", "#update_order", function (e) {
   $priceorder = $(this).data("priceorder");
   $slipimage = $(this).data("slipimage");
   $dateorder = $(this).data("dateorder");
-  $("#productId").val($product_ids);
+  $("#order_id").val($product_ids);
   $("#order_name").val($order_name);
   $("#totalcost_orders").val($total_cost);
   $("#priceorder").html($priceorder);
