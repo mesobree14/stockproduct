@@ -90,7 +90,7 @@ function tablelistsetOrder ($number, $orderid, $ordername, $totalcost_order, $pr
       </td>
       <td>
           <div class=\"table-data-feature\" >
-            <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"getting_a_scholarship.php \">
+            <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"details/detail_orderbuy.php?orderbuy_id=$orderid \">
               <i class=\"fas fa-list-alt\"></i>
             </a>
             <button type=\"button\" id=\"update_order\" data-target=\"#modalFormUpdateOrder\" data-toggle=\"modal\"  
@@ -99,8 +99,8 @@ function tablelistsetOrder ($number, $orderid, $ordername, $totalcost_order, $pr
             >
                 <i class=\"fas fa-pencil-alt text-warning\"></i>
             </button>
-            <button type=\"button\" class=\"item\" id=\"falseTrashBtnProject\" data-id=\"$orderid\">
-              <i class=\"fas fa-trash-alt text-danger\"></i>
+            <button type=\"button\" class=\"item\" id=\"confirmTrashOrder\" data-id=\"$orderid\" data-ordername=\"$ordername\">
+              <i class=\"fas fa-trash-alt text-danger\"></i> 
             </button>
           </div>
       </td>
@@ -145,19 +145,6 @@ function tableDetailStock($number, $product_id,$productname,$productcount,$produ
               <td class=\"font-weight-bold\">$productcount</td> 
               <td class=\"font-weight-bold\">$toal_all</td> 
               <td class=\"font-weight-bold\">$datetime_order</td> 
-              <td class='text-center'>
-                <div class=\"table-data-feature text-center\" >
-                    <button type=\"button\" id=\"update_order\" data-target=\"#modalFormUpdateOrder\" data-toggle=\"modal\"  
-                       class=\"item\" data-id=\"$product_id\" data-productname=\"$productname\" data-ordername=\"$ordername\" 
-                       data-productprice=\"$productprice\" data-productcount=\"$productcount\"
-                    >
-                        <i class=\"fas fa-pencil-alt text-warning\"></i>
-                    </button>
-                    <button type=\"button\" class=\"item\" id=\"falseTrashBtnProject\" data-id=\"$product_id\">
-                      <i class=\"fas fa-trash-alt text-danger\"></i>
-                    </button>
-                </div>
-              </td>
             </tr>
         </form>
     ";
@@ -249,7 +236,7 @@ function listOrderSell($number, $ordersell_id, $ordersell_name,$count_item, $pri
 
   $listorder = "
       <tr>
-        <td class=\"font-weight-bold\">$number</td>
+        <td class=\"font-weight-bold \"> $number</td>
         <td class=\"font-weight-bold\">$ordersell_name</td>
         <td class=\"font-weight-bold\">$count_item รายการ</td> 
         <td class=\"font-weight-bold\">$price_total บาท</td> 
@@ -261,13 +248,13 @@ function listOrderSell($number, $ordersell_id, $ordersell_name,$count_item, $pri
               <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"details/detail_ordersell.php?ordersell_id=".$ordersell_id." \">
                 <i class=\"fas fa-list-alt\"></i>
               </a>
-              <button type=\"button\" id=\"update_order_sell\" data-target=\"#modalFormUpdateOrderSell\" data-toggle=\"modal\"  
-                       class=\"item\" data-id=\"$ordersell_id\" data-ordersellname=\"$ordersell_name\" data-pricetotal=\"$price_total\" 
+              <button type=\"button\" id=\"edit_order_sell\" data-target=\"#modalFormUpdateOrderSell\" data-toggle=\"modal\"  
+                       class=\"item\" data-ordersellid=\"$ordersell_id\" data-ordersellname=\"$ordersell_name\" data-pricetotal=\"$price_total\" 
                        data-customername=\"$customer_name\" data-datesell=\"$date_sell\"
                     >
                         <i class=\"fas fa-pencil-alt text-warning\"></i>
                     </button>
-                    <button type=\"button\" class=\"item\" id=\"falseTrashBtnProject\" data-id=\"$ordersell_id\">
+                    <button type=\"button\" class=\"item\" id=\"confirmTrashOrderSell\" data-id=\"$ordersell_id\" data-ordersell=\"$ordersell_name\">
                       <i class=\"fas fa-trash-alt text-danger\"></i>
                     </button>
             </div>
@@ -315,6 +302,12 @@ function detailOrderSell($ordersell_name,$is_totalprice,$custome_name,$tell_cust
 
   $list_detail = "
       <div class=\"col-12\">
+        <div class=\"col-12 row\">
+          <button class=\"ml-auto px-5 mt-4\">
+            <i class=\"fas fa-file-code\"></i>
+            Print PDF
+          </button>
+        </div>
         <div class=\"col-12 row\">
           <div class=\"row \">
             <h3 class=\"fs-3 font-thi\">รายการ : </h3>
@@ -404,6 +397,50 @@ function listProductSell($number,$product_id, $product_anme, $rate_customerprice
               </button>
           </div>
         </td>
+    </tr>
+  ";
+  echo $list;
+}
+
+function listDetailOrderBuy($order_id, $order_name, $total_cost, $data_time_buy, $order_slipt, $total_product, $count_product){
+  $list = "
+    <div class=\"col-12 shadow-sm row\">
+      <div class=\"col-4 p-2\">
+        <span class=\"my-3\">สลิป : </span>
+        <img class=\"card-img-top\" src=\"../../db/slip-orders/$order_slipt\"/>
+      </div>
+      <div class=\"col-7 py-4 mx-auto\">
+        <div class=\"col-12 row\">
+          <button class=\"ml-auto px-5\">
+            <i class=\"fas fa-file-code\"></i>
+            Print PDF
+          </button>
+        </div>
+        <h2 class=\"card-title font-bold\">ชื่อรายการ : $order_name</h2>
+        <div class=\"col-12 row mx-2\">
+          <div class=\"col-4\">ค่าใช้จ่าย $total_cost บาท</div>
+          <div class=\"col-4\">สินค้า $total_product รายการ</div>
+          <div class=\"col-4\">จำนวน $count_product ชิ้น</div>
+        </div>
+        <div class=\"col-12 row mx-2 pt-4\">
+          <div class=\"border p-3 ml-auto rounded\">
+            สั่งซื้อเมื่อ : $data_time_buy
+          </div>
+        </div>
+      </div>
+    </div>
+  ";
+  echo $list;
+}
+
+function listProductBuy($number,$product_id, $product_name, $cost_price, $total_product, $prices){
+  $list = "
+    <tr>
+      <td class=\"font-weight-bold \"> $number</td>
+      <td class=\"font-weight-bold \"> $product_name</td>
+      <td class=\"font-weight-bold \"> $cost_price บาท</td>
+      <td class=\"font-weight-bold \"> $total_product ชิ้น</td>
+      <td class=\"font-weight-bold \"> $prices บาท</td>
     </tr>
   ";
   echo $list;

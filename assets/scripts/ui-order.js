@@ -90,7 +90,7 @@ customElements.define("mian-add-image", AddImage);
 const uiForm = `    
       <div class="col-md-12">
         <div class=row col-12">
-        <button type="button" class="remove-btn ml-auto">❌ ลบ</button>
+        <button type="button" class="remove-btn ml-auto my-2">❌ ลบ</button>
         </div>
         <div class="form-group mb-2">
           <label class="mt-0 mb-0 font-weight-bold text-dark labelCount"></label>
@@ -576,9 +576,9 @@ class modelUpdateOrder extends HTMLElement {
         div.innerHTML = `
             <div class="col-md-12" >
               <div class=row col-12">
-              <button type="button" class="remove-btn-2 ml-auto" data-index="${stock.product_id}">❌ ลบ</button>
+              <button type="button" class="remove-btn-2 ml-auto my-2" data-index="${stock.product_id}">❌ ลบ</button>
               </div>
-              <input type="hidden" name="product_id" value="${stock.product_id}" />
+              <input type="hidden" name="product_id[]" value="${stock.product_id}" />
               <div class="form-group mb-2">
                 <label class="mt-0 mb-0 font-weight-bold text-dark"></label>
                 <div class="customInputContainer">
@@ -675,17 +675,18 @@ class modelUpdateOrder extends HTMLElement {
       <div class="modal fade bd-example-modal-xl " id="modalFormUpdateOrder" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
           <div class="modal-content" id="">
-            <div class="modal-header">
-              <h5 class="modal-title row" id="exampleModalLongTitle">สินค้าที่สั่งซื้อ</p></h5>
+            <div class="modal-header px-4">
+              <h5 class="modal-title row mx-4" id="exampleModalLongTitle">สินค้าที่สั่งซื้อ</p></h5>
               <button type="button" class="close" id="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <form id="form_update" method="post" action="backend/create_order.php" enctype="multipart/form-data">
               <input type="hidden" name="status_form" value="update" />
-              <input type="hidden" name="order_id" id="order_id" value="update" />
+              <input type="hidden" name="order_id" id="order_id" />
+              <input type="hidden" name="default_img" id="img_default"/>
               <div class="modal-body">
-                <div class="mt-2 row border">
+                <div class="mt-2 row">
                   <div class="col-md-8">
                       <div class="col-md-12">
                         <div class="form-group mb-2">
@@ -715,7 +716,7 @@ class modelUpdateOrder extends HTMLElement {
                       </div>
                   </div>
                   <div class="col-md-4">
-                    <mian-add-image id="slipt_order" count="orderSlip" wrapper="ux-wrap" filenames="uimgname" cancles="ux-cancle"
+                    <mian-add-image id="slipt_order" count="order_Slip" wrapper="ux-wrap" filenames="uimgname" cancles="ux-cancle"
                       names="รูปโปรไฟล์" custom="btn_custom" setdefault="setDefaultImgOrder"></mian-add-image>
                   </div>
                 </div>
@@ -758,10 +759,53 @@ $(document).on("click", "#update_order", function (e) {
   $("#totalcost_orders").val($total_cost);
   $("#priceorder").html($priceorder);
   $("#date_time_order").val($dateorder);
+  $("#img_default").val($slipimage);
 
   e.preventDefault();
   $("#slip_order").val($slipimage);
   $(".slipt_order").attr("src", `../db/slip-orders/${$slipimage}`);
   $(".ux-wrap").last().addClass("active");
   $(".uimgname").html($slipimage);
+});
+
+$(document).on("click", "#confirmTrashOrder", function (e) {
+  let ID = $(this).data("id");
+  let ordername = $(this).data("ordername");
+  Swal.fire({
+    title: "คุณแน่ใจไหม ?",
+    text: `รายการ ${ordername} นี้ พร้อมสินค้า จะถูกลบทั้งหมด จะไม่สามารถย้อนกลับได้`,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    cancelButtonText: "ยกเลิก",
+    confirmButtonText: "ยืนยัน",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const responseapi = await fetch(
+          `http://localhost/stockproduct/system/backend/api/order.php?order_id=${ID}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+          }
+        );
+        const responsedata = await responseapi.json();
+        console.log("s=", responsedata.status);
+        if (responsedata.status === 201) {
+          console.log(responsedata);
+          Swal.fire({
+            title: "เรียบร้อย",
+            text: "ลบ order นี้เรียบร้อยแล้ว",
+            icon: "success",
+            showConfirmButton: false,
+          }).then(() => {
+            window.location.reload();
+          });
+        }
+      } catch (e) {
+        throw new Error(`Is Delete Error : ${e}`);
+      }
+    }
+  });
 });

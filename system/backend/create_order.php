@@ -31,6 +31,7 @@
     <?php
       date_default_timezone_set("Asia/Bangkok");
       $id_user = $_SESSION['users_order']['id'];
+      $day_add = date('Y-m-d H:i:s');
 
       function setImgpath($nameImg){
         $ext = pathinfo(basename($_FILES[$nameImg]["name"]), PATHINFO_EXTENSION);
@@ -52,7 +53,6 @@
         
           $issucess = false;
           $countInsert = 0; 
-          $day_add = date('Y-m-d H:i:s');
 
           $order_name = $_POST['order_name'];
           $totalcost_order = $_POST['totalcost_order'];
@@ -83,7 +83,6 @@
                           VALUES ('$is_product_name','$is_count_product','$is_price_product','$is_expenses','$id_user','$id_order','$day_add')
                       ";
                       $queryQl = mysqli_query($conn, $insertQl) or die(mysqli_error($conn));
-                      echo $queryQl;
                       if($queryQl){
                         $countInsert++;
                         $issucess = true;
@@ -102,20 +101,100 @@
                   }
               }
           }elseif($_POST['status_form'] == "update"){
+            $coun_update = 0;
+            $count_delete = 0;
+            $count_insert = 0;
             $order_id = $_POST['order_id'];
-            $update_order = "UPDATE order_box SET order_name='order_name', slip_order='".setImgpath("slipt_order")."',
-              totalcost_order='$totalcost_order',count_order='$count_order',id_adder='$id_user',date_time_order='$date_time_order' WHERE order_id='$order_id'";
+            $default_img = $_POST['default_img'];
+
+            $all_success = true;
+            if(isset($_FILES['order_Slip']) && $_FILES['order_Slip']['error'] == 0){
+            $update_order = "UPDATE order_box SET order_name='$order_name', slip_order='".setImgpath("order_Slip")."',
+              totalcost_order='$totalcost_order', count_order='$count_order', id_adder='$id_user', date_time_order='$date_time_order' WHERE order_id='$order_id'";
+            }else{
+              $update_order = "UPDATE order_box SET order_name='$order_name', slip_order='$default_img',
+              totalcost_order='$totalcost_order', count_order='$count_order', id_adder='$id_user', date_time_order='$date_time_order' WHERE order_id='$order_id'";
+            }
               $query_update = mysqli_query($conn,$update_order) or die(mysqli_error($conn));
-              if($query_update){
-                $product_id =$_POST['product_id'];
-                for($i=0; $i < count($product_id); $i++){
-                  
+            if($query_update){
+              if(isset($_FILES['order_Slip']) && $_FILES['order_Slip']['error'] == 0){
+                unlink(__DIR__  . '/../../db/slip-orders/' . $default_img);
+              }
+              $old_product = [];
+              $res_ponse = mysqli_query($conn, "SELECT product_id, product_name, id_order FROM stock_product WHERE id_order=$order_id") or die(mysqli_error($conn));
+              while($row = mysqli_fetch_assoc($res_ponse)){
+                $old_product[] = $row['product_id'];
+              }
+
+              $product_name = $_POST['product_name'];
+              $product_id = isset($_POST['product_id']) ? $_POST['product_id'] : [];
+              $count_product = $_POST['count_product'];
+              $price_product = $_POST['price_product'];
+              $expenses = $_POST['expenses'];
+
+              $edit_id = [];
+              $add_id = [];
+              $trash_id = [];
+              $newIds = [];
+
+              foreach($product_name as $key => $pname){
+                $pid = !empty($product_id[$key]) ? $product_id[$key] : null;
+                $pcount = $count_product[$key];
+                $pprice = $price_product[$key];
+                $p_exp = $expenses[$key];
+
+                if($pid){
+                  $sql_edit = "UPDATE stock_product SET product_name='$pname', product_count='$pcount', product_price='$pprice', expenses='$p_exp' ,id_adder='$id_user' WHERE product_id=$pid AND id_order=$order_id";
+                  $query_edit = mysqli_query($conn,$sql_edit) or die(mysqli_error($conn));
+                  if($query_edit){
+                    $coun_update++;
+                    $edit_id[] = $pid;
+                    $newIds[] = $pid;
+                  }else{
+                    $all_success = false;
+                  }
+                }else{
+                  $sql_insert = "INSERT INTO stock_product(product_name,product_count,product_price,expenses,id_adder,id_order,create_at)
+                  VALUES ('$pname','$pcount','$pprice','$p_exp','$id_user','$order_id','$day_add')";
+                  $query_inserts = mysqli_query($conn,$sql_insert) or die(mysqli_error($conn));
+                  if($query_inserts){
+                    $count_insert++;
+                    $is_id = mysqli_insert_id($conn);
+                    $add_id[] = $is_id;
+                    $newIds[] = $is_id;
+                  }else{
+                    $all_success = false;
+                  }
                 }
               }
+              $id_to_delete = array_diff($old_product, $newIds);
+              if(!empty($id_to_delete)){
+                $ids = implode(",", $id_to_delete);
+                $query_del = mysqli_query($conn,"DELETE FROM stock_product WHERE product_id IN ($ids)");
+                if($query_del){
+                  $count_delete++;
+                  $trash_id[] = $id_to_delete;
+                }else{
+                  $all_success = false;
+                }
+              }
+              if($all_success){
+                echo "<script type=\"text/javascript\">
+                        MySetSweetAlert('success', 'เรียบร้อย', 'อัปเดต: $coun_update, เพิ่ม: $count_insert, ลบ: $count_delete รายการ', '../orders.php')
+                    </script>";
+              }else{
+                echo "<script type=\"text/javascript\">
+                    MySetSweetAlert('error', 'เกิดข้อผิดพลาด', 'ไม่สามารถทำงานบางส่วนได้', '../orders.php')
+                </script>";
+              }
+            }else{
+              echo "<script type=\"text/javascript\">
+                  MySetSweetAlert('error', 'เกิดข้อผิดพลาด', 'ไม่สามารถอัปเดต order ได้', '../orders.php')
+              </script>";
+              exit;
+            }
           }
         
-      }elseif($_SERVER['REQUEST_METHOD'] === "GET"){
-       
       }
     ?>
 </body>

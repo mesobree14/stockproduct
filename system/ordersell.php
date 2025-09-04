@@ -47,7 +47,7 @@ if(!isset($_SESSION['users_order'])){
           </div>
           <div class="col-md-12 mt-4">
             <div class="table-responsive table-responsive-data2 mt-2">
-                <table class="table table-data2 mydataTablePatron">
+                <table class="table table-data2">
                     <thead>
                         <tr>
                             <th>ลำดับ</th>
@@ -68,7 +68,7 @@ if(!isset($_SESSION['users_order'])){
                                     FROM orders_sell O
                                     LEFT JOIN sell_typepay ST ON ST.ordersell_id = O.id_ordersell
                                     LEFT JOIN list_productsell P ON P.ordersell_id = O.id_ordersell
-                                    GROUP BY O.id_ordersell";
+                                    GROUP BY O.id_ordersell ORDER BY O.create_at DESC";
                                   
                           $query_data = mysqli_query($conn,$sql) or die(mysqli_error($conn));
                           $orders_ass = [];
@@ -110,6 +110,7 @@ if(!isset($_SESSION['users_order'])){
           </div>
       </div>
       <mian-form-ordersell></mian-form-ordersell>
+      <main-update-ordersell></main-update-ordersell>
     </main>
   </div>
   <script src="../assets/scripts/ui-ordersell.js"></script>

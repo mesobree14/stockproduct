@@ -14,9 +14,7 @@ if(!isset($_SESSION['users_order'])){
           </script>
       ";
 }
-// $sql = "SELECT OS.id_ordersell, OS.ordersell_name, OS.is_totalprice, OS.custome_name, OS.tell_custome,OS.date_time_sell,OS.shipping_note,OS.sender,OS.wages,OS.reason,OS.slip_ordersell,
-//   OS.adder_id, OS.create_at
-// FROM orders_sell OS LEFT JOIN sell_typepay ST ON OS.id_ordersell = ST.ordersell_id WHERE id_ordersell='$ordersell_id'";
+
 $sql = "SELECT * FROM orders_sell LEFT JOIN sell_typepay ON orders_sell.id_ordersell = sell_typepay.ordersell_id WHERE id_ordersell='$ordersell_id'";
 $sql_query = mysqli_query($conn,$sql) or die(mysqli_error($conn));
 

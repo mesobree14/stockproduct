@@ -87,17 +87,28 @@ class AddImage extends HTMLElement {
 
 customElements.define("mian-add-image", AddImage);
 let data = [];
+
 const originalPush = data.push;
 
 function updateGrandTotal() {
   const results = document.querySelectorAll("span[id^='price_result-']");
+  const resutlProduct = document.querySelectorAll("span[id^='is_totals-']");
+  //let totalProduct = resutlProduct.length;
   let totalOrder = results.length;
-  document.getElementById("totalOrder").textContent = `${totalOrder} ชิ้น`;
+  document.getElementById("totalOrder").textContent = `${totalOrder} รายการ`;
+
   let totalPrice = 0;
   results.forEach((span) => {
     const value = parseFloat(span.textContent.trim()) || 0;
     totalPrice += value;
   });
+
+  let totalCount = 0;
+  resutlProduct.forEach((span) => {
+    const value = parseFloat(span.textContent.trim()) || 0;
+    totalCount += value;
+  });
+  document.getElementById("totalProducts").textContent = `${totalCount} ชิ้น`;
   document.getElementById("totalPrice").textContent = totalPrice;
   document.getElementById("is_totalprice").value = totalPrice;
 }
@@ -125,6 +136,7 @@ class formOrDerSell extends HTMLElement {
     this.scriptjs();
     this.isSelectPrice();
     this.removeform();
+    this.valueDataProduct();
   }
 
   async loadDataStock() {
@@ -236,6 +248,7 @@ class formOrDerSell extends HTMLElement {
       updateGrandTotal();
       tatolproduct.addEventListener("input", function () {
         is_totals.textContent = this.value;
+        console.log({ is_totals: this.value });
         let result =
           Number(this.value) *
           Number(filtered[0][customer.replace(/-\d+$/, "")]);
@@ -273,6 +286,7 @@ class formOrDerSell extends HTMLElement {
   }
 
   loadOption() {
+    const tatolproducts = this.querySelector(`#tatolproduct-${this.numbers}`);
     let customInput = document.querySelector(`.customInput-${this.numbers}`);
     let selectedData = document.querySelector(`.selectedData-${this.numbers}`);
     let searchInput = document.querySelector(
@@ -305,7 +319,7 @@ class formOrDerSell extends HTMLElement {
 
     for (let i = 0; i < productLength; i++) {
       let products = this.stockdata[i];
-
+      tatolproducts.min = 0;
       const li = document.createElement("li");
       li.classList.add("block");
       const row = document.createElement("div");
@@ -438,18 +452,25 @@ class formOrDerSell extends HTMLElement {
       div.appendChild(btn);
     }
   }
+  valueDataProduct() {
+    const product_data = this.data ?? [];
+    if (product_data) {
+      console.log("g=", product_data.productname);
+      let selectedData = this.querySelector(`.selectedData-${this.numbers}`);
+      selectedData.value = `${product_data.productname ?? ""}`;
+    }
+  }
   renderCreateOrderSell() {
     this.innerHTML = `
             <div class="col-md-12 row mb-3 formGroups" id="formGroup-${
               this.numbers
             }">
               <div class="btn-remove col-md-12 row"></div>
-              <div class="col-xl-4 col-lg-7">
+              <div class="col-xl-3 col-lg-7">
                 <div class="form-group mb-2">
                   <label class="mt-0 mb-0 font-weight-bold text-dark col-12">รายการสินค้าที่ 
-                  <span data-role="index">${
-                    Number(this.numbers) + 1
-                  }</span></label>
+                  <span data-role="index">${Number(this.numbers) + 1}</span>
+                  </label>
                     <div class="customInputContainer customInputContainer-${
                       this.numbers
                     }">
@@ -471,7 +492,9 @@ class formOrDerSell extends HTMLElement {
               </div>
               <div class="col-xl-3 col-lg-5">
                 <div class="form-group mb-2">
-                    <label class="m-0 font-weight-bold text-dark col-12">เรทราคา</label>
+                    <label class="m-0 font-weight-bold text-dark col-12" id="x-${
+                      this.numbers
+                    }">เรทราคา</label>
                       <div class="dropdown dropdown-${this.numbers}">
                         <div class="select select-${this.numbers}">
                           <span>เลือก เรทราคา</span>
@@ -522,7 +545,9 @@ class formOrDerSell extends HTMLElement {
               </div>
               <div class="col-xl-2 col-lg-4">
                 <div class="form-group mb-2">
-                  <label class="m-0 font-weight-bold text-dark col-12">จำนวนขายกี่ชิ้น</label>
+                  <label class="m-0 font-weight-bold text-dark col-12">จำนวนขายกี่ชิ้น <span class="totalc-${
+                    this.numbers
+                  }"></span></label>
                   <div class="d-flex">
                     <input type="number" class="form-control mr-2 distotal" name="tatol_product[]" id="tatolproduct-${
                       this.numbers
@@ -530,7 +555,7 @@ class formOrDerSell extends HTMLElement {
                   </div>
                 </div>
               </div>
-              <div class="col-xl-3 col-lg-8">
+              <div class="col-xl-4 col-lg-8">
                   <div class="form-group mb-2">
                     <label class="m-0 font-weight-bold text-dark col-12">จำนวนชิ้น x ราคาต่อชิ้น = ผลลัพธ์ </label>
                     <div class="form-control">
@@ -593,7 +618,6 @@ class modelSetOrderSell extends HTMLElement {
     data.push = function (...args) {
       let keys = Object.keys(args[0])[0];
       let values = Object.values(args[0])[0];
-
       let indexkey = typecustom.findIndex((obj) => obj.hasOwnProperty(keys));
       if (indexkey !== -1) {
         typecustom[indexkey][keys] = values.replace(/-\d+$/, "");
@@ -637,23 +661,29 @@ class modelSetOrderSell extends HTMLElement {
                             
                           <div class="row">
 
-                                <div class="col-xl-6 col-lg-8 col-sm-12">
+                                <div class="col-xl-5 col-lg-8 col-sm-12">
                                   <div class="form-group mb-2">
                                     <label class="mt-0 mb-0 font-weight-bold text-dark">รายการขาย</label>
                                     <input type="text" class="form-control" name="ordersell_name" id="ordersell_name" placeholder="รายการขาย" required>
                                   </div> 
                                 </div>
-                                <div class="col-xl-6 col-lg-4 col-sm-12">
-                                <div class="form-group mb-2">
+                                <div class="col-xl-7 col-lg-4 col-sm-12">
+                                    <div class="form-group mb-2">
                                       <label class="m-0 font-weight-bold text-dark col-12">ราคาที่ต้องจ่าย </label>
                                       <div class="row">
-                                        <div class="form-control col-7 mr-3">
+                                        <div class="form-control col-5 mr-3">
                                           <span id="totalPrice">0</span>
                                           <input type="hidden" name="is_totalprice" id="is_totalprice"/>
                                         </div>
-                                        <div class="col-4 align-self-center">
-                                          <span class="font-weight-bold" id="totalOrder">0 ชิ้น</span>
+                                        <div class="col-6 row">
+                                          <div class="col-6 align-self-center">
+                                            <span class="font-weight-bold" id="totalOrder">0 รายการ</span>
+                                          </div>
+                                          <div class="col-6 align-self-center row ml-auto">
+                                              <span class="font-weight-bold" id="totalProducts">0 ชิ้น</span>
+                                          </div>
                                         </div>
+                                        
                                       </div>
                                     </div>
                                 </div>
@@ -722,3 +752,301 @@ class modelSetOrderSell extends HTMLElement {
 }
 
 customElements.define("mian-form-ordersell", modelSetOrderSell);
+
+class modelUpdateOrderSell extends HTMLElement {
+  constructor() {
+    super();
+  }
+  connectedCallback() {
+    this.selectedLiId = [];
+    this.addEventListener("setId", async (e) => {
+      this.OrderSellId = e.detail;
+      await this.loadProduct(this.OrderSellId);
+    });
+    this.renderEditOrderSell();
+    this.addProductForm();
+    this.setIdCostomer();
+    this.checkCustomer();
+  }
+
+  async loadProduct(productId) {
+    try {
+      const responseapi = await fetch(
+        `http://localhost/stockproduct/system/backend/api/stockordersell.php?ordersell_id=${productId}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const responsedata = await responseapi.json();
+      const container = document.querySelector("#edit-form-order");
+      container.innerHTML = "";
+      if (responsedata.data.length > 0) {
+        responsedata.data.forEach((product, index) => {
+          const divIn = document.createElement("mian-input-ordersell");
+          divIn.setAttribute("numbers", index + 1);
+          divIn.data = product;
+          container.appendChild(divIn);
+        });
+      } else {
+        const divIns = document.createElement("mian-input-ordersell");
+        container.appendChild(divIns);
+      }
+    } catch (e) {
+      throw new Error(`Is Error Fetch ${e}`);
+    }
+  }
+
+  addProductForm() {
+    const container = this.querySelector("#edit-form-order");
+    const addForm = this.querySelector("#add-form");
+
+    addForm.addEventListener("click", () => {
+      const divIn = this.querySelector("mian-input-ordersell");
+      const index =
+        container.querySelectorAll("mian-input-ordersell").length + 1;
+      if (divIn) {
+        const clone = divIn.cloneNode(true);
+        clone.setAttribute("numbers", index);
+        container.appendChild(clone);
+      } else {
+        const newInput = document.createElement("mian-input-ordersell");
+        newInput.setAttribute("numbers", index);
+        container.appendChild(newInput);
+      }
+    });
+  }
+
+  setIdCostomer() {
+    this.addEventListener("priceSelected", (e) => {
+      const { numbers, selectId } = e.detail;
+      this.selectedLiId[numbers] = selectId.replace(/-\d+$/, "");
+    });
+  }
+
+  checkCustomer() {
+    let typecustom = [];
+    const div = this.querySelector(".shipping-state");
+    div.style.display = "none";
+    data.push = function (...args) {
+      console.log({ args });
+      let keys = Object.keys(args[0])[0];
+      let values = Object.values(args[0])[0];
+      let indexkey = typecustom.findIndex((obj) => obj.hasOwnProperty(keys));
+      if (indexkey !== -1) {
+        typecustom[indexkey][keys] = values.replace(/-\d+$/, "");
+      } else {
+        typecustom.push({ [keys]: values.replace(/-\d+$/, "") });
+      }
+      let status = typecustom.some((obj) =>
+        Object.values(obj).includes("price_customer_deliver")
+      );
+      if (status) {
+        div.style.display = "block";
+      } else {
+        div.style.display = "none";
+      }
+      return this.length;
+    };
+  }
+
+  renderEditOrderSell() {
+    this.innerHTML = `
+        <div class="modal fade" id="modalFormUpdateOrderSell" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+          <div class="modal-dialog modal-xl modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+              <div class="modal-content" id="">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">แก้ไขรายการขาย <span id="orders_name"></span></h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <form id="myForm" method="POST" action="backend/order_sell.php" enctype="multipart/form-data">
+                    <input type="hidden" name="status_form" value="update" />
+                    <input type="hidden" name="ordersell_id" id="ordersell_id"/>
+
+                    <div class="modal-body">
+                      
+                      <div class="" id="edit-form-order">
+                      </div>
+                      <div class="row col-12 mt-2 mb-4">
+                        <button type="button" class="btn btn-sm btn-success ml-auto mr-4" id="add-form">เพิ่ม สินค้า</button>
+                      </div>
+                      <div class="col-12 row mb-3 border mt-4 py-3">
+                        <div class="col-xl-9 col-lg-7 col-md-12">
+                            
+                          <div class="row">
+
+                                <div class="col-xl-5 col-lg-8 col-sm-12">
+                                  <div class="form-group mb-2">
+                                    <label class="mt-0 mb-0 font-weight-bold text-dark">รายการขาย</label>
+                                    <input type="text" class="form-control" name="ordersell_name" id="eordersell_name" placeholder="รายการขาย" required>
+                                  </div> 
+                                </div>
+                                <div class="col-xl-7 col-lg-4 col-sm-12">
+                                    <div class="form-group mb-2">
+                                      <label class="m-0 font-weight-bold text-dark col-12">ราคาที่ต้องจ่าย </label>
+                                      <div class="row">
+                                        <div class="form-control col-5 mr-3">
+                                          <span id="etotalPrice">0</span>
+                                          <input type="hidden" name="is_totalprice" id="is_totalprice"/>
+                                        </div>
+                                        <div class="col-6 row">
+                                          <div class="col-6 align-self-center">
+                                            <span class="font-weight-bold" id="etotalOrder">0 รายการ</span>
+                                          </div>
+                                          <div class="col-6 align-self-center row ml-auto">
+                                              <span class="font-weight-bold" id="etotalProducts">0 ชิ้น</span>
+                                          </div>
+                                        </div>
+                                        
+                                      </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-5 col-md-7">
+                                  <div class="form-group mb-2">
+                                    <label class="mt-0 mb-0 font-weight-bold text-dark">ชื่อลูกค้า</label>
+                                    <input type="text" class="form-control" name="custome_name" id="ecustome_name" placeholder="ชื่อ" required>
+                                  </div> 
+                                </div>
+
+                              <div class="col-xl-4 col-md-5">
+                                <div class="form-group mb-2">
+                                  <label class="mt-0 mb-0 font-weight-bold text-dark">เบอร์โทร</label>
+                                  <input type="text" class="form-control" name="tell_custome" id="etell_custome" placeholder="เบอร์โทร" required>
+                                </div> 
+                              </div>
+
+                              <div class="col-xl-3 col-md-5">
+                                <div class="form-group mb-2">
+                                  <label class="mt-0 mb-0 font-weight-bold text-dark">วันที่และเวลา</label>
+                                  <input type="datetime-local" class="form-control" name="date_time_sell" id="edate_time_sell" placeholder="วันที่และเวลา" required>
+                                </div> 
+                              </div>
+                              <div class="col-xl-8 col-md-12">
+                                <div class="form-group mb-2 shipping-state">
+                                  <label class="mt-0 mb-0 font-weight-bold text-dark">หมายเหตุการจัดส่ง</label>
+                                  <div class="row">
+                                    <input type="text" class=" form-control col-lg-6 col-sm-12" name="shipping_note" id="eshipping_note" placeholder="หมายเหตุ">
+                                    <input type="text" class="mx-2 form-control col-lg-3 col-sm-6" name="sender" id="esender" placeholder="ผู้ส่ง">
+                                    <input type="text" class="col form-control col-lg-2 col-sm-5" name="wages" id="ewages" placeholder="ค่าจ้าง">
+                                  </div>
+                                </div> 
+                              </div>
+                              <div class="col-xl-4 col-md-12">
+                                <label class="mt-0 mb-0 col-12 font-weight-bold text-dark">ตัวเลือกการจ่าย</label>
+                                <select class="form-control multiple-select" id="epayment_option" name="payment_option[]" placeholder="ตัวเลือกการจ่าย" multiple="multiple">
+                                    <option value="โอน">โอน</option>
+                                    <option value="จ่ายสด">จ่ายสด</option>
+                                    <option value="ติดค้าง">ติดค้าง</option>
+                                </select>
+                              </div>
+                              <div class="col-12">                         
+                                  <label for="exampleFormControlTextarea1">เหตุผล(ถ้ามี)</label>
+                                  <textarea class="form-control" id="ereason" name="reason" rows="2"></textarea>
+                              </div>
+                          </div>
+
+                        </div>
+                        <div class="col-xl-3 col-lg-5 col-md-12">
+                          <mian-add-image id="slip_orderseller" count="sell_slip" wrapper="ux-wrap" filenames="uimgname" cancles="ux-cancle"
+                            names="รูปโปรไฟล์" custom="btn_custom" setdefault="setDefaultImgSell"></mian-add-image>
+                        </div>
+                      </div>
+                      
+                    </div>
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary ml-auto mr-4">บันทึกข้อมูล</button>
+                    </div>
+                </form>
+              </div>
+          </div>
+      </div>
+    `;
+  }
+}
+
+customElements.define("main-update-ordersell", modelUpdateOrderSell);
+
+$(document).on("click", "#edit_order_sell", function (e) {
+  let ordersell_id = $(this).data("ordersellid");
+  let component = document.querySelector("main-update-ordersell");
+  component.dispatchEvent(new CustomEvent("setId", { detail: ordersell_id }));
+
+  fetch(
+    `http://localhost/stockproduct/system/backend/api/ordersell.php?ordersell_id=${ordersell_id}`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  )
+    .then((res) => res.json())
+    .then((data) => {
+      const ordersell = data.data.orersell;
+      $("#ordersell_id").val(ordersell.id_ordersell);
+      $("#eordersell_name").val(ordersell.ordersell_name);
+      $("#orders_name").html(ordersell.ordersell_name);
+      $("#etotalPrice").html(ordersell.is_totalprice);
+      $("#eis_totalprice").val(ordersell.is_totalprice);
+      $("#etotalOrder").html(`${ordersell.countproduct} รายการ`);
+      $("#etotalProducts").html(`${ordersell.totalproduct} ชิ้น`);
+      $("#ecustome_name").val(ordersell.custome_name);
+      $("#etell_custome").val(ordersell.tell_custome);
+      $("#edate_time_sell").val(ordersell.date_time_sell);
+      $("#eshipping_note").val(ordersell.shipping_note);
+      $("#esender").val(ordersell.sender);
+      $("#ewages").val(ordersell.wages);
+      $("#ereason").val(ordersell.reason);
+      const selectTypePrice = data.data.sell_type.map(
+        (item) => item.list_typepay
+      );
+
+      $("#epayment_option").val(selectTypePrice).trigger("change");
+    })
+    .catch((e) => {
+      console.error(`Fetch Catch ${e}`);
+    });
+});
+
+$(document).on("click", "#confirmTrashOrderSell", function (e) {
+  let idorder_sell = $(this).data("id");
+  let order_sellname = $(this).data("ordersell");
+  console.log({ idorder_sell, order_sellname });
+  Swal.fire({
+    title: "คุณแน่ใจไหม ?",
+    text: `รายการ ${order_sellname} นี้ พร้อมสินค้า จะถูกลบทั้งหมด จะไม่สามารถย้อนกลับได้`,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    cancelButtonText: "ยกเลิก",
+    confirmButtonText: "ยืนยัน",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const responseapi = await fetch(
+          `http://localhost/stockproduct/system/backend/api/stockordersell.php?ordersell_id=${idorder_sell}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+          }
+        );
+        const responsedata = await responseapi.json();
+        if (responsedata.status === 201) {
+          console.log(responsedata);
+          Swal.fire({
+            title: "เรียบร้อย",
+            text: "ลบ order นี้เรียบร้อยแล้ว",
+            icon: "success",
+            showConfirmButton: false,
+          }).then(() => {
+            window.location.reload();
+          });
+        }
+      } catch (e) {
+        throw new Error(`Is Error Catch ${e}`);
+      }
+    }
+  });
+});

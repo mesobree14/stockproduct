@@ -137,25 +137,25 @@ class modelCreateRatePrice extends HTMLElement {
                     <div class="col-md-6">
                       <div class="form-group mb-2">
                         <label class="mt-0 mb-0 font-weight-bold text-dark">ราคา หน้าร้าน</label>
-                        <input type="number" class="form-control" name="rate_storefront" id="rate_price_storefront" placeholder="ชื่อสินค้า" required>
+                        <input type="text" class="form-control" name="rate_storefront" id="rate_price_storefront" placeholder="ชื่อสินค้า" required>
                       </div>  
                     </div>
                     <div class="col-md-6">
                         <div class="form-group mb-2">
                           <label class="mt-0 mb-0 font-weight-bold text-dark">ราคา วีไอพี่</label>
-                          <input type="number" class="form-control" name="rate_vip" id="rate_price_vip" placeholder="ชื่อสินค้า" required>
+                          <input type="text" class="form-control" name="rate_vip" id="rate_price_vip" placeholder="ชื่อสินค้า" required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group mb-2">
                           <label class="mt-0 mb-0 font-weight-bold text-dark">ราคา ตัวแทนจำหน่าย</label>
-                          <input type="number" class="form-control" name="rate_dealers" id="rate_price_dealers" placeholder="ชื่อสินค้า" required>
+                          <input type="text" class="form-control" name="rate_dealers" id="rate_price_dealers" placeholder="ชื่อสินค้า" required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group mb-2">
                           <label class="mt-0 mb-0 font-weight-bold text-dark">ราคา จัดส่ง</label>
-                          <input type="number" class="form-control" name="rate_delivery" id="rate_price_delivery" placeholder="ชื่อสินค้า" required>
+                          <input type="text" class="form-control" name="rate_delivery" id="rate_price_delivery" placeholder="ชื่อสินค้า" required>
                         </div>
                     </div>
                     <div class="col-md-12 align-self-center row mt-4">
@@ -181,16 +181,7 @@ class modelCreateRatePrice extends HTMLElement {
 }
 customElements.define("main-rate-price", modelCreateRatePrice);
 
-// setImagePriviews(
-//   ".orphanImage",
-//   ".setDefaultImgOrphan",
-//   "#setbtnCustomX",
-//   ".x-cancleX i",
-//   ".ximgnameX",
-//   ".x-wrapX"
-// );
-
-class modelUpdateOrder extends HTMLElement {
+class modelUpdateStock extends HTMLElement {
   connectedCallback() {
     this.addEventListener("setId", (e) => {
       this.productId = e.detail;
@@ -230,12 +221,10 @@ class modelUpdateOrder extends HTMLElement {
             </div>
             <form id="form_update" method="post" action="backend/create_order.php" enctype="multipart/form-data">
               <input type="hidden" name="status_form" value="update" />
+              <input type="text" id="id_stock" name="stock_id"/>
               <div class="modal-body">
                 <div class="mt-2 row border">
-                  
                 </div>
-                
-              
               </div>
               <div class="modal-footer">
                 <button type="submit" class="btn btn-sm btn-success ml-auto mr-4">บันทึกข้อมูล</button>
@@ -248,4 +237,9 @@ class modelUpdateOrder extends HTMLElement {
     `;
   }
 }
-customElements.define("main-update-order", modelUpdateOrder);
+customElements.define("main-update-stock", modelUpdateStock);
+
+$(document).on("click", "#update_product", function (e) {
+  const product_id = $(this).data("id");
+  const product_name = $(this).data("name");
+});

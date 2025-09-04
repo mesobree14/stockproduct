@@ -66,6 +66,7 @@
 .table-data2 {
   border-collapse: collapse;
   overflow: visible;
+  width: 100%;
 }
 
 .table-data2.table thead th {
@@ -95,6 +96,7 @@
   -moz-border-radius-bottomleft: 3px;
   border-bottom-left-radius: 3px;
   vertical-align: top;
+  border: 2px solid blue;
 }
 
 .table-data2.table tbody tr td:first-child .au-checkbox {

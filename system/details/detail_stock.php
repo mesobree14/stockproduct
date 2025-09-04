@@ -92,7 +92,6 @@ if(!isset($_SESSION['users_order'])){
                               <th>จำนวน</th>
                               <th>ราคารวม</th>
                               <th>เวลา</th>
-                              <th>จัดการ</th>
                           </tr>
                       </thead>
                       <tbody>

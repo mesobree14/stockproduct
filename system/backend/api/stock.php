@@ -25,7 +25,6 @@
                 $get_data[] = $res_data;
              }
              header('Content-Type: application/json');
-             //echo json_encode($get_data);
               print json_encode(array(
                 'status'=> 201,
                 'message'=> 'get data is success',

@@ -58,7 +58,7 @@
             }else{
               $update_rate = "UPDATE rate_price 
                 SET product_name='$product_name',id_adder='$id_user',price_custommer_vip='$rate_vip', price_customer_frontstore='$rate_storefront', 
-                price_customer_deliver='$rate_delivery', price_customer_dealer='$rate_dealers',create_at='$day_add'";
+                price_customer_deliver='$rate_delivery', price_customer_dealer='$rate_dealers',create_at='$day_add' WHERE rate_id=$rate_id";
               $query_update = mysqli_query($conn,$update_rate) or die(mysqli_error($conn));
               if($query_update){
                 echo "<script type=\"text/javascript\">
