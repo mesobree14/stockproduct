@@ -25,20 +25,26 @@ function navigationOfiicer($path = ""){
                           </a>
                         </li>
                         <li>
+                          <a href=\"{$path}finance.php\">
+                              <i class=\"fab fa-bitcoin\"></i>
+                              <span>การเงิน</span>
+                          </a>
+                        </li>
+                        <li>
                           <a href=\"{$path}orders.php\">
-                              <i class=\"fas fa-users\"></i>
+                              <i class=\"fa-solid fa-truck\"></i>
                               <span>คำสั่งซื้อ</span>
                           </a>
                         </li>
                         <li>
                           <a href=\"{$path}stock.php\">
-                              <i class=\"fas fa-users\"></i>
+                              <i class=\"fas fa-store\"></i>
                               <span>คลังสินค้า</span>
                           </a>
                         </li>
                         <li>
                           <a href=\"{$path}ordersell.php\">
-                            <i class=\"fas fa-user\"></i>
+                            <i class=\"fa-solid fa-truck-fast\"></i>
                               <span>สินค้าที่ขาย</span>
                           </a>
                         </li>
@@ -70,6 +76,53 @@ function navbar($logo, $path=""){
     ";
     echo $navList;
 
+}
+
+function tableCapital($number, $capital_id, $count_capital,$slip, $date_time_ad){
+  $list = "
+    <tr>
+      <td>$number</td>
+      <td class=\"font-weight-bold\">$count_capital</td>
+      <td class=\"font-weight-bold\">$date_time_ad</td>
+
+      <td>
+        <div class=\"table-data-feature\" >
+            <button type=\"button\" id=\"update_order\" data-target=\"#modalFormUpdateOrder\" data-toggle=\"modal\"  
+                   class=\"item\" data-id=\"$capital_id\" data-count=\"$count_capital\" data-dateadd=\"$date_time_ad\" 
+            >
+                <i class=\"fas fa-pencil-alt text-warning\"></i>
+            </button>
+            <button type=\"button\" class=\"item\" id=\"confirmTrashOrder\" data-id=\"$capital_id\">
+              <i class=\"fas fa-trash-alt text-danger\"></i> 
+            </button>
+          </div>
+      </td>
+    </tr>
+  ";
+  echo $list;
+}
+function tableWithDraw($number, $withdraw_id, $count_withdraw,$reason,$slip_withdrow, $date_time_ad){
+  $list = "
+    <tr>
+      <td class=\"font-weight-bold\">$number</td>
+      <td class=\"font-weight-bold\">$count_withdraw</td>
+  
+      <td class=\"font-weight-bold\">$date_time_ad</td>
+      <td>
+        <div class=\"table-data-feature\" >
+            <button type=\"button\" id=\"update_order\" data-target=\"#modalFormUpdateOrder\" data-toggle=\"modal\"  
+                   class=\"item\" data-id=\"$withdraw_id\" data-count=\"$count_withdraw\" data-dateadd=\"$date_time_ad\" 
+            >
+                <i class=\"fas fa-pencil-alt text-warning\"></i>
+            </button>
+            <button type=\"button\" class=\"item\" id=\"confirmTrashOrder\" data-id=\"$withdraw_id\">
+              <i class=\"fas fa-trash-alt text-danger\"></i> 
+            </button>
+          </div>
+      </td>
+    </tr>
+  ";
+  echo $list;
 }
 
 function tablelistsetOrder ($number, $orderid, $ordername, $totalcost_order, $price_order, $sliptImg, $date_time_order){
@@ -298,15 +351,15 @@ function status_deliver($shippingnote, $sender, $wages){
         <img src=\"http://localhost/stockproduct/db/slip-sellorder/$img_slip \" class=\"img-sell\"/> ";
     }
   }
-function detailOrderSell($ordersell_name,$is_totalprice,$custome_name,$tell_custome,$date_time_sell,$total,$shipping_note,$sender,$wages,$reason,$slip_ordersell,$adder_id,$create_at,$sell_type){
+function detailOrderSell($id_ordersell,$ordersell_name,$is_totalprice,$custome_name,$tell_custome,$date_time_sell,$total,$shipping_note,$sender,$wages,$reason,$slip_ordersell,$adder_id,$create_at,$sell_type){
 
   $list_detail = "
       <div class=\"col-12\">
         <div class=\"col-12 row\">
-          <button class=\"ml-auto px-5 mt-4\">
+          <a href=\"PDF/PDF_ordersell.php?ordersell_id=$id_ordersell\" target=\"_blank\" class=\"ml-auto px-5 mt-4\">
             <i class=\"fas fa-file-code\"></i>
             Print PDF
-          </button>
+          </a>
         </div>
         <div class=\"col-12 row\">
           <div class=\"row \">
@@ -411,10 +464,10 @@ function listDetailOrderBuy($order_id, $order_name, $total_cost, $data_time_buy,
       </div>
       <div class=\"col-7 py-4 mx-auto\">
         <div class=\"col-12 row\">
-          <button class=\"ml-auto px-5\">
+          <a href=\"PDF/PDF_orderbuy.php?order_id=$order_id\" target=\"_blank\" class=\"border ml-auto  py-2 px-5\">
             <i class=\"fas fa-file-code\"></i>
             Print PDF
-          </button>
+          </a>
         </div>
         <h2 class=\"card-title font-bold\">ชื่อรายการ : $order_name</h2>
         <div class=\"col-12 row mx-2\">

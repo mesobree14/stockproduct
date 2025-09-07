@@ -90,6 +90,10 @@ let data = [];
 
 const originalPush = data.push;
 
+let data2 = [];
+
+const originalPush2 = data2.push;
+
 function updateGrandTotal() {
   const results = document.querySelectorAll("span[id^='price_result-']");
   const resutlProduct = document.querySelectorAll("span[id^='is_totals-']");
@@ -582,6 +586,8 @@ class formOrDerSell extends HTMLElement {
 }
 
 customElements.define("mian-input-ordersell", formOrDerSell);
+class FormOrderUpdate extends formOrDerSell {}
+customElements.define("mian-input-update", FormOrderUpdate);
 
 class modelSetOrderSell extends HTMLElement {
   connectedCallback() {
@@ -590,6 +596,20 @@ class modelSetOrderSell extends HTMLElement {
     this.addProductForm();
     this.setIdCostomer();
     this.checkCustomer();
+    this.generateID();
+  }
+
+  generateID() {
+    function generateId(length = 8) {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let result = "";
+      for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return result;
+    }
+    const id = generateId(10);
+    document.getElementById("ordersell_name").value = id;
   }
   setIdCostomer() {
     this.addEventListener("priceSelected", (e) => {
@@ -614,8 +634,9 @@ class modelSetOrderSell extends HTMLElement {
   checkCustomer() {
     let typecustom = [];
     const div = this.querySelector(".shipping-state");
-    div.style.display = "none";
+    div.style.display = "block";
     data.push = function (...args) {
+      console.log({ x11: args });
       let keys = Object.keys(args[0])[0];
       let values = Object.values(args[0])[0];
       let indexkey = typecustom.findIndex((obj) => obj.hasOwnProperty(keys));
@@ -627,11 +648,11 @@ class modelSetOrderSell extends HTMLElement {
       let status = typecustom.some((obj) =>
         Object.values(obj).includes("price_customer_deliver")
       );
-      if (status) {
-        div.style.display = "block";
-      } else {
-        div.style.display = "none";
-      }
+      // if (status) {
+      //   div.style.display = "block";
+      // } else {
+      //   div.style.display = "none";
+      // }
       return this.length;
     };
   }
@@ -712,9 +733,8 @@ class modelSetOrderSell extends HTMLElement {
                                 <div class="form-group mb-2 shipping-state">
                                   <label class="mt-0 mb-0 font-weight-bold text-dark">หมายเหตุการจัดส่ง</label>
                                   <div class="row">
-                                    <input type="text" class=" form-control col-lg-6 col-sm-12" name="shipping_note" id="shipping_note" placeholder="หมายเหตุ">
-                                    <input type="text" class="mx-2 form-control col-lg-3 col-sm-6" name="sender" id="sender" placeholder="ผู้ส่ง">
-                                    <input type="text" class="col form-control col-lg-2 col-sm-5" name="wages" id="wages" placeholder="ค่าจ้าง">
+                                      <input type="text" class="mx-2 form-control col-md-6 col-sm-12" name="sender" id="sender" placeholder="ผู้ส่ง">
+                                      <input type="text" class=" form-control col-md-5 col-sm-12" name="tell_sender" id="tell_sender" placeholder="เบอร์โทรผู้ส่ง">
                                   </div>
                                 </div> 
                               </div>
@@ -725,6 +745,10 @@ class modelSetOrderSell extends HTMLElement {
                                     <option value="จ่ายสด">จ่ายสด</option>
                                     <option value="ติดค้าง">ติดค้าง</option>
                                 </select>
+                              </div>
+                              <div class="col-12">
+                                    <label class="mt-0 mb-0 font-weight-bold text-dark">ที่อยู่ในการจัดส่ง</label>
+                                    <input type="text" class="form-control" name="location_send" id="location_send" placeholder="ที่อยู่ในการจัดส่ง" required>
                               </div>
                               <div class="col-12">                         
                                   <label for="exampleFormControlTextarea1">เหตุผล(ถ้ามี)</label>
@@ -783,13 +807,13 @@ class modelUpdateOrderSell extends HTMLElement {
       container.innerHTML = "";
       if (responsedata.data.length > 0) {
         responsedata.data.forEach((product, index) => {
-          const divIn = document.createElement("mian-input-ordersell");
+          const divIn = document.createElement("mian-input-update");
           divIn.setAttribute("numbers", index + 1);
           divIn.data = product;
           container.appendChild(divIn);
         });
       } else {
-        const divIns = document.createElement("mian-input-ordersell");
+        const divIns = document.createElement("mian-input-update");
         container.appendChild(divIns);
       }
     } catch (e) {
@@ -802,15 +826,14 @@ class modelUpdateOrderSell extends HTMLElement {
     const addForm = this.querySelector("#add-form");
 
     addForm.addEventListener("click", () => {
-      const divIn = this.querySelector("mian-input-ordersell");
-      const index =
-        container.querySelectorAll("mian-input-ordersell").length + 1;
+      const divIn = this.querySelector("mian-input-update");
+      const index = container.querySelectorAll("mian-input-update").length + 1;
       if (divIn) {
         const clone = divIn.cloneNode(true);
         clone.setAttribute("numbers", index);
         container.appendChild(clone);
       } else {
-        const newInput = document.createElement("mian-input-ordersell");
+        const newInput = document.createElement("mian-input-update");
         newInput.setAttribute("numbers", index);
         container.appendChild(newInput);
       }
@@ -826,10 +849,10 @@ class modelUpdateOrderSell extends HTMLElement {
 
   checkCustomer() {
     let typecustom = [];
-    const div = this.querySelector(".shipping-state");
-    div.style.display = "none";
+    const div = this.querySelector(".shipping-state2");
+    div.style.display = "block";
     data.push = function (...args) {
-      console.log({ args });
+      console.log({ x23: args });
       let keys = Object.keys(args[0])[0];
       let values = Object.values(args[0])[0];
       let indexkey = typecustom.findIndex((obj) => obj.hasOwnProperty(keys));
@@ -841,11 +864,11 @@ class modelUpdateOrderSell extends HTMLElement {
       let status = typecustom.some((obj) =>
         Object.values(obj).includes("price_customer_deliver")
       );
-      if (status) {
-        div.style.display = "block";
-      } else {
-        div.style.display = "none";
-      }
+      // if (status) {
+      //   div.style.display = "block";
+      // } else {
+      //   div.style.display = "none";
+      // }
       return this.length;
     };
   }
@@ -925,12 +948,11 @@ class modelUpdateOrderSell extends HTMLElement {
                                 </div> 
                               </div>
                               <div class="col-xl-8 col-md-12">
-                                <div class="form-group mb-2 shipping-state">
-                                  <label class="mt-0 mb-0 font-weight-bold text-dark">หมายเหตุการจัดส่ง</label>
+                                <div class="form-group mb-2 shipping-state2">
+                                  <label class="mt-0 mb-0 font-weight-bold text-dark">ข้อมูลผู้ส่ง</label>
                                   <div class="row">
-                                    <input type="text" class=" form-control col-lg-6 col-sm-12" name="shipping_note" id="eshipping_note" placeholder="หมายเหตุ">
-                                    <input type="text" class="mx-2 form-control col-lg-3 col-sm-6" name="sender" id="esender" placeholder="ผู้ส่ง">
-                                    <input type="text" class="col form-control col-lg-2 col-sm-5" name="wages" id="ewages" placeholder="ค่าจ้าง">
+                                    <input type="text" class="mx-2 form-control col-md-6 col-sm-12" name="sender" id="esender" placeholder="ผู้ส่ง">
+                                    <input type="text" class=" form-control col-md-5 col-sm-12" name="tell_sender" id="etell_sender" placeholder="เบอร์โทรผู้ส่ง">
                                   </div>
                                 </div> 
                               </div>
@@ -941,6 +963,10 @@ class modelUpdateOrderSell extends HTMLElement {
                                     <option value="จ่ายสด">จ่ายสด</option>
                                     <option value="ติดค้าง">ติดค้าง</option>
                                 </select>
+                              </div>
+                              <div class="col-12">
+                                    <label class="mt-0 mb-0 font-weight-bold text-dark">ที่อยู่ในการจัดส่ง</label>
+                                    <input type="text" class="form-control" name="location_send" id="location_send" placeholder="ที่อยู่ในการจัดส่ง" required>
                               </div>
                               <div class="col-12">                         
                                   <label for="exampleFormControlTextarea1">เหตุผล(ถ้ามี)</label>

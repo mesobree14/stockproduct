@@ -63,8 +63,12 @@
           $custome_name = $_POST['custome_name'];
           $tell_custome = $_POST['tell_custome'];
           $date_time_sell = $_POST['date_time_sell'];
-          $shipping_note = $_POST['shipping_note'] ?? "";
+          
           $sender = $_POST['sender'] ?? "";
+          $tell_sender = $_POST['tell_sender'];
+          $location_send = $_POST['location_send'];
+
+          $shipping_note = $_POST['shipping_note'] ?? "";
           $wages = $_POST['wages'] ?? null;
           if(empty($wages)){
             $wages = 0;
@@ -79,8 +83,8 @@
 
           $chkstatus = [];
  
-          $sql_add = "INSERT INTO orders_sell (ordersell_name,is_totalprice,custome_name,tell_custome,date_time_sell,shipping_note,sender,wages,reason,slip_ordersell,adder_id,create_at)
-           VALUES ('$ordersell_name','$is_totalprice','$custome_name','$tell_custome','$date_time_sell','$shipping_note','$sender','$wages','$reason','".setImgpath("sell_slip")."','$id_user','$day_add')";
+          $sql_add = "INSERT INTO orders_sell (ordersell_name,is_totalprice,custome_name,tell_custome,date_time_sell,shipping_note,sender,tell_sender,location_send,wages,reason,slip_ordersell,adder_id,create_at)
+           VALUES ('$ordersell_name','$is_totalprice','$custome_name','$tell_custome','$date_time_sell','$shipping_note','$sender','$tell_sender','$location_send','$wages','$reason','".setImgpath("sell_slip")."','$id_user','$day_add')";
           $query_add = mysqli_query($conn, $sql_add) or die(mysqli_error($conn));
           if($query_add){
             $id_order_sell = mysqli_insert_id($conn);

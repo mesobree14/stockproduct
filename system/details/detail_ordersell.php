@@ -78,7 +78,7 @@ foreach($res_acc as $rows){
               <?php 
                 
                 detailOrderSell(
-                  $order['ordersell_name'],$order['is_totalprice'],$order['custome_name'],$order['tell_custome'],$order['date_time_sell'],$count_row['total'],
+                  $order['id_ordersell'],$order['ordersell_name'],$order['is_totalprice'],$order['custome_name'],$order['tell_custome'],$order['date_time_sell'],$count_row['total'],
                   $order['shipping_note'],$order['sender'],$order['wages'],$order['reason'],$order['slip_ordersell'],$order['adder_id'],$order['create_at'],$sell_type
                 ); 
               ?>
