@@ -25,8 +25,14 @@
 <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap4.min.js"></script>
 
-<link rel="stylesheet" href="https://unpkg.com/multiple-select@2.1.1/dist/multiple-select.min.css">
-<script src="https://unpkg.com/multiple-select@2.1.1/dist/multiple-select.min.js"></script>
+<link href="https://unpkg.com/multiple-select@2.2.0/dist/multiple-select.min.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+<script src="https://unpkg.com/multiple-select@2.2.0/dist/multiple-select.min.js"></script>
+
+
+<!-- <link rel="stylesheet" href="https://unpkg.com/multiple-select@2.1.1/dist/multiple-select.min.css">
+<script src="https://unpkg.com/multiple-select@2.1.1/dist/multiple-select.min.js"></script> -->
 
 
 

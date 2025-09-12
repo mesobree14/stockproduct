@@ -91,9 +91,26 @@ class Capital extends HTMLElement {
   constructor() {
     super();
   }
+  get availableCapital() {
+    return this.getAttribute("availablecapital");
+  }
   connectedCallback() {
     this.renderHTML();
+    //this.scripts();
   }
+  // scripts() {
+  //   let count_capital = document.getElementById("count_capital");
+  //   count_capital.addEventListener("input", () => {
+  //     if (
+  //       Number(count_capital.value.replace(/,/g, "").trim()) >
+  //       Number(this.availableCapital.replace(/,/g, "").trim())
+  //     ) {
+  //       count_capital.style.border = "3px solid red";
+  //     } else {
+  //       count_capital.style.border = "3px solid green";
+  //     }
+  //   });
+  // }
   renderHTML() {
     this.innerHTML = `
       <div class="modal fade bd-example-modal-xl" id="modalFormCapital" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
@@ -110,6 +127,10 @@ class Capital extends HTMLElement {
               <div class="modal-body">
                 <div class="modal-body">
                     <div class="col-md-12 row mb-3">
+                    <div class="col-md-7 row py-2">
+                        <span class="ml-auto text-primary font-weight-bold">จำนวนทุนที่สามารถใช้ได้ : ${this.availableCapital} บาท</span>
+                      </div>
+                      <div class="col-md-5"></div>
                       <div class="col-md-7">
                         <div class="form-group mb-2">
                           <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนทุน / .บ</label>
@@ -149,8 +170,35 @@ class Withdraw extends HTMLElement {
   constructor() {
     super();
   }
+  get usableProfit() {
+    return this.getAttribute("usableprofit") || "0";
+  }
+
   connectedCallback() {
     this.renderHTML();
+    this.scripts();
+  }
+
+  scripts() {
+    let input_price = document.getElementById("count_withdraw");
+    let res_value = document.getElementById("res-value");
+    input_price.addEventListener("input", () => {
+      let result =
+        Number(this.usableProfit.replace(/,/g, "").trim()) -
+        Number(input_price.value.replace(/,/g, "").trim());
+      res_value.textContent = Math.floor(result * 100) / 100;
+
+      if (
+        Number(input_price.value.replace(/,/g, "").trim()) >
+        Number(this.usableProfit.replace(/,/g, "").trim())
+      ) {
+        input_price.style.border = "3px solid red";
+        res_value.style.color = "red";
+      } else {
+        res_value.style.color = "green";
+        input_price.style.border = "3px solid green";
+      }
+    });
   }
   renderHTML() {
     this.innerHTML = `
@@ -168,10 +216,14 @@ class Withdraw extends HTMLElement {
               <div class="modal-body">
                 <div class="modal-body">
                     <div class="col-md-12 row mb-3">
+                      <div class="col-md-7 row py-2">
+                        <span class="ml-auto text-primary font-weight-bold">จำนวนเงินที่สามารถเบิกถอนได้ : ${this.usableProfit} บาท</span>
+                      </div>
+                      <div class="col-md-5"></div>
                       <div class="col-md-7">
                         <div class="form-group mb-2">
-                          <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนเงินที่เบิกถอน / .บ</label>
-                          <input type="text" class="form-control" name="count_withdraw" id="rate_price_storefront" placeholder="ชื่อสินค้า" required>
+                          <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนเงินที่เบิกถอน / .บ <span id="res-value"></span></label>
+                          <input type="text" class="form-control" name="count_withdraw" id="count_withdraw" placeholder="ชื่อสินค้า" required>
                         </div>  
                       </div>
                       <div class="col-md-5">

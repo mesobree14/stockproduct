@@ -14,6 +14,7 @@ include_once("../../../backend/config.php");
       $arrays = [];
       $countsuccess = 0;
       $trashimg = "";
+      $type_pays = [];
 
       $sql = mysqli_query($conn,"SELECT id_ordersell, slip_ordersell,ordersell_name FROM orders_sell WHERE id_ordersell=$id_ordersell");
       if(mysqli_num_rows($sql) > 0){
@@ -27,13 +28,22 @@ include_once("../../../backend/config.php");
               }
             }
           }
-          $list_products = mysqli_query($conn,"SELECT list_sellid,productname,ordersell_id FROM list_productsell WHERE ordersell_id=$id_ordersell");
-          $rows_product = mysqli_num_rows($list_products);
-          if($rows_product > 0){
-            foreach($list_products as $res){
+          $del_typepay = mysqli_query($conn,"DELETE FROM sell_typepay WHERE ordersell_id=$id_ordersell");
+          if($del_typepay){
+            $type_pays[] = [
+              'deletetype_pay' => 'success'
+            ];
+          }else{
+            $type_pays[] = [
+              'deletetype_pay' => 'false'
+            ];
+          }
+          // $list_products = mysqli_query($conn,"SELECT list_sellid,productname,ordersell_id FROM list_productsell WHERE ordersell_id=$id_ordersell");
+          // $rows_product = mysqli_num_rows($list_products);
+          // if($rows_product > 0){
+          //   foreach($list_products as $res){
               $trash_productsell = mysqli_query($conn,"DELETE FROM list_productsell WHERE ordersell_id=$id_ordersell");
               if($trash_productsell){
-                $countsuccess++;
                 $arrays[] = [
                   'name' => $res['productname'],
                   'status'=> 'success'
@@ -50,11 +60,11 @@ include_once("../../../backend/config.php");
                 'order_id'=> $id_ordersell,
                 'trashimg' => $trashimg,
                 'message' => 'delete finished',
-                'success_count' => $countsuccess,
-                'result' => $arrays
+                'result' => $arrays,
+                'type_pays'=>$type_pays
               ));
-          }
-        }
+         // }
+        //}
       }
     }elseif($_SERVER['REQUEST_METHOD'] == "GET"){
       $id_ordersell = $_GET['ordersell_id'];

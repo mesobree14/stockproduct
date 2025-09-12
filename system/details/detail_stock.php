@@ -37,7 +37,7 @@ if(!isset($_SESSION['users_order'])){
           <div class="col-md-12">
             <?php
               $sql = "SELECT product_name, product_price,
-               COUNT(*) total,SUM(product_count * product_price) AS resutl_price, SUM(product_count) AS total_count FROM stock_product WHERE product_name='$product_name' GROUP BY product_name";
+               COUNT(*) total,SUM(expenses) AS resutl_price, SUM(product_count) AS total_count FROM stock_product WHERE product_name='$product_name' GROUP BY product_name";
                $selectStockProduct = mysqli_query($conn,$sql) or die(mysqli_error($conn));
                $acc_fetch = mysqli_fetch_assoc($selectStockProduct);
 
@@ -81,6 +81,17 @@ if(!isset($_SESSION['users_order'])){
                 </div>
           </div>
           <div class="col-md-12 mt-4">
+            
+              <div class="tabs">
+                <div class="tab-button-outer">
+                  <ul id="tab-button">
+                    <li><a href="#tab01">รอบการสั่งซื้อ</a></li>
+                    <li><a href="#tab02">รอบการขาย</a></li>
+                  </ul>
+                </div>
+              </div>
+            
+            <div id="tab01" class="tab-contents">
             <div class="table-responsive table-responsive-data2 mt-2">
                   <table class="table table-data2 mydataTablePatron">
                       <thead>
@@ -107,6 +118,34 @@ if(!isset($_SESSION['users_order'])){
                           ?>
                       </tbody>
                   </table> 
+            </div>
+            </div>
+            <div id="tab02" class="tab-contents">
+                <div class="table-responsive table-responsive-data2 mt-2">
+                  <table class="table table-data2 mydataTablePatron">
+                    <thead>
+                        <tr>
+                            <th>ลำดับ</th> 
+                            <th>ชื่อ</th>
+                            <th>จากคำสั่งขาย</th>
+                            <th>ประเภทลูกค้า</th>
+                            <th>ราคาขายต่อชิ้น</th>
+                            <th>จำนวน</th>
+                            <th>ราคารวม</th>
+                            <th>เวลา</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                <?php
+                  $sell_sql = "SELECT * FROM list_productsell PS LEFT JOIN orders_sell OS ON OS.id_ordersell = PS.ordersell_id WHERE PS.productname='$product_name' ORDER BY PS.create_at DESC";
+                  $get_sqlsell = mysqli_query($conn,$sell_sql) or die(mysqli_error($conn));
+                  foreach($get_sqlsell as $key => $res2){
+                    tableDetailStockSell(($key+1),$res2['list_sellid'],$res2['productname'],$res2['ordersell_name'],$res2['tatol_product'],$res2['rate_customertype'],$res2['type_custom'],$res2['date_time_sell']);
+                  }
+                ?>
+                    </tbody>
+                  </table>
+                </div>
             </div>
           </div>
       </div>

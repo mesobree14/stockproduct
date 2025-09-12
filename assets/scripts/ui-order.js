@@ -126,7 +126,9 @@ const uiForm = `
       </div>
     `;
 
-const createGrandTotal = () => {
+const createGrandTotal = (capital = []) => {
+  console.log({ capital: capital[0].funds_that_can_be_used });
+  let valueInput = document.getElementById("totalcost_order");
   const results = document.querySelectorAll("input[id^='expenses-']");
   let totalPrice = 0;
   results.forEach((span) => {
@@ -135,6 +137,13 @@ const createGrandTotal = () => {
       totalPrice += value;
     }
   });
+  if (totalPrice > Number(capital[0].funds_that_can_be_used)) {
+    valueInput.style.color = "red";
+    valueInput.style.border = "2px solid red";
+  } else {
+    valueInput.style.color = "green";
+    valueInput.style.border = "2px solid green";
+  }
   document.getElementById("totalcost_order").value = totalPrice;
 };
 
@@ -144,13 +153,47 @@ class modelCreateOrder extends HTMLElement {
   }
 
   stockproducts = [];
+  financedata = [];
   async connectedCallback() {
     await this.loadProduct();
+
     this.renderCreateOrder();
     this.scripts();
-    //this.updateData();
+    this.generateID();
+    await this.loadBeUseCapital();
   }
 
+  async loadBeUseCapital() {
+    try {
+      const api_finance = await fetch(
+        "http://localhost/stockproduct/system/backend/api/api_capital_withdraw.php",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const response = await api_finance.json();
+      this.financedata.push(response.data);
+      let span = document.getElementById("funds_that_can_be_used");
+
+      span.textContent = `ทุนที่มี ${response.data.funds_that_can_be_used}`;
+
+      if (
+        Number(response.data.funds_that_can_be_used.replace(/,/g, "").trim()) >
+        0
+      ) {
+        span.classList.add("text-success");
+        span.classList.remove("text-danger");
+      } else {
+        span.classList.add("text-danger");
+        span.classList.remove("text-success");
+      }
+
+      return response.data;
+    } catch (e) {
+      throw new Error(`Is Error : ${e}`);
+    }
+  }
   async loadProduct() {
     try {
       const api_data = await fetch(
@@ -166,6 +209,19 @@ class modelCreateOrder extends HTMLElement {
     } catch (e) {
       throw new Error(`Is Error : ${e}`);
     }
+  }
+
+  generateID() {
+    function generateId(length = 8) {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let result = "";
+      for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return result;
+    }
+    const id = generateId(10);
+    document.getElementById("orderbuy_name").value = id;
   }
 
   updateData(data_product, index, group) {
@@ -281,14 +337,15 @@ class modelCreateOrder extends HTMLElement {
         expenses.id = `expenses-${index}`;
         count_product.addEventListener("input", (e) => {
           let value = e.target.value;
+          console.log("SS=", value);
           price_product.value = Number((expenses.value / value).toFixed(2));
-          createGrandTotal();
+          createGrandTotal(this.financedata);
         });
 
         price_product.addEventListener("input", (e) => {
           let value = e.target.value;
           expenses.value = Number((count_product.value * value).toFixed(2));
-          createGrandTotal();
+          createGrandTotal(this.financedata);
         });
 
         expenses.addEventListener("input", (e) => {
@@ -296,11 +353,10 @@ class modelCreateOrder extends HTMLElement {
           price_product.value = Number(
             (value / count_product.value).toFixed(2)
           );
-          createGrandTotal();
+          createGrandTotal(this.financedata);
         });
       });
     };
-
     document.getElementById("add-form").addEventListener("click", function () {
       const div = document.createElement("div");
       div.className = "formGroup col-md-12 border mb-3";
@@ -335,7 +391,7 @@ class modelCreateOrder extends HTMLElement {
                       <div class="col-md-12">
                         <div class="form-group mb-2">
                           <label class="mt-0 mb-0 font-weight-bold text-dark">รายการคำสั่งซื้อ</label>
-                          <input type="text" class="form-control" name="order_name" id="" placeholder="รายการคำสั่งซื้อ" required>
+                          <input type="text" class="form-control" name="order_name" id="orderbuy_name" placeholder="รายการคำสั่งซื้อ" required>
                         </div> 
                       </div>
 
@@ -343,12 +399,12 @@ class modelCreateOrder extends HTMLElement {
                         <div class="col-md-7">
                           <div class="form-group mb-2">
                             <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าใช้จ่ายทั้งหมด</label>
-                            <input type="number" class="form-control" name="totalcost_order" id="totalcost_order" placeholder="ค่าใช้จ่าย" required>
+                            <input type="text" class="form-control" name="totalcost_order" id="totalcost_order" placeholder="ค่าใช้จ่าย" required>
                           </div> 
                         </div>
                         <div class="col-md-5">
                           <div class="form-group">
-                            <label class="mt-0 mb-0 font-weight-bold text-dark align-self-center mt-4">บาท</label>
+                            <label class="mt-0 mb-0 font-weight-bold text-dark align-self-center mt-4">บาท <span id="funds_that_can_be_used"></span></label>
                           </div>
                         </div>
                       </div>
@@ -384,13 +440,13 @@ class modelCreateOrder extends HTMLElement {
                       <div class="col-md-5">
                         <div class="form-group mb-2">
                           <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวน</label>
-                          <input type="text" class="c_count_product form-control" name="count_product[]"placeholder="ชื่อสินค้า" required>
+                          <input type="text" class="c_count_product form-control" name="count_product[]"placeholder="จำนวน" required>
                         </div>
                       </div>
                       <div class="col-md-4">
                           <div class="form-group mb-2">
                             <label class="mt-0 mb-0 font-weight-bold text-dark">ราคาต้นทุน/ชิ้น</label>
-                            <input type="text" class="c_price_product form-control" name="price_product[]" placeholder="ชื่อสินค้า" required>
+                            <input type="text" class="c_price_product form-control" name="price_product[]" placeholder="ราคาต้นทุน" required>
                           </div>
                       </div>
                       <div class="col-md-3 align-self-center">
@@ -419,6 +475,58 @@ class modelCreateOrder extends HTMLElement {
 }
 customElements.define("main-create-order", modelCreateOrder);
 
+const uiFormUpdate = `    
+      <div class="col-md-12">
+        <div class=row col-12">
+        <button type="button" class="remove-btn ml-auto my-2">❌ ลบ</button>
+        </div>
+        <div class="form-group mb-2">
+          <label class="mt-0 mb-0 font-weight-bold text-dark labelCount"></label>
+          <div class="customInputContainer">
+              <div class="customInput searchInput">
+                  <input class="selectedData form-control u_product_name"  type="text" name="product_name[]" required/>
+              </div>
+              <div class="options">
+                  <ul></ul>
+              </div>
+          </div>
+        </div>  
+      </div>
+      <div class="col-md-12 row">
+        <div class="col-md-5">
+          <div class="form-group mb-2">
+            <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวน</label>
+            <input type="text" class="u_count_product form-control" name="count_product[]" id="" placeholder="ชื่อสินค้า" required>
+          </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group mb-2">
+              <label class="mt-0 mb-0 font-weight-bold text-dark">ราคาต้นทุน/ชิ้น</label>
+              <input type="text" class="u_price_product form-control" name="price_product[]" id="" placeholder="ชื่อสินค้า" required>
+            </div>
+        </div>
+        <div class="col-md-3 align-self-center">
+            <div class="form-group mb-2">
+              <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าใช้จ่าย</label>
+              <input type="text" class="u_expenses form-control" name="expenses[]" placeholder="ค่าใช้จ่าย" required>
+            </div>
+        </div>
+      </div>
+    `;
+
+const updateGrandTotal = () => {
+  const results = document.querySelectorAll("input[id^='e-expenses-']");
+  console.log({ results });
+  let totalPrice = 0;
+  results.forEach((span) => {
+    console.log({ span });
+    const value = Number(span.value.trim());
+    if (!isNaN(value)) {
+      totalPrice += value;
+    }
+  });
+  document.getElementById("totalcost_orders").value = totalPrice;
+};
 class modelUpdateOrder extends HTMLElement {
   stockproductAll = [];
   stockproducts_id = [];
@@ -473,7 +581,6 @@ class modelUpdateOrder extends HTMLElement {
     const container = document.getElementById("formupdateorder");
     const group = container.querySelectorAll(".formGroup");
     group.forEach((group, index) => {
-      console.log("ff0=", index);
       let label = group.querySelector("label");
       label.textContent = `ชื่อสินค้าตัวที่ ${index + 1}`;
 
@@ -536,7 +643,6 @@ class modelUpdateOrder extends HTMLElement {
         let searched_product = this.stockproductAll.filter((data) =>
           data.product_name.toLowerCase().includes(searchedVal)
         );
-        console.log({ searched_product });
         ul.innerHTML = "";
         if (searched_product.length === 0) {
           ul.innerHTML = "";
@@ -550,6 +656,31 @@ class modelUpdateOrder extends HTMLElement {
           });
           ul.appendChild(li);
         });
+      });
+      let product_name = group.querySelector(".u_product_name");
+      let count_product = group.querySelector(".u_count_product");
+      let price_product = group.querySelector(".u_price_product");
+      let expenses = group.querySelector(".u_expenses");
+      product_name.id = `e-product_name-${index}`;
+      count_product.id = `e-count_product-${index}`;
+      price_product.id = `e-price_product-${index}`;
+      expenses.id = `e-expenses-${index}`;
+      count_product.addEventListener("input", (e) => {
+        let value = e.target.value;
+        price_product.value = Number((expenses.value / value).toFixed(2));
+        updateGrandTotal();
+      });
+
+      price_product.addEventListener("input", (e) => {
+        let value = e.target.value;
+        expenses.value = Number((count_product.value * value).toFixed(2));
+        updateGrandTotal();
+      });
+
+      expenses.addEventListener("input", (e) => {
+        let value = e.target.value;
+        price_product.value = Number((value / count_product.value).toFixed(2));
+        updateGrandTotal();
       });
     });
   }
@@ -616,21 +747,22 @@ class modelUpdateOrder extends HTMLElement {
         let count_product = div.querySelector(".u_count_product");
         let price_product = div.querySelector(".u_price_product");
         let expenses = div.querySelector(".u_expenses");
-        product_name.id = `product_name-${index}`;
-        count_product.id = `count_product-${index}`;
-        price_product.id = `price_product-${index}`;
-        expenses.id = `expenses-${index}`;
+        product_name.id = `e-product_name-${index}`;
+        count_product.id = `e-count_product-${index}`;
+        price_product.id = `e-price_product-${index}`;
+        expenses.id = `e-expenses-${index}`;
 
         count_product.addEventListener("input", (e) => {
           let value = e.target.value;
+          console.log("t=", expenses.value);
           price_product.value = Number((expenses.value / value).toFixed(2));
-          //createGrandTotal();
+          updateGrandTotal();
         });
 
         price_product.addEventListener("input", (e) => {
           let value = e.target.value;
           expenses.value = Number((count_product.value * value).toFixed(2));
-          //createGrandTotal();
+          updateGrandTotal();
         });
 
         expenses.addEventListener("input", (e) => {
@@ -638,13 +770,14 @@ class modelUpdateOrder extends HTMLElement {
           price_product.value = Number(
             (value / count_product.value).toFixed(2)
           );
-          //createGrandTotal();
+          updateGrandTotal();
         });
         container.addEventListener("click", (e) => {
           if (e.target.classList.contains("remove-btn-2")) {
             const index = e.target.dataset.index;
             const targetDiv = document.querySelector(`[data-index="${index}"]`);
             if (targetDiv) targetDiv.remove();
+            updateGrandTotal();
           }
         });
       });
@@ -660,12 +793,13 @@ class modelUpdateOrder extends HTMLElement {
       const divs = document.createElement("div");
       divs.className = "formGroup col-md-12 border mb-3";
 
-      divs.innerHTML = uiForm;
+      divs.innerHTML = uiFormUpdate;
       containers.appendChild(divs);
 
       divs.querySelector(".remove-btn").addEventListener("click", () => {
         divs.remove();
         this.countterForm();
+        //updateGrandTotal();
       });
       this.countterForm();
     });

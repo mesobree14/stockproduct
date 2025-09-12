@@ -182,6 +182,44 @@
   transform: translate(-50%, -50%);
 }
 
+/* ------------------------- tabs --------------------------*/
+
+.tabs {
+  max-width: 640px;
+  margin: 0;
+  padding: 0 20px;
+}
+
+#tab-button {
+  display: table;
+  table-layout: fixed;
+  width: 50%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+#tab-button li {
+  display: table-cell;
+  width: 20%;
+}
+#tab-button li a {
+  display: block;
+  padding: 0.5em;
+  background: #eee;
+  border: 1px solid #ddd;
+  text-align: center;
+  color: #000;
+  text-decoration: none;
+}
+#tab-button li:not(:first-child) a {
+  border-left: none;
+}
+#tab-button li a:hover,
+#tab-button .is-active a {
+  border-bottom-color: transparent;
+  background: #fff;
+}
+
 /* ------------------------- button --------------------------*/
 
 .bd-none {

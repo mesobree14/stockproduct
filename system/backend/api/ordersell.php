@@ -35,6 +35,8 @@ include_once("../../../backend/config.php");
             'date_time_sell' => $rows['date_time_sell'],
             'shipping_note' => $rows['shipping_note'],
             'sender' => $rows['sender'],
+            'tell_sender' => $rows['tell_sender'],
+            'location_send' => $rows['location_send'],
             'wages' => $rows['wages'],
             'reason' => $rows['reason'],
             'slip_ordersell' => $rows['slip_ordersell'],

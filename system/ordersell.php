@@ -114,6 +114,7 @@ if(!isset($_SESSION['users_order'])){
     </main>
   </div>
   <script src="../assets/scripts/ui-ordersell.js"></script>
+  <script src="../assets/scripts/update-ui-ordersell.js"></script>
   <script src="../assets/scripts/script-bash.js"></script>
 </body>
 </html>

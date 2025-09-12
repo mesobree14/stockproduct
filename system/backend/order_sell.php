@@ -80,11 +80,16 @@
           $payment_options = $_POST['payment_option'];
           $reason = $_POST['reason'] ?? "";
 
+          $count_totalpays = $_POST['count_totalpays'];
+          $count_stuck = $_POST['count_stuck'];
+          echo $count_totalpays;
+          echo "<br>";
+          echo $count_stuck;
 
           $chkstatus = [];
  
-          $sql_add = "INSERT INTO orders_sell (ordersell_name,is_totalprice,custome_name,tell_custome,date_time_sell,shipping_note,sender,tell_sender,location_send,wages,reason,slip_ordersell,adder_id,create_at)
-           VALUES ('$ordersell_name','$is_totalprice','$custome_name','$tell_custome','$date_time_sell','$shipping_note','$sender','$tell_sender','$location_send','$wages','$reason','".setImgpath("sell_slip")."','$id_user','$day_add')";
+          $sql_add = "INSERT INTO orders_sell (ordersell_name,is_totalprice,custome_name,tell_custome,date_time_sell,shipping_note,sender,tell_sender,location_send,wages,reason,slip_ordersell,count_totalpays,count_stuck,adder_id,create_at)
+           VALUES ('$ordersell_name','$is_totalprice','$custome_name','$tell_custome','$date_time_sell','$shipping_note','$sender','$tell_sender','$location_send','$wages','$reason','".setImgpath("sell_slip")."','$count_totalpays','$count_stuck','$id_user','$day_add')";
           $query_add = mysqli_query($conn, $sql_add) or die(mysqli_error($conn));
           if($query_add){
             $id_order_sell = mysqli_insert_id($conn);
@@ -102,9 +107,10 @@
 
             for($i=0; $i < count($is_products); $i++){
               $is_product = mysqli_real_escape_string($conn,trim($is_products[$i]));
-              $is_costomer = mysqli_real_escape_string($conn, trim($is_costommerd[$i]));
+              $formatis_costommerd = number_format((float)$is_costommerd[$i], 2, '.','');
+              $is_costomer = mysqli_real_escape_string($conn, trim(number_format((float)$is_costommerd[$i], 2, '.','')));
               $tatol_product = mysqli_real_escape_string($conn, trim($tatol_products[$i]));
-              $resutl_price = mysqli_real_escape_string($conn, trim($resutl_prices[$i]));
+              $resutl_price = mysqli_real_escape_string($conn, trim(number_format((float)$resutl_prices[$i], 2, '.','')));
               $istype_custom = mysqli_real_escape_string($conn,trim($type_custom[$i]));
               if($is_product !== "" || $is_costomer !== "" || $tatol_product !== "" || $resutl_price !== ""){
                 $add_sqls = "INSERT INTO list_productsell (ordersell_id,productname,rate_customertype,type_custom,tatol_product,price_to_pay,create_at)

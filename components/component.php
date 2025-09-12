@@ -81,7 +81,7 @@ function navbar($logo, $path=""){
 function tableCapital($number, $capital_id, $count_capital,$slip, $date_time_ad){
   $list = "
     <tr>
-      <td>$number</td>
+      <td></td>
       <td class=\"font-weight-bold\">$count_capital</td>
       <td class=\"font-weight-bold\">$date_time_ad</td>
 
@@ -104,9 +104,9 @@ function tableCapital($number, $capital_id, $count_capital,$slip, $date_time_ad)
 function tableWithDraw($number, $withdraw_id, $count_withdraw,$reason,$slip_withdrow, $date_time_ad){
   $list = "
     <tr>
-      <td class=\"font-weight-bold\">$number</td>
+      <td></td>
       <td class=\"font-weight-bold\">$count_withdraw</td>
-  
+      <td class=\"font-weight-bold\">$reason</td>
       <td class=\"font-weight-bold\">$date_time_ad</td>
       <td>
         <div class=\"table-data-feature\" >
@@ -124,6 +124,45 @@ function tableWithDraw($number, $withdraw_id, $count_withdraw,$reason,$slip_with
   ";
   echo $list;
 }
+
+function setData($titleText, $number){
+    $listData = "
+      <div class=\"col-xl-3 col-md-6 mb-4\">
+        <div class=\"card border-left-primary shadow  py-2 border\">
+            <div class=\"card-body\">
+                <div class=\"row no-gutters align-items-center\">
+                    <div class=\"col mr-2\">
+                        <div class=\"text-xs font-weight-bold text-primary text-uppercase mb-1\">
+                            $titleText
+                        </div>
+                        <div class=\"h5 mb-0 font-weight-bold text-gray-800\">$number บาท</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>";
+      echo $listData;
+  }
+
+  function uiWorking($titleText,$average_cost, $average_sell){
+    $list = "
+    <div class=\"col-xl-3 col-md-6 mb-4\">
+        <div class=\"card border-left-primary shadow  py-2 border\">
+            <div class=\"px-3 py-2\">
+                <div class=\"row no-gutters align-items-center\">
+                    <div class=\"col mr-2\">
+                        <div class=\"text-xs font-weight-bold text-primary text-uppercase mb-1\">
+                            $titleText
+                        </div>
+                        <div class=\"small mb-2 font-weight-bold text-danger\">ทุนตกชิ้นละ: $average_cost บาท</div>
+                        <div class=\"small mb-0 font-weight-bold text-success\">ขายตกชิ้นละ: $average_sell บาท</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>";
+    echo $list;
+  }
 
 function tablelistsetOrder ($number, $orderid, $ordername, $totalcost_order, $price_order, $sliptImg, $date_time_order){
   $listOrder = "
@@ -195,7 +234,40 @@ function tableDetailStock($number, $product_id,$productname,$productcount,$produ
               <td class=\"font-weight-bold\">$productname</td>
               <td class=\"font-weight-bold\">$ordername</td>
               <td class=\"font-weight-bold\">$productprice บาท</td> 
-              <td class=\"font-weight-bold\">$productcount</td> 
+              <td class=\"font-weight-bold\">$productcount ชิ้น</td> 
+              <td class=\"font-weight-bold\">$toal_all</td> 
+              <td class=\"font-weight-bold\">$datetime_order</td> 
+            </tr>
+        </form>
+    ";
+    echo $list_stock;
+}
+
+function typecustomse($type){
+    if($type === "price_customer_dealer"){
+      return "ตัวแทนจำหน่าย";
+    }else if($type === "price_custommer_vip"){
+      return "ลูกค้า vip";
+    }else if($type === "price_customer_frontstore"){
+      return "ลูกค้าหน้าร้าน";
+    }else if($type === "price_customer_deliver"){
+      return "การจัดส่ง";
+    }else{
+      return $type;
+    }
+  }
+
+function tableDetailStockSell($number, $product_id,$productname,$ordername, $productcount,$productprice, $rate_custom, $datetime_order){
+    $toal_all = $productprice * $productcount;
+    $list_stock = "
+        <form>
+            <tr>
+              <td class=\"font-weight-bold\">$number</td>
+              <td class=\"font-weight-bold\">$productname</td>
+              <td class=\"font-weight-bold\">$ordername</td>
+              <td class=\"font-weight-bold\">". typecustomse($rate_custom) ."</td> 
+              <td class=\"font-weight-bold\">$productprice บาท</td> 
+              <td class=\"font-weight-bold\">$productcount ชิ้น</td> 
               <td class=\"font-weight-bold\">$toal_all</td> 
               <td class=\"font-weight-bold\">$datetime_order</td> 
             </tr>
@@ -341,6 +413,7 @@ function status_deliver($shippingnote, $sender, $wages){
     $list.="</tr>";
     return $list;
   }
+  
 
   function slip($img_slip){
     if($img_slip !==""){ 
@@ -412,19 +485,6 @@ function detailOrderSell($id_ordersell,$ordersell_name,$is_totalprice,$custome_n
   echo $list_detail;
 }
 
-  function typecustomse($type){
-    if($type === "price_customer_dealer"){
-      return "ตัวแทนจำหน่าย";
-    }else if($type === "price_custommer_vip"){
-      return "ลูกค้า vip";
-    }else if($type === "price_customer_frontstore"){
-      return "ลูกค้าหน้าร้าน";
-    }else if($type === "price_customer_deliver"){
-      return "การจัดส่ง";
-    }else{
-      return $type;
-    }
-  }
 
 function listProductSell($number,$product_id, $product_anme, $rate_customerprice, $type_custom, $lotal_product, $price_topay){
 
