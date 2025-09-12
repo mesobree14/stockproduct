@@ -127,7 +127,6 @@ const uiForm = `
     `;
 
 const createGrandTotal = (capital = []) => {
-  console.log({ capital: capital[0].funds_that_can_be_used });
   let valueInput = document.getElementById("totalcost_order");
   const results = document.querySelectorAll("input[id^='expenses-']");
   let totalPrice = 0;
@@ -514,22 +513,35 @@ const uiFormUpdate = `
       </div>
     `;
 
-const updateGrandTotal = () => {
+const updateGrandTotal = (capital = []) => {
+  let valueInput = document.getElementById("add-price");
+  let def_value = document.getElementById("defult-price");
+
+  console.log(def_value.textContent.match(/[0-9.]+/)[0]);
   const results = document.querySelectorAll("input[id^='e-expenses-']");
-  console.log({ results });
   let totalPrice = 0;
   results.forEach((span) => {
-    console.log({ span });
     const value = Number(span.value.trim());
     if (!isNaN(value)) {
       totalPrice += value;
     }
   });
+  let del = totalPrice - Number(def_value.textContent.match(/[0-9.]+/)[0]);
+
+  if (del > Number(capital[0].funds_that_can_be_used)) {
+    valueInput.style.color = "red";
+    valueInput.textContent = `เพิ่มมา ${del} บาท เกินงบ`;
+  } else {
+    valueInput.style.color = "green";
+    valueInput.textContent = `เพิ่มมา ${del} บาท`;
+  }
+
   document.getElementById("totalcost_orders").value = totalPrice;
 };
 class modelUpdateOrder extends HTMLElement {
   stockproductAll = [];
   stockproducts_id = [];
+  financedata = [];
   connectedCallback() {
     this.addEventListener("setId", (e) => {
       this.productId = e.detail;
@@ -540,6 +552,38 @@ class modelUpdateOrder extends HTMLElement {
 
     this.renderUpdateOrder();
     this.countterForm();
+    this.loadBeUseCapital();
+  }
+
+  async loadBeUseCapital() {
+    try {
+      const api_finance = await fetch(
+        "http://localhost/stockproduct/system/backend/api/api_capital_withdraw.php",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const response = await api_finance.json();
+      this.financedata.push(response.data);
+      let span = document.getElementById("u_funds_that_can_be_used");
+      span.textContent = `ทุนที่มี ${response.data.funds_that_can_be_used}`;
+
+      if (
+        Number(response.data.funds_that_can_be_used.replace(/,/g, "").trim()) >
+        0
+      ) {
+        span.classList.add("text-success");
+        span.classList.remove("text-danger");
+      } else {
+        span.classList.add("text-danger");
+        span.classList.remove("text-success");
+      }
+
+      return response.data;
+    } catch (e) {
+      throw new Error(`Is Error : ${e}`);
+    }
   }
 
   async loadProductAll() {
@@ -668,19 +712,19 @@ class modelUpdateOrder extends HTMLElement {
       count_product.addEventListener("input", (e) => {
         let value = e.target.value;
         price_product.value = Number((expenses.value / value).toFixed(2));
-        updateGrandTotal();
+        updateGrandTotal(this.financedata);
       });
 
       price_product.addEventListener("input", (e) => {
         let value = e.target.value;
         expenses.value = Number((count_product.value * value).toFixed(2));
-        updateGrandTotal();
+        updateGrandTotal(this.financedata);
       });
 
       expenses.addEventListener("input", (e) => {
         let value = e.target.value;
         price_product.value = Number((value / count_product.value).toFixed(2));
-        updateGrandTotal();
+        updateGrandTotal(this.financedata);
       });
     });
   }
@@ -756,13 +800,13 @@ class modelUpdateOrder extends HTMLElement {
           let value = e.target.value;
           console.log("t=", expenses.value);
           price_product.value = Number((expenses.value / value).toFixed(2));
-          updateGrandTotal();
+          updateGrandTotal(this.financedata);
         });
 
         price_product.addEventListener("input", (e) => {
           let value = e.target.value;
           expenses.value = Number((count_product.value * value).toFixed(2));
-          updateGrandTotal();
+          updateGrandTotal(this.financedata);
         });
 
         expenses.addEventListener("input", (e) => {
@@ -770,14 +814,14 @@ class modelUpdateOrder extends HTMLElement {
           price_product.value = Number(
             (value / count_product.value).toFixed(2)
           );
-          updateGrandTotal();
+          updateGrandTotal(this.financedata);
         });
         container.addEventListener("click", (e) => {
           if (e.target.classList.contains("remove-btn-2")) {
             const index = e.target.dataset.index;
             const targetDiv = document.querySelector(`[data-index="${index}"]`);
             if (targetDiv) targetDiv.remove();
-            updateGrandTotal();
+            updateGrandTotal(this.financedata);
           }
         });
       });
@@ -836,11 +880,21 @@ class modelUpdateOrder extends HTMLElement {
                             <input type="text" class="form-control" name="totalcost_order" id="totalcost_orders" placeholder="ค่าใช้จ่าย" required>
                           </div> 
                         </div>
-                        <div class="col-md-5">
+                        <div class="col-md-5 row"> 
                           <div class="form-group">
                             <label class="mt-0 mb-0 font-weight-bold text-dark align-self-center mt-4">บาท</label>
                           </div>
                         </div>
+                        
+                      </div>
+                      <div class="col-md-12">
+                      <div class="form-group">
+                        <label class="mt-0 mb-0 font-weight-bold text-dark align-self-center">
+                          <span class="text-primary px-2" id="defult-price"></span>
+                          <span class="px-2" id="u_funds_that_can_be_used"></span> 
+                          <span class="px-2" id="add-price"></span>
+                        </label>
+                      </div>
                       </div>
                       <div class="col-md-12">
                         <div class="form-group mb-2">
@@ -891,6 +945,7 @@ $(document).on("click", "#update_order", function (e) {
   $("#order_id").val($product_ids);
   $("#order_name").val($order_name);
   $("#totalcost_orders").val($total_cost);
+  $("#defult-price").html(`เดิม ${$total_cost} บาท`);
   $("#priceorder").html($priceorder);
   $("#date_time_order").val($dateorder);
   $("#img_default").val($slipimage);

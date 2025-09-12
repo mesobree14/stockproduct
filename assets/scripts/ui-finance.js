@@ -166,6 +166,55 @@ class Capital extends HTMLElement {
 
 customElements.define("main-create-capital", Capital);
 
+$(document).on("click", "#confirmTrashCapital", function (e) {
+  let ID = $(this).data("id");
+  let name = $(this).data("name");
+  let img = $(this).data("img");
+  console.log({ img });
+  Swal.fire({
+    title: "คุณแน่ใจไหม ?",
+    text: `ทุน ${name} นี้ จะถูกลบ จะไม่สามารถย้อนกลับได้`,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    cancelButtonText: "ยกเลิก",
+    confirmButtonText: "ยืนยัน",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const responseapi = await fetch(
+          `http://localhost/stockproduct/system/backend/api/finances.php`,
+          {
+            method: "DELETE",
+            credentials: "include",
+            body: JSON.stringify({
+              id: ID,
+              table_name: "capital",
+              image: img,
+            }),
+          }
+        );
+        const responsedata = await responseapi.json();
+        console.log("s=", responsedata.status);
+        if (responsedata.status === 201) {
+          console.log(responsedata);
+          Swal.fire({
+            title: "เรียบร้อย",
+            text: responsedata.message,
+            icon: "success",
+            showConfirmButton: false,
+          }).then(() => {
+            window.location.reload();
+          });
+        }
+      } catch (e) {
+        throw new Error(`Is Delete Error : ${e}`);
+      }
+    }
+  });
+});
+
 class Withdraw extends HTMLElement {
   constructor() {
     super();
@@ -257,3 +306,52 @@ class Withdraw extends HTMLElement {
 }
 
 customElements.define("main-create-withdraw", Withdraw);
+
+$(document).on("click", "#confirmTrashWithroaw", function (e) {
+  let ID = $(this).data("id");
+  let name = $(this).data("name");
+  let img = $(this).data("img");
+  console.log({ img });
+  Swal.fire({
+    title: "คุณแน่ใจไหม ?",
+    text: `คุณยืนยันที่จะลบข้อมูลเบิกถอน ${name} นี้ ใช่ไหม`,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    cancelButtonText: "ยกเลิก",
+    confirmButtonText: "ยืนยัน",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const responseapi = await fetch(
+          `http://localhost/stockproduct/system/backend/api/finances.php`,
+          {
+            method: "DELETE",
+            credentials: "include",
+            body: JSON.stringify({
+              id: ID,
+              table_name: "withdraw",
+              image: img,
+            }),
+          }
+        );
+        const responsedata = await responseapi.json();
+        console.log("s=", responsedata.status);
+        if (responsedata.status === 201) {
+          console.log(responsedata);
+          Swal.fire({
+            title: "เรียบร้อย",
+            text: responsedata.message,
+            icon: "success",
+            showConfirmButton: false,
+          }).then(() => {
+            window.location.reload();
+          });
+        }
+      } catch (e) {
+        throw new Error(`Is Delete Error : ${e}`);
+      }
+    }
+  });
+});

@@ -48,7 +48,12 @@ function navigationOfiicer($path = ""){
                               <span>สินค้าที่ขาย</span>
                           </a>
                         </li>
-                      
+                        <li>
+                          <a href=\"{$path}ordersell.php\">
+                            <i class=\"fa-solid fa-people-group\"></i>
+                              <span>ข้อมูลลูกค้า</span>
+                          </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -92,7 +97,7 @@ function tableCapital($number, $capital_id, $count_capital,$slip, $date_time_ad)
             >
                 <i class=\"fas fa-pencil-alt text-warning\"></i>
             </button>
-            <button type=\"button\" class=\"item\" id=\"confirmTrashOrder\" data-id=\"$capital_id\">
+            <button type=\"button\" class=\"item\" id=\"confirmTrashCapital\" data-img=\"$slip\" data-name=\"$count_capital\" data-id=\"$capital_id\">
               <i class=\"fas fa-trash-alt text-danger\"></i> 
             </button>
           </div>
@@ -115,7 +120,7 @@ function tableWithDraw($number, $withdraw_id, $count_withdraw,$reason,$slip_with
             >
                 <i class=\"fas fa-pencil-alt text-warning\"></i>
             </button>
-            <button type=\"button\" class=\"item\" id=\"confirmTrashOrder\" data-id=\"$withdraw_id\">
+            <button type=\"button\" class=\"item\" id=\"confirmTrashWithroaw\" data-img=\"$slip_withdrow\" data-name=\"$count_withdraw\" data-id=\"$withdraw_id\">
               <i class=\"fas fa-trash-alt text-danger\"></i> 
             </button>
           </div>
