@@ -57,20 +57,37 @@ if(!isset($_SESSION['users_order'])){
             $is_quall = mysqli_query($conn,$quall);
             $is_accquall = mysqli_fetch_assoc($is_quall);
 
-            $average_cost = $acc_usecapital['costordercount'] / $acc_totals['totalproduct'];
-            $average_sell = $acc_qlprofits['totalpices'] / $acc_total_psell['totalproductsell'];
+            $costordercount = $acc_usecapital['costordercount'] ?? 0;
+            $totalproduct = $acc_totals['totalproduct'] ?? 0;
 
-            $total_capitals = $average_cost * $acc_total_psell['totalproductsell'];
-            $total_profit = $acc_qlprofits['totalpices'] - $total_capitals;
+            $totalpices = $acc_qlprofits['totalpices'] ?? 0;
+            $totalproductsell = $acc_total_psell['totalproductsell'];
+            $countcapital = $acc_capintal['countcapital'] ?? 0;
+            $countstuck = $is_accquall['countstuck'] ?? 0;
+            if($totalproduct > 0 ){
+              $average_cost = $costordercount  / $totalproduct;
+            }else {
+              $average_cost = 0;
+            }
+            if($totalproductsell > 0){
+              $average_sell = $totalpices /  $totalproductsell;
+            }else{
+              $average_sell = 0;
+            }
 
-            setData("ทุนทั้งหมด",number_format($acc_capintal['countcapital'] ?? 0,2,'.',','));
-            $costorder = $acc_usecapital['costordercount'] - $total_capitals;
+            $total_capitals = $average_cost * $totalproductsell;
+            $total_profit = $totalpices - $total_capitals;
+
+            
+
+            setData("ทุนทั้งหมด",number_format($countcapital,2,'.',','));
+            $costorder = $costordercount - $total_capitals;
             setData("ทุนที่กำลังใช้",number_format($costorder ?? 0,2,'.',','));
 
-            setData("หนี้ลูกค้ายังไม่จ่าย",number_format($is_accquall['countstuck'] ?? 0,2,'.',','));
+            setData("หนี้ลูกค้ายังไม่จ่าย",number_format($countstuck,2,'.',','));
 
-            $available = $acc_capintal['countcapital'] - $costorder;
-            $remain_capital =bcsub($acc_capintal['countcapital'] ?? 0,bcadd($costorder,$is_accquall['countstuck'] ?? 0, 2), 2);
+            $available = $countcapital - $costorder;
+            $remain_capital =bcsub($countcapital,bcadd($costorder,$countstuck, 2), 2);
             setData("ทุนที่ยังใช้ได้",number_format($remain_capital ?? 0 ,2,'.',','));
             
           ?>

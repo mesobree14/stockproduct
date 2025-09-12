@@ -136,7 +136,11 @@ const createGrandTotal = (capital = []) => {
       totalPrice += value;
     }
   });
-  if (totalPrice > Number(capital[0].funds_that_can_be_used)) {
+
+  if (
+    totalPrice >
+    Number(capital[0].funds_that_can_be_used.replace(/[^\d.-]/g, ""))
+  ) {
     valueInput.style.color = "red";
     valueInput.style.border = "2px solid red";
   } else {
@@ -336,7 +340,7 @@ class modelCreateOrder extends HTMLElement {
         expenses.id = `expenses-${index}`;
         count_product.addEventListener("input", (e) => {
           let value = e.target.value;
-          console.log("SS=", value);
+
           price_product.value = Number((expenses.value / value).toFixed(2));
           createGrandTotal(this.financedata);
         });
@@ -517,7 +521,6 @@ const updateGrandTotal = (capital = []) => {
   let valueInput = document.getElementById("add-price");
   let def_value = document.getElementById("defult-price");
 
-  console.log(def_value.textContent.match(/[0-9.]+/)[0]);
   const results = document.querySelectorAll("input[id^='e-expenses-']");
   let totalPrice = 0;
   results.forEach((span) => {
@@ -528,7 +531,7 @@ const updateGrandTotal = (capital = []) => {
   });
   let del = totalPrice - Number(def_value.textContent.match(/[0-9.]+/)[0]);
 
-  if (del > Number(capital[0].funds_that_can_be_used)) {
+  if (del > Number(capital[0].funds_that_can_be_used.replace(/[^\d.-]/g, ""))) {
     valueInput.style.color = "red";
     valueInput.textContent = `เพิ่มมา ${del} บาท เกินงบ`;
   } else {
