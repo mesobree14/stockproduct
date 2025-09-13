@@ -789,7 +789,7 @@ class modelSetOrderSell extends HTMLElement {
                               </div>
                               <div class="col-12">
                                     <label class="mt-0 mb-0 font-weight-bold text-dark">ที่อยู่ในการจัดส่ง</label>
-                                    <input type="text" class="form-control" name="location_send" id="location_send" placeholder="ที่อยู่ในการจัดส่ง" required>
+                                    <input type="text" class="form-control" name="location_send" id="location_send" placeholder="ที่อยู่ในการจัดส่ง">
                               </div>
                               <div class="col-12">                         
                                   <label for="exampleFormControlTextarea1">เหตุผล(ถ้ามี)</label>

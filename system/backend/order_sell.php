@@ -80,11 +80,11 @@
           $payment_options = $_POST['payment_option'];
           $reason = $_POST['reason'] ?? "";
 
-          $count_totalpays = $_POST['count_totalpays'];
-          $count_stuck = $_POST['count_stuck'];
-          echo $count_totalpays;
-          echo "<br>";
-          echo $count_stuck;
+          $count_totalpays = $_POST['count_totalpays'] ?? 0;
+          if($count_totalpays === '' || $count_totalpays === null){
+            $count_totalpays = 0;
+          }
+          $count_stuck = $_POST['count_stuck'] ?? 0;
 
           $chkstatus = [];
  
