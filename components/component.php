@@ -49,7 +49,7 @@ function navigationOfiicer($path = ""){
                           </a>
                         </li>
                         <li>
-                          <a href=\"{$path}ordersell.php\">
+                          <a href=\"{$path}customer.php\">
                             <i class=\"fa-solid fa-people-group\"></i>
                               <span>ข้อมูลลูกค้า</span>
                           </a>

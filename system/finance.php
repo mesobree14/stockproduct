@@ -61,7 +61,7 @@ if(!isset($_SESSION['users_order'])){
             $totalproduct = $acc_totals['totalproduct'] ?? 0;
 
             $totalpices = $acc_qlprofits['totalpices'] ?? 0;
-            $totalproductsell = $acc_total_psell['totalproductsell'];
+            $totalproductsell = $acc_total_psell['totalproductsell'] ?? 0;
             $countcapital = $acc_capintal['countcapital'] ?? 0;
             $countstuck = $is_accquall['countstuck'] ?? 0;
             if($totalproduct > 0 ){
@@ -102,7 +102,7 @@ if(!isset($_SESSION['users_order'])){
             
             setData("เบิกถอนไปแล้ว",number_format($acc_useprofit['use_prefit'] ?? 0,2,'.',','));
             setData("สามารถใช้ได้",number_format($total_profit - $acc_useprofit['use_prefit'],2,'.',','));
-            uiWorking("ค่าเฉลี่ย ".$acc_total_psell['totalproductsell']." ชิ้น",number_format($average_cost ?? 0 ,2,'.',','),number_format($average_sell ?? 0,2,'.',','))
+            uiWorking("ค่าเฉลี่ยขาย ".$totalproductsell ." ชิ้น",number_format($average_cost ?? 0 ,2,'.',','),number_format($average_sell ?? 0,2,'.',','))
           ?>
         </div>
         <div class="col-12 row mt-2">
