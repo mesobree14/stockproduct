@@ -597,7 +597,6 @@ class modelSetOrderSell extends HTMLElement {
     this.renderCreateOrderSell();
     this.addProductForm();
     this.setIdCostomer();
-    //this.checkCustomer();
     this.generateID();
     this.statusPayment();
   }
@@ -634,31 +633,6 @@ class modelSetOrderSell extends HTMLElement {
       container.appendChild(clone);
     });
   }
-  // checkCustomer() {
-  //   let typecustom = [];
-  //   const div = this.querySelector(".shipping-state");
-  //   div.style.display = "block";
-  //   data.push = function (...args) {
-  //     console.log({ x11: args });
-  //     let keys = Object.keys(args[0])[0];
-  //     let values = Object.values(args[0])[0];
-  //     let indexkey = typecustom.findIndex((obj) => obj.hasOwnProperty(keys));
-  //     if (indexkey !== -1) {
-  //       typecustom[indexkey][keys] = values.replace(/-\d+$/, "");
-  //     } else {
-  //       typecustom.push({ [keys]: values.replace(/-\d+$/, "") });
-  //     }
-  //     let status = typecustom.some((obj) =>
-  //       Object.values(obj).includes("price_customer_deliver")
-  //     );
-  //     if (status) {
-  //       div.style.display = "block";
-  //     } else {
-  //       div.style.display = "none";
-  //     }
-  //     return this.length;
-  //   };
-  // }
 
   statusPayment() {
     var $select = $("#payment_options");
@@ -720,90 +694,68 @@ class modelSetOrderSell extends HTMLElement {
                       </div>
                       <div class="col-12 row mb-3 border mt-4 py-3">
                         <div class="col-xl-9 col-lg-7 col-md-7 col-sm-12">
-                            
-                          <div class="row">
-
-                                <div class="col-xl-5 col-lg-8 col-sm-12">
+                            <div class="row">
+                              <div class="col-xl-5 col-lg-8 col-sm-12">
+                                <div class="form-group mb-2">
+                                  <label class="mt-0 mb-0 font-weight-bold text-dark">รายการขาย <span class="text-danger">*</span> </label>
+                                  <input type="text" class="form-control" name="ordersell_name" id="ordersell_name" placeholder="รายการขาย" required>
+                                </div> 
+                              </div>
+                              <div class="col-xl-7 col-lg-4 col-sm-12">
                                   <div class="form-group mb-2">
-                                    <label class="mt-0 mb-0 font-weight-bold text-dark">รายการขาย</label>
-                                    <input type="text" class="form-control" name="ordersell_name" id="ordersell_name" placeholder="รายการขาย" required>
-                                  </div> 
-                                </div>
-                                <div class="col-xl-7 col-lg-4 col-sm-12">
-                                    <div class="form-group mb-2">
-                                      <label class="m-0 font-weight-bold text-dark">ราคาที่ต้องจ่าย </label>
-                                      <div class="row">
-                                        <div class="form-control col-5 ml-2">
-                                          <span id="totalPrice">0</span>
-                                          <input type="hidden" name="is_totalprice" id="is_totalprice"/>
-                                        </div>
-                                        <div class="col-6 row">
-                                          <div class="col-6 align-self-center">
-                                            <span class="font-weight-bold" id="totalOrder">0 รายการ</span>
-                                          </div>
-                                          <div class="col-6 align-self-center row ml-auto">
-                                              <span class="font-weight-bold" id="totalProducts">0 ชิ้น</span>
-                                          </div>
-                                        </div>
-                                        
+                                    <label class="m-0 font-weight-bold text-dark">ราคาที่ต้องจ่าย <span class="text-danger">*</span></label>
+                                    <div class="row">
+                                      <div class="form-control col-5 ml-2">
+                                        <span id="totalPrice">0</span>
+                                        <input type="hidden" name="is_totalprice" id="is_totalprice"/>
                                       </div>
+                                      <div class="col-6 row">
+                                        <div class="col-6 align-self-center">
+                                          <span class="font-weight-bold" id="totalOrder">0 รายการ</span>
+                                        </div>
+                                        <div class="col-6 align-self-center row ml-auto">
+                                            <span class="font-weight-bold" id="totalProducts">0 ชิ้น</span>
+                                        </div>
+                                      </div>
+                                      
                                     </div>
-                                </div>
-
-                                <div class="col-xl-5 col-md-7">
-                                  <div class="form-group mb-2">
-                                    <label class="mt-0 mb-0 font-weight-bold text-dark">ชื่อลูกค้า</label>
-                                    <input type="text" class="form-control" name="custome_name" id="custome_name" placeholder="ชื่อ" required>
-                                  </div> 
-                                </div>
-
-                              <div class="col-xl-4 col-md-5">
-                                <div class="form-group mb-2">
-                                  <label class="mt-0 mb-0 font-weight-bold text-dark">เบอร์โทร</label>
-                                  <input type="text" class="form-control" name="tell_custome" id="tell_custome" placeholder="เบอร์โทร" required>
-                                </div> 
+                                  </div>
                               </div>
-
-                              <div class="col-xl-3 col-md-5">
-                                <div class="form-group mb-2">
-                                  <label class="mt-0 mb-0 font-weight-bold text-dark">วันที่และเวลา</label>
-                                  <input type="datetime-local" class="form-control" name="date_time_sell" id="date_time_sell" placeholder="วันที่และเวลา" required>
-                                </div> 
-                              </div>
-                              <div class="col-xl-8 col-md-12">
+                            </div>
+                            <main-get-select></main-get-select>
+                            <div class="row">
+                              <div class="col-xl-8 col-md-12 pl-3">
                                 <div class="form-group mb-2 shipping-state">
                                   <label class="mt-0 mb-0 font-weight-bold text-dark">หมายเหตุการจัดส่ง</label>
                                   <div class="row">
-                                      <input type="text" class="mx-2 form-control col-md-6 col-sm-12" name="sender" id="sender" placeholder="ผู้ส่ง">
-                                      <input type="text" class=" form-control col-md-5 col-sm-12" name="tell_sender" id="tell_sender" placeholder="เบอร์โทรผู้ส่ง">
+                                      <input type="text" class="ml-3 mr-1 py-2 form-control col-md-6 col-sm-12" name="sender" id="sender" placeholder="ผู้ส่ง">
+                                      <input type="text" class=" form-control py-2 col-md-5 col-sm-12" name="tell_sender" id="tell_sender" placeholder="เบอร์โทรผู้ส่ง">
                                   </div>
                                 </div> 
                               </div>
-                              <div class="col-xl-4 col-md-12">
-                                <label class="mt-0 mb-0 col-12 font-weight-bold text-dark">ตัวเลือกการจ่าย</label>
-                                <select class="form-control multiple-select" name="payment_option[]" id="payment_options" placeholder="ตัวเลือกการจ่าย" multiple="multiple">
+                              <div class="col-xl-4 pl-0 col-md-12">
+                                <label class="mt-0 mb-0 col-12 font-weight-bold text-dark">ตัวเลือกการจ่าย <span class="text-danger">*</span></label>
+                                <select class="form-control multiple-select" name="payment_option[]" id="payment_options" placeholder="ตัวเลือกการจ่าย" multiple="multiple" required>
                                     <option value="โอน">โอน</option>
                                     <option value="จ่ายสด">จ่ายสด</option>
                                     <option value="ติดค้าง">ติดค้าง</option>
                                 </select>
                               </div>
-                              <div class="col-12">
-                                    <label class="mt-0 mb-0 font-weight-bold text-dark">ที่อยู่ในการจัดส่ง</label>
-                                    <input type="text" class="form-control" name="location_send" id="location_send" placeholder="ที่อยู่ในการจัดส่ง">
-                              </div>
+                              
                               <div class="col-12">                         
                                   <label for="exampleFormControlTextarea1">เหตุผล(ถ้ามี)</label>
                                   <textarea class="form-control" id="exampleFormControlTextarea1" name="reason" rows="2"></textarea>
                               </div>
-                          </div>
-
+                              
+                            </div>
+                          
                         </div>
                         <div class="col-xl-3 col-lg-5 col-md-5 col-sm-12">
                           <mian-add-image id="slip_orderseller" count="sell_slip" wrapper="ux-wrap" filenames="uimgname" cancles="ux-cancle"
                             names="รูปโปรไฟล์" custom="btn_custom" setdefault="setDefaultImgSell"></mian-add-image>
                           <div class="col-12" id="status_payment">
-                              <label for="" class="small">จำนวนเงินที่ลูกค้าจ่าย</label>
-                              <input type="text" class="form-control" name="count_totalpays" id="count_totalpays" placeholder="จำนวนเงินที่ลูกค้าจ่าย">
+                              <label for="" class="small">จำนวนเงินที่ลูกค้าจ่าย <span class="text-danger">*</span></label>
+                              <input type="text" class="form-control" name="count_totalpays" id="count_totalpays" placeholder="จำนวนเงินที่ลูกค้าจ่าย" required>
                               <input type="hidden" class="form-control" name="count_stuck" id="count_stuck" value="0" placeholder="จำนวนเงินที่ลูกค้าจ่าย">
                               <div class="align-self-center row mt-2 ml-2" id="is_stock">
                                 <b id="txt-status"></b> <span class="ml-2 font-weight-bold" id="results"></span>
@@ -825,6 +777,439 @@ class modelSetOrderSell extends HTMLElement {
 }
 
 customElements.define("mian-form-ordersell", modelSetOrderSell);
+
+// <div class="col-xl-5 col-md-7">
+//      <div class="form-group mb-2">
+//        <label class="mt-0 mb-0 font-weight-bold text-dark">ชื่อลูกค้า <span class="text-danger">*</span></label>
+//        <input type="text" class="form-control" name="custome_name" id="custome_name" placeholder="ชื่อ" required>
+//      </div>
+//    </div>
+//    <div class="col-xl-4 col-md-5">
+//      <div class="form-group mb-2">
+//        <label class="mt-0 mb-0 font-weight-bold text-dark">เบอร์โทร <span class="text-danger">*</span></label>
+//        <input type="text" class="form-control" name="tell_custome" id="tell_custome" placeholder="เบอร์โทร" required>
+//      </div>
+//    </div>
+//  <div class="col-xl-3 col-md-5">
+//    <div class="form-group mb-2">
+//      <label class="mt-0 mb-0 font-weight-bold text-dark">วันที่และเวลา <span class="text-danger">*</span></label>
+//      <input type="datetime-local" class="form-control" name="date_time_sell" id="date_time_sell" placeholder="วันที่และเวลา" required>
+//    </div>
+//  </div>
+{
+  /* <div class="col-12">
+                                    <label class="mt-0 mb-0 font-weight-bold text-dark">ที่อยู่ในการจัดส่ง</label>
+                                    <input type="text" class="form-control" name="location_send" id="location_send" placeholder="ที่อยู่ในการจัดส่ง">
+                              </div> */
+}
+
+class SelectCustome extends HTMLElement {
+  constructor() {
+    super();
+  }
+  customdata = [];
+  async connectedCallback() {
+    await this.loadData();
+    this.render();
+    this.scriptCodeCustome();
+  }
+
+  async loadData() {
+    try {
+      const response = await fetch(
+        "http://localhost/stockproduct/system/backend/api/customer_api.php",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const responsedata = await response.json();
+      this.customdata.push(responsedata.data);
+      return responsedata;
+    } catch (e) {
+      console.error(`Is Error ${e}`);
+    }
+  }
+  updateData(data_custome, index, group) {
+    console.log({ data_custome });
+    this.scriptTell(data_custome);
+    this.scriptLocation(data_custome);
+    let selectedData = group.querySelector(`.IsselectedData-${index}`);
+    let customInputContainer = document.querySelector(
+      `.IscustomInputContainer-${index}`
+    );
+    const ul = group.querySelector("ul");
+    selectedData.value = data_custome ?? "";
+    for (const li of group.querySelectorAll("li.selected")) {
+      li.classList.remove("selected");
+    }
+    const clickedLi = [...ul.children].find(
+      (li) => li.innerText === data_custome
+    );
+    if (clickedLi) clickedLi.classList.add("selected");
+    customInputContainer.classList.toggle("show");
+  }
+  scriptCodeCustome() {
+    const index = 1;
+    let isForm = document.querySelector(".is-form");
+    let getSelect = isForm.querySelector(".getSelect");
+    let customInputContainer = getSelect.querySelector(".customInputContainer");
+    let customInput = getSelect.querySelector(`.customInput`);
+
+    let selectedData = getSelect.querySelector(".selectedData");
+    let serchInput = getSelect.querySelector(".searchInput input");
+    let ul = getSelect.querySelector(`.options ul`);
+
+    customInput.classList.add(`IscustomInput-${index}`);
+    getSelect.classList.add(`IscustomInputContainer-${index}`);
+    selectedData.classList.add(`IsselectedData-${index}`);
+    serchInput.classList.add(`IsserchInput-${index}`);
+    ul.classList.add(`Isoptions-${index}`);
+
+    window.addEventListener("click", (e) => {
+      const searchInputEl = getSelect.querySelector(`.IssearchInput-${index}`);
+      if (searchInputEl && searchInputEl.contains(e.target)) {
+        searchInputEl.classList.add("focus");
+      } else if (searchInputEl) {
+        searchInputEl.classList.remove("focus");
+      }
+      if (customInputContainer && !customInputContainer.contains(e.target)) {
+        customInputContainer.classList.remove("show");
+      }
+    });
+    customInput.addEventListener("click", () => {
+      customInputContainer.classList.add("show");
+    });
+    for (let i = 0; i < this.customdata[0].length; i++) {
+      let custom = this.customdata[0][i];
+      let li = document.createElement("li");
+      li.classList.add("block");
+      const row = document.createElement("div");
+      row.classList.add("row");
+      let span = document.createElement("span");
+      span.textContent = custom.custome_name;
+      row.appendChild(span);
+      li.appendChild(row);
+      ul.appendChild(li);
+    }
+    ul.querySelectorAll("li").forEach((li) => {
+      li.addEventListener("click", () => {
+        let spanTxt = li.querySelector("span").innerText;
+        this.scriptTell(spanTxt);
+        this.scriptLocation(spanTxt);
+        selectedData.value = spanTxt;
+        for (const li of document.querySelectorAll("li.selected")) {
+          li.classList.remove("selected");
+        }
+        li.classList.add("selected");
+        customInputContainer.classList.toggle("show");
+      });
+    });
+    serchInput.addEventListener("keyup", () => {
+      let searchedVal = serchInput.value.toLowerCase();
+      let searched_product = this.customdata[0].filter((data) =>
+        data.custome_name.toLowerCase().includes(searchedVal)
+      );
+      console.log({ searched_product });
+      ul.innerHTML = "";
+      if (searched_product.length === 0) {
+        ul.innerHTML = "";
+        return;
+      }
+      searched_product.forEach((data) => {
+        const li = document.createElement("li");
+        li.textContent = data.custome_name;
+        li.addEventListener("click", (e) => {
+          this.updateData(e.target.textContent, index, getSelect);
+        });
+        ul.appendChild(li);
+      });
+    });
+  }
+
+  updateDataTell(data_tell, index, group) {
+    console.log({ data_tell });
+    let selectedData = group.querySelector(`.IsselectedTellData-${index}`);
+    let customInputContainer = document.querySelector(
+      `.IsTellInputContainer-${index}`
+    );
+    const ul = group.querySelector("ul");
+    selectedData.value = data_tell ?? "";
+    for (const li of group.querySelectorAll("li.selected")) {
+      li.classList.remove("selected");
+    }
+    const clickedLi = [...ul.children].find((li) => li.innerText === data_tell);
+    if (clickedLi) clickedLi.classList.add("selected");
+    customInputContainer.classList.toggle("show");
+  }
+
+  scriptTell(customename) {
+    if (customename) {
+      const index = 2;
+      const customes = this.customdata[0].filter((data) =>
+        data.custome_name.toLowerCase().includes(customename)
+      );
+      const isTell = document.querySelector(".is-tell");
+      let getSelectTell = isTell.querySelector(".getSelectTell");
+      let customInputContainer = getSelectTell.querySelector(
+        ".customInputContainer"
+      );
+      let customInput = getSelectTell.querySelector(`.customInput`);
+
+      let selectedData = getSelectTell.querySelector(".selectedData");
+      let serchInput = getSelectTell.querySelector(".searchInput input");
+      let ul = getSelectTell.querySelector(`.options ul`);
+      customInput.classList.add(`IsTellInput-${index}`);
+      getSelectTell.classList.add(`IsTellInputContainer-${index}`);
+      selectedData.classList.add(`IsselectedTellData-${index}`);
+      serchInput.classList.add(`IsTellserchInput-${index}`);
+      ul.classList.add(`IsTelloptions-${index}`);
+
+      selectedData.value = "";
+
+      window.addEventListener("click", (e) => {
+        const searchInputEl = getSelectTell.querySelector(
+          `.IsTellserchInput-${index}`
+        );
+        if (searchInputEl && searchInputEl.contains(e.target)) {
+          searchInputEl.classList.add("focus");
+        } else if (searchInputEl) {
+          searchInputEl.classList.remove("focus");
+        }
+        if (customInputContainer && !customInputContainer.contains(e.target)) {
+          customInputContainer.classList.remove("show");
+        }
+      });
+      customInput.addEventListener("click", () => {
+        customInputContainer.classList.add("show");
+      });
+      ul.innerHTML = "";
+      if (customes.length > 0 && customes[0].customtell) {
+        for (let i = 0; i < customes[0].customtell.length; i++) {
+          let custom = customes[0].customtell;
+          let li = document.createElement("li");
+          li.classList.add("block");
+          const row = document.createElement("div");
+          row.classList.add("row");
+          let span = document.createElement("span");
+          span.textContent = custom[i];
+          row.appendChild(span);
+          li.appendChild(row);
+          ul.appendChild(li);
+        }
+      }
+      ul.querySelectorAll("li").forEach((li) => {
+        li.addEventListener("click", () => {
+          let spanTxt = li.querySelector("span").innerText;
+          selectedData.value = spanTxt;
+          for (const li of document.querySelectorAll("li.selected")) {
+            li.classList.remove("selected");
+          }
+          li.classList.add("selected");
+          customInputContainer.classList.toggle("show");
+        });
+      });
+
+      serchInput.addEventListener("keyup", () => {
+        let searchedVal = serchInput.value.toLowerCase();
+        if (customes.length > 0 && Array.isArray(customes[0].customtell)) {
+          let searched_product = customes[0].customtell.filter((data) =>
+            data.toLowerCase().includes(searchedVal)
+          );
+          ul.innerHTML = "";
+          if (searched_product.length === 0) {
+            ul.innerHTML = "";
+            return;
+          }
+          searched_product.forEach((data) => {
+            const li = document.createElement("li");
+            console.log({ data });
+            li.textContent = data;
+            li.addEventListener("click", (e) => {
+              this.updateDataTell(e.target.textContent, index, getSelectTell);
+            });
+            ul.appendChild(li);
+          });
+        }
+      });
+    }
+  }
+
+  updateDataLocation(data_location, index, group) {
+    console.log({ data_location });
+    let selectedLocationData = group.querySelector(
+      `.IsselectedLocationData-${index}`
+    );
+    let customInputContainer = document.querySelector(
+      `.IsLocationInputContainer-${index}`
+    );
+    const ul = group.querySelector("ul");
+    selectedLocationData.value = data_location ?? "";
+    for (const li of group.querySelectorAll("li.selected")) {
+      li.classList.remove("selected");
+    }
+    const clickedLi = [...ul.children].find(
+      (li) => li.innerText === data_location
+    );
+    if (clickedLi) clickedLi.classList.add("selected");
+    customInputContainer.classList.toggle("show");
+  }
+
+  scriptLocation(customername) {
+    if (customername) {
+      const index = 3;
+      const customes = this.customdata[0].filter((data) =>
+        data.custome_name.toLowerCase().includes(customername)
+      );
+      const isLocation = document.querySelector(".is-loaction");
+      let getSelectLocation = isLocation.querySelector(".getSelectLocation");
+      let customInputContainer = getSelectLocation.querySelector(
+        ".customInputContainer"
+      );
+      let customInput = getSelectLocation.querySelector(`.customInput`);
+
+      let selectedData = getSelectLocation.querySelector(".selectedData");
+      let serchInput = getSelectLocation.querySelector(".searchInput input");
+      let ul = getSelectLocation.querySelector(`.options ul`);
+      customInput.classList.add(`IsLocationInput-${index}`);
+      getSelectLocation.classList.add(`IsLocationInputContainer-${index}`);
+      selectedData.classList.add(`IsselectedLocationData-${index}`);
+      serchInput.classList.add(`IsLocationserchInput-${index}`);
+      ul.classList.add(`IsLocationoptions-${index}`);
+
+      selectedData.value = "";
+
+      window.addEventListener("click", (e) => {
+        const searchInputEl = getSelectLocation.querySelector(
+          `.IsLocationserchInput-${index}`
+        );
+        if (searchInputEl && searchInputEl.contains(e.target)) {
+          searchInputEl.classList.add("focus");
+        } else if (searchInputEl) {
+          searchInputEl.classList.remove("focus");
+        }
+        if (customInputContainer && !customInputContainer.contains(e.target)) {
+          customInputContainer.classList.remove("show");
+        }
+      });
+      customInput.addEventListener("click", () => {
+        customInputContainer.classList.add("show");
+      });
+      ul.innerHTML = "";
+      if (customes.length > 0 && customes[0].customlocation) {
+        console.log("[", customes);
+        for (let i = 0; i < customes[0].customlocation.length; i++) {
+          let custom = customes[0].customlocation;
+          console.log("LO=", i);
+          console.log("LO=", custom);
+          let li = document.createElement("li");
+          li.classList.add("block");
+          const row = document.createElement("div");
+          row.classList.add("row");
+          let span = document.createElement("span");
+          span.textContent = custom[i];
+          row.appendChild(span);
+          li.appendChild(row);
+          ul.appendChild(li);
+        }
+      }
+      ul.querySelectorAll("li").forEach((li) => {
+        li.addEventListener("click", () => {
+          let spanTxt = li.querySelector("span").innerText;
+          selectedData.value = spanTxt;
+          for (const li of document.querySelectorAll("li.selected")) {
+            li.classList.remove("selected");
+          }
+          li.classList.add("selected");
+          customInputContainer.classList.toggle("show");
+        });
+      });
+
+      serchInput.addEventListener("keyup", () => {
+        let searchedVal = serchInput.value.toLowerCase();
+
+        if (customes.length > 0 && Array.isArray(customes[0].customlocation)) {
+          let searched_product = customes[0].customlocation.filter((data) =>
+            data.toLowerCase().includes(searchedVal)
+          );
+          ul.innerHTML = "";
+          if (searched_product.length === 0) {
+            ul.innerHTML = "";
+            return;
+          }
+          searched_product.forEach((data) => {
+            const li = document.createElement("li");
+            console.log({ data });
+            li.textContent = data;
+            li.addEventListener("click", (e) => {
+              this.updateDataLocation(
+                e.target.textContent,
+                index,
+                getSelectLocation
+              );
+            });
+            ul.appendChild(li);
+          });
+        }
+      });
+    }
+  }
+  render() {
+    this.innerHTML = `
+    <div class="row col-12 p-0">
+      <div class="col-xl-5 col-md-7 is-form">
+        <div class="getSelect form-group mb-2">
+          <label class="mt-0 mb-0 font-weight-bold text-dark">ชื่อลูกค้า <span class="text-danger">*</span></label>
+          <div class="customInputContainer">
+              <div class="customInput searchInput">
+                  <input class="selectedData form-control cusotmer_name"  type="text" name="custome_name" required/>
+              </div>
+              <div class="options">
+                  <ul></ul>
+              </div>
+          </div>
+        </div> 
+      </div>
+
+      <div class="col-xl-4 col-md-5 is-tell">
+        <div class="getSelectTell form-group mb-2">
+          <label class="mt-0 mb-0 font-weight-bold text-dark">เบอร์โทร <span class="text-danger">*</span></label>
+          <div class="customInputContainer">
+              <div class="customInput searchInput">
+                  <input class="selectedData form-control cusotmer_tell"  type="text" name="tell_custome" required/>
+              </div>
+              <div class="options">
+                  <ul></ul>
+              </div>
+          </div>
+        </div> 
+      </div>
+
+      <div class="col-xl-3 col-md-5">
+        <div class="form-group mb-2">
+          <label class="mt-0 mb-0 font-weight-bold text-dark">วันที่และเวลา <span class="text-danger">*</span></label>
+          <input type="datetime-local" class="form-control" name="date_time_sell" id="date_time_sell" placeholder="วันที่และเวลา" required>
+        </div> 
+      </div>
+      <div class="col-12 is-loaction">
+        <div class="getSelectLocation form-group mb-2">
+            <label class="mt-0 mb-0 font-weight-bold text-dark">ที่อยู่ในการจัดส่ง</label>
+            <div class="customInputContainer">
+              <div class="customInput searchInput">
+                  <input class="selectedData form-control location_send"  type="text" name="location_send" placeholder="ที่อยู่ในการจัดส่ง" required/>
+              </div>
+              <div class="options">
+                  <ul></ul>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    `;
+  }
+}
+
+customElements.define("main-get-select", SelectCustome);
 
 $(document).on("click", "#confirmTrashOrderSell", function (e) {
   let idorder_sell = $(this).data("id");

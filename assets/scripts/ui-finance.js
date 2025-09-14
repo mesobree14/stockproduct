@@ -124,6 +124,7 @@ class Capital extends HTMLElement {
             </div>
             <form  method="POST" action="backend/finance.php" enctype="multipart/form-data">
               <input type="hidden" name="status_form" value="capital"/>
+              <input type="hidden" name="capital_id" id="capital_id" />
               <div class="modal-body">
                 <div class="modal-body">
                     <div class="col-md-12 row mb-3">
@@ -165,6 +166,24 @@ class Capital extends HTMLElement {
 }
 
 customElements.define("main-create-capital", Capital);
+
+$(document).on("click", "#update_capital", function (e) {
+  let id_capital = $(this).data("id");
+  let img_capital = $(this).data("img");
+  let count_capital = $(this).data("count");
+  let date_capital = $(this).data("date");
+
+  $("#capital_id").val(id_capital);
+  $("#count_capital").val(count_capital);
+  $("#date_time_capital").val(date_capital);
+
+  e.preventDefault();
+  $("#slip_capital").val(img_capital);
+  $(".slip_capital").attr("src", `../db/slip-finance/${img_capital}`);
+  $(".ux-wrap").last().addClass("active");
+  $(".uimgname").html(img_capital);
+  console.log({ id_capital, img_capital, count_capital, date_capital });
+});
 
 $(document).on("click", "#confirmTrashCapital", function (e) {
   let ID = $(this).data("id");
@@ -260,8 +279,9 @@ class Withdraw extends HTMLElement {
                   <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <form  method="POST" action="backend/finance.php" enctype="multipart/form-data">
+            <form  method="POST" action="backend/finance.php" id="is_form" enctype="multipart/form-data">
               <input type="hidden" name="status_form" value="withdraw"/>
+              <input type="hidden" name="withdraw_id" id="withdraw_id"/>
               <div class="modal-body">
                 <div class="modal-body">
                     <div class="col-md-12 row mb-3">
@@ -272,7 +292,7 @@ class Withdraw extends HTMLElement {
                       <div class="col-md-7">
                         <div class="form-group mb-2">
                           <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนเงินที่เบิกถอน / .บ <span id="res-value"></span></label>
-                          <input type="text" class="form-control" name="count_withdraw" id="count_withdraw" placeholder="ชื่อสินค้า" required>
+                          <input type="text" class="form-control" name="count_withdraw" id="count_withdraw" placeholder="จำนวนเงิน" required>
                         </div>  
                       </div>
                       <div class="col-md-5">
@@ -284,7 +304,7 @@ class Withdraw extends HTMLElement {
                       <div class="col-md-7">
                         <div class="form-group mb-2">
                           <label class="mt-0 mb-0 font-weight-bold text-dark">เหตุผลในการเบิกถอน</label>
-                          <textarea class="form-control" id="exampleFormControlTextarea1" name="reason" rows="3"></textarea>
+                          <textarea class="form-control" id="reason" name="reason" rows="3"></textarea>
                         </div>
                       </div>
                       <div class="col-md-5">
@@ -306,6 +326,52 @@ class Withdraw extends HTMLElement {
 }
 
 customElements.define("main-create-withdraw", Withdraw);
+
+$(document).on("click", "#update_withraw", function (e) {
+  //document.getElementById("is_form").id = "is_update_form";
+  let withdraw_id = $(this).data("id");
+  let count_withdraw = $(this).data("count");
+  let date_withraw = $(this).data("date");
+  let img_withdraw = $(this).data("img");
+  let reason = $(this).data("reason");
+
+  $("#withdraw_id").val(withdraw_id);
+  $("#count_withdraw").val(count_withdraw);
+  $("#date_time_withdraw").val(date_withraw);
+  //$("#withdraw_id").val(img_withdraw);
+  $("#reason").val(reason);
+});
+
+// เช็กว่า jQuery มีหรือยัง
+console.log(
+  "has jQuery?",
+  !!window.jQuery,
+  "version:",
+  window.jQuery && jQuery.fn && jQuery.fn.jquery
+);
+
+// เช็กว่า bootstrap modal plugin โหลดไหม
+console.log(
+  "has bootstrap modal plugin?",
+  !!(window.jQuery && jQuery.fn && jQuery.fn.modal)
+);
+
+// เช็กว่ามี element id ที่ตรงไหม
+console.log(
+  "#modalFormWithdraw exists?",
+  document.getElementById("modalFormWithdraw") ? true : false
+);
+
+// เช็กว่ามี error ใน console (ดู red errors) — ถ้ามี ให้แก้ก่อน
+
+// $(document).ready(function () {
+//   $("#modalFormWithdraw").on("hidden.bs.modal", function (e) {
+//     console.log(e);
+//     console.log("fl");
+//     $(this).find("form").trigger("reset");
+//     //$(this).find("#is_update_form").removeAttr("id");
+//   });
+// });
 
 $(document).on("click", "#confirmTrashWithroaw", function (e) {
   let ID = $(this).data("id");

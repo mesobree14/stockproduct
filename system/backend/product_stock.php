@@ -41,6 +41,8 @@
             $rate_vip = $_POST['rate_vip'];
             $rate_dealers = $_POST['rate_dealers'];
             $rate_delivery = $_POST['rate_delivery'];
+
+            $url_encode = urlencode($_POST['product_name']);
             
             if(!$rate_id){
               $sql_rate = "INSERT INTO rate_price (product_name,id_adder,price_custommer_vip,price_customer_frontstore,price_customer_deliver,price_customer_dealer,create_at)
@@ -48,11 +50,11 @@
                 $query_insert = mysqli_query($conn,$sql_rate) or die(mysqli_error($conn));
                 if($query_insert){
                   echo "<script type=\"text/javascript\">
-                            MySetSweetAlert(\"success\",\"เรียบร้อย\",\"เพิ่มข้อมูลเรียบร้อยแล้ว\",\"../details/detail_stock.php?product_name=$product_name\")
+                            MySetSweetAlert(\"success\",\"เรียบร้อย\",\"เพิ่มข้อมูลเรียบร้อยแล้ว\",\"../details/detail_stock.php?product_name=$url_encode\")
                         </script>";
                 }else {
                   echo "<script type=\"text/javascript\">
-                        MySetSweetAlert(\"warning\",\"ล้มเหลว!\",\"เพิ่มข้อมูลไม่สำเร็จ!\",\"../details/detail_stock.php?product_name=$product_name\")
+                        MySetSweetAlert(\"warning\",\"ล้มเหลว!\",\"เพิ่มข้อมูลไม่สำเร็จ!\",\"../details/detail_stock.php?product_name=$url_encode\")
                       </script>";
                 }
             }else{
@@ -62,11 +64,11 @@
               $query_update = mysqli_query($conn,$update_rate) or die(mysqli_error($conn));
               if($query_update){
                 echo "<script type=\"text/javascript\">
-                            MySetSweetAlert(\"success\",\"เรียบร้อย\",\"แก้ไขข้อมูลเรียบร้อยแล้ว\",\"../details/detail_stock.php?product_name=$product_name\")
+                            MySetSweetAlert(\"success\",\"เรียบร้อย\",\"แก้ไขข้อมูลเรียบร้อยแล้ว\",\"../details/detail_stock.php?product_name=$url_encode\")
                         </script>";
               }else{
                 echo "<script type=\"text/javascript\">
-                        MySetSweetAlert(\"warning\",\"ล้มเหลว!\",\"แก้ไขข้อมูลไม่สำเร็จ!\",\"../details/detail_stock.php?product_name=$product_name\")
+                        MySetSweetAlert(\"warning\",\"ล้มเหลว!\",\"แก้ไขข้อมูลไม่สำเร็จ!\",\"../details/detail_stock.php?product_name=$url_encode\")
                       </script>";
               }
             }

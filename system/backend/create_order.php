@@ -43,7 +43,7 @@
               $newImage = $new_img_name;
               
           }else{
-              $newImage = $new_img_name;
+              $newImage = "";
               
           }
           return $newImage;

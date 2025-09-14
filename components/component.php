@@ -92,8 +92,9 @@ function tableCapital($number, $capital_id, $count_capital,$slip, $date_time_ad)
 
       <td>
         <div class=\"table-data-feature\" >
-            <button type=\"button\" id=\"update_order\" data-target=\"#modalFormUpdateOrder\" data-toggle=\"modal\"  
-                   class=\"item\" data-id=\"$capital_id\" data-count=\"$count_capital\" data-dateadd=\"$date_time_ad\" 
+            <button type=\"button\" id=\"update_capital\" data-target=\"#modalFormCapital\" data-toggle=\"modal\"  
+                   class=\"item\" data-id=\"$capital_id\" data-count=\"$count_capital\" data-date=\"$date_time_ad\" 
+                   data-img=\"$slip\"
             >
                 <i class=\"fas fa-pencil-alt text-warning\"></i>
             </button>
@@ -115,8 +116,9 @@ function tableWithDraw($number, $withdraw_id, $count_withdraw,$reason,$slip_with
       <td class=\"font-weight-bold\">$date_time_ad</td>
       <td>
         <div class=\"table-data-feature\" >
-            <button type=\"button\" id=\"update_order\" data-target=\"#modalFormUpdateOrder\" data-toggle=\"modal\"  
-                   class=\"item\" data-id=\"$withdraw_id\" data-count=\"$count_withdraw\" data-dateadd=\"$date_time_ad\" 
+            <button type=\"button\" id=\"update_withraw\" data-target=\"#modalFormWithdraw\" data-toggle=\"modal\"  
+                   class=\"item\" data-id=\"$withdraw_id\" data-count=\"$count_withdraw\" data-date=\"$date_time_ad\"
+                   data-img=\"$slip_withdrow\" data-reason=\"$reason\" 
             >
                 <i class=\"fas fa-pencil-alt text-warning\"></i>
             </button>
@@ -219,7 +221,7 @@ function tablelistStock ($number, $product_name, $total_order, $total_count, $to
       <td class=\"font-weight-bold\">$remaining_amount ชิ้น</td> 
       <td class='text-center'>
           <div class=\"table-data-feature\" >
-            <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"details/detail_stock.php?product_name=".$product_name." \">
+            <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"details/detail_stock.php?product_name=".urlencode($product_name)." \">
               <i class=\"fas fa-list-alt\"></i>
             </a>
           </div>
