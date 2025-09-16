@@ -32,7 +32,7 @@ if(!isset($_SESSION['users_order'])){
   <div class="page-wrapper chiller-theme toggled">
       <?php  navigationOfiicer("../"); ?>
        <main class="page-content mt-0">
-      <?php navbar("รายละเอียด / ".$product_name."", "../"); ?>
+      <?php navbar("รายละเอียดสินค้า / ".$product_name."", "../"); ?>
       <div class="container-fluid row">
           <div class="col-md-12">
             <?php

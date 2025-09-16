@@ -39,7 +39,7 @@ $total_price = $row_count['counts'];
   <div class="page-wrapper chiller-theme toggled">
       <?php  navigationOfiicer("../"); ?>
        <main class="page-content mt-0">
-      <?php navbar("รายละเอียด / ".$row_sql['order_name']."", "../"); ?>
+      <?php navbar("รายละเอียดคำสั่งซื้อ / ".$row_sql['order_name']."", "../"); ?>
       <div class="container-fluid row">
           <div class="col-md-12 mt-4 card shadow-lg rounded">
             <?php listDetailOrderBuy(

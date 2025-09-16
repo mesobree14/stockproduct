@@ -48,7 +48,7 @@ if(!isset($_SESSION['users_order'])){
                             <thead>
                                 <tr>
                                     <th>ลำดับ</th>
-                                    <th>คำสั่งซื้อ</th>
+                                    <th style="width:22%">คำสั่งซื้อ</th>
                                     <th>ค่าใช้จ่าย</th>
                                     <th>รายการสินค้า</th>
                                     <th>เวลา</th>

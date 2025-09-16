@@ -48,14 +48,14 @@ if(!isset($_SESSION['users_order'])){
                         <table class="table table-data2 mydataTablePatron">
                             <thead>
                                 <tr>
-                                    <th>ลำดับ</th>
-                                    <th>ชื่อ สินค้า</th>
+                                    <th style="width:5%">ลำดับ</th>
+                                    <th style="">ชื่อ สินค้า</th>
                                     <!-- <th>จำนวนครั้งที่ซื้อ</th> -->
-                                    <th>จำนวนทั้งหมด ชิ้น</th>
+                                    <th style="width:15%">จำนวนทั้งหมด ชิ้น</th>
                                     <!-- <th>ต้นทุนทั้งหมด บ.</th> -->
-                                    <th>ขายไปแล้ว ชิ้น.</th>
-                                    <th>สินค้าคงเหลือ</th>
-                                    <th>จัดการ</th>
+                                    <th style="width:15%">ขายไปแล้ว ชิ้น.</th>
+                                    <th style="width:15%">สินค้าคงเหลือ</th>
+                                    <th style="width:5%">จัดการ</th>
                                 </tr> 
                             </thead>
                             <tbody>

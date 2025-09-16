@@ -97,7 +97,7 @@ foreach($res_acc as $rows){
   <div class="page-wrapper chiller-theme toggled">
       <?php  navigationOfiicer("../"); ?>
        <main class="page-content mt-0">
-      <?php navbar("รายละเอียด / ".$order['ordersell_name']."", "../"); ?>
+      <?php navbar("รายละเอียดคำสั่งขาย / ".$order['ordersell_name']."", "../"); ?>
       <div class="container-fluid row">
           <div class="col-md-12 mt-4 card shadow-lg rounded">
             

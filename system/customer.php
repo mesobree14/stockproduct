@@ -41,17 +41,27 @@ if(!isset($_SESSION['users_order'])){
                 <table class="table table-data2">
                     <thead>
                         <tr>
-                            <th>ชื่อลูกค้า</th>
-                            <th>จำนวนรายการที่ซื้อ</th>
-                            <th>รวมค่าใช้จ่าย</th>
-                            <th>จำนวนเงินที่จ่ายแล้ว</th>
-                            <th>จำนวนครั้งที่จ่าย</th>
-                            <th>จำนวนหนี้ที่ติดค้างอยู่</th>
-                            <th>จัดการ</th>
+                            <th></th>
+                            <th></th>
+                            <th style="width:27%">ชื่อลูกค้า</th>
+                            <th style="width:15%">รายการที่ซื้อ</th>
+                            <th style="width:15%">รวมค่าใช้จ่าย</th>
+                            <th style="width:15%">จำนวนเงินที่จ่ายแล้ว</th>
+                            <th style="width:15%">จำนวนหนี้ที่ติดค้างอยู่</th>
+                            <th style="width:13%">จัดการ</th>
                         </tr>
                     </thead>
                     <tbody>
-                      
+                      <?php
+                        $sql = "SELECT COUNT(*) AS count_order, SUM(is_totalprice) AS prices_sell, custome_name, SUM(count_totalpays) AS prices_pay, SUM(count_stuck) AS count_stuck FROM orders_sell GROUP BY custome_name";
+                        $query_sql = mysqli_query($conn,$sql) or die(mysqli_error($conn));
+                        $nums = mysqli_num_rows($query_sql);
+                        if($nums > 0){
+                          foreach($query_sql as $key => $res){
+                            listCustomer(($key+1),$res['custome_name'],$res['count_order'],$res['prices_sell'],$res['prices_pay'],$res['count_stuck']);
+                          }
+                        }
+                      ?>
                     </tbody>
                 </table>
             </div>

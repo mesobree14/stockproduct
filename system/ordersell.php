@@ -37,7 +37,7 @@ if(!isset($_SESSION['users_order'])){
       <?php navbar("ราการขาย"); ?>
       <div class="container-fluid row">
 
-        <div class="ml-auto border">
+          <div class="ml-auto border">
             <button class="bd-none au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" 
                 data-target="#modalFormOrderSell"
             >

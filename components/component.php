@@ -656,4 +656,30 @@ function listProductBuy($number,$product_id, $product_name, $cost_price, $total_
   echo $list;
 }
 
+function listCustomer($number,$custom_name,$count_order,$pricessell,$pricespay,$countstuck){
+  $list = "
+    <tr>
+      <td class=\"font-weight-bold\"></td>
+      <td class=\"font-weight-bold\">$number</td>
+      <td class=\"font-weight-bold\">$custom_name</td>
+      <td class=\"font-weight-bold\">$count_order รายการ</td>
+      <td class=\"font-weight-bold\">$pricessell บาท</td>
+      <td class=\"font-weight-bold\">$pricespay บาท</td>
+      
+      <td class=\"font-weight-bold\">$countstuck บาท</td>
+      <td class='text-center'>
+            <div class=\"table-data-feature\" >
+              <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"details/detail_customer.php?custom_name=".urlencode($custom_name)." \">
+                <i class=\"fas fa-list-alt\"></i>
+              </a>
+              <button type=\"button\" class=\"item\" id=\"falseTrashBtnProject\" data-custom=\"$custom_name\">
+                <i class=\"fa-solid fa-circle-dollar-to-slot\"></i>
+              </button>
+          </div>
+        </td>
+    </tr>
+  ";
+  echo $list;
+}
+
 ?>
