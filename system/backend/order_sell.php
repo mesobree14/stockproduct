@@ -50,7 +50,6 @@
       }
       
       if($_SERVER['REQUEST_METHOD'] === "POST"){
-        if($_POST['status_form'] === "create"){
                     
           $is_products = $_POST['product'];
           $is_costommerd = $_POST['costommerds'];
@@ -126,11 +125,9 @@
                         </script>";
           }
 
-        }
+        
       }
-      // elseif($_SERVER['REQUEST_METHOD'] === "GET"){
-       
-      // }
+      
     ?>
 </body>
 </html>

@@ -58,6 +58,37 @@ $sql_sun = "SELECT COUNT(*) AS total, SUM(tatol_product) AS totalproduct, SUM(pr
 $is_sum = $conn->query($sql_sun);
 $count_rows = $is_sum->fetch_assoc();
 
+$type_customer = [];
+
+function setTypeCustom($value){
+  switch($value){
+    case "price_customer_dealer":
+      return "ตัวแทนจำหน่าย";
+      break;
+    case "price_custommer_vip";
+      return "ลูกค้า vip";
+      break;
+    case "price_customer_frontstore":
+      return "ลูกค้าหน้าร้าน";
+      break;
+    case "price_customer_deliver":
+      return "การจัดส่ง";
+      break;
+    default:
+      return $value;
+  }
+}
+
+function status_pays($totalprice,$custompay,$countstuck){
+  if($totalprice == $custompay){
+    return "<b style=\"color: #4CAF50;\">จ่ายครบถ้วน</b>";
+  }elseif($totalprice == $countstuck){
+    return "<b style=\"color: #ff1a1a;\">ติดค้าง $countstuck บาท</b>";
+  }else{
+    return "<b style=\"color: #ff1a1a;\">จ่ายแล้วแต่ยังติดค้าง $countstuck บาท</p>";
+  }
+}
+
 
 $html = '
 <style>
@@ -153,7 +184,9 @@ $html = '
   }
 </style>
   <div class="" style="">
-    <div style="float: left; width: 55%;">xxx</div>
+    <div style="float: left; width: 55%; margin-left:5px">
+      <img src="../../../assets/img/Jbox-logo.jpg" width="40" height="40" />
+    </div>
     <div style="float: right; width: 40%;">
       <h3 style="text-align: right;">ใบเสร็จคำสั่งขาย</h3>
     </div>
@@ -163,11 +196,11 @@ $html = '
         <div class="left">
           <div class="doc">
               <b class="label" style="font-size:17px;">ผู้ขาย :</b>
-              <small class="value">อับดุลเราะห์มาน เส็นสอ</small>
+              <small class="value">JBok จำหน่ายกล่องพัศดุราคาโรงงาน</small>
           </div>
           <div class="doc">
               <b class="label" style="font-size:17px;">เบอร์โทร :</b>
-              <small class="value">080-710-4145</small>
+              <small class="value">081-189-9578</small>
           </div>
         </div>
         <div class="right" style="background-color:#ffb3ff;">
@@ -196,6 +229,7 @@ $html = '
     ';
 $i = 1;
 while($rows = $query_item->fetch_assoc()){
+  $type_customer[] = $rows['type_custom'];
   $html .= "
     <tr>
         <td class=\"name\">{$rows['productname']}</td>
@@ -206,6 +240,7 @@ while($rows = $query_item->fetch_assoc()){
   ";
   $i++;
 }
+$unique = array_unique($type_customer);
   $html .='
     </tbody>
   </table>
@@ -226,14 +261,15 @@ while($rows = $query_item->fetch_assoc()){
     </table>
     <div class="component" style="margin-top:2%;">
       <div class="left-custom">
-        <div style="width:100%;text-align:right;">
-          <b style="color: #4CAF50;">จ่ายครบถ้วน</b>
+        <div style="width:100%;text-align:right;">';
+          $html .= status_pays($order['is_totalprice'],$order['count_totalpays'],$order['count_stuck']);
+        $html .='
         </div>
       </div>
       <div style="float: right;width: 50%;box-sizing: border-box;">
         <div class="doc" style="border:1px solid gray;background-color:#ffb3ff;padding:2%;">
-            <b class="label">&nbsp; จำนวนเงินทั้งสิ้น : </b>
-            <b class="value">'.$count_rows['prices'].' บาท</b>
+            <b class="label">&nbsp; จำนวนเงินที่จ่าย : </b>
+            <b class="value">'.$order['count_totalpays'].' บาท</b>
         </div>
       </div>
     </div>
@@ -245,7 +281,11 @@ while($rows = $query_item->fetch_assoc()){
         </div>
         <div class="doc">
             <b class="label" style="font-size:17px;">ประเภทลูกค้า :</b>
-            <small class="value">ลูกค้าหน้าร้าน</small>
+            <small class="value">[ '; 
+            foreach($unique as $val){
+              $html .= setTypeCustom($val);
+            }
+            $html .=' ]</small>
         </div>
       </div>
       <div class="right-custom">

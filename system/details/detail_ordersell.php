@@ -18,15 +18,18 @@ if(!isset($_SESSION['users_order'])){
 $sql = "SELECT * FROM orders_sell LEFT JOIN sell_typepay ON orders_sell.id_ordersell = sell_typepay.ordersell_id WHERE id_ordersell='$ordersell_id'";
 $sql_query = mysqli_query($conn,$sql) or die(mysqli_error($conn));
 
-$count_query = mysqli_query($conn, "SELECT COUNT(*) AS total FROM list_productsell WHERE ordersell_id='$ordersell_id'");
+$count_query = mysqli_query($conn, "SELECT COUNT(*) AS total, SUM(tatol_product) AS total_product FROM list_productsell WHERE ordersell_id='$ordersell_id'");
 $count_row = mysqli_fetch_assoc($count_query);
 
 $res_acc = [];
 while($row = mysqli_fetch_assoc($sql_query)){
+
   $res_acc[] = $row;
 }
 $order = null;
 $sell_type = [];
+
+
 
 foreach($res_acc as $rows){
   if(!$order){
@@ -34,11 +37,15 @@ foreach($res_acc as $rows){
       'id_ordersell' => $rows['id_ordersell'],
       'ordersell_name' => $rows['ordersell_name'],
       'is_totalprice' => $rows['is_totalprice'],
+      'count_totalpays' => $rows['count_totalpays'],
+      'count_stuck' => $rows['count_stuck'],
       'custome_name' => $rows['custome_name'],
       'tell_custome' => $rows['tell_custome'],
+      'location_send' => $rows['location_send'],
       'date_time_sell' => $rows['date_time_sell'],
       'shipping_note' => $rows['shipping_note'],
       'sender' => $rows['sender'],
+      'tell_sender' => $rows['tell_sender'],
       'wages' => $rows['wages'],
       'reason' => $rows['reason'],
       'slip_ordersell' => $rows['slip_ordersell'],
@@ -52,6 +59,25 @@ foreach($res_acc as $rows){
     'list_typepay' => $rows['list_typepay'],
   ];
 }
+
+  function status_pay($list_typepay){
+      if(is_string($list_typepay)){
+          $list_typepay = explode(",", str_replace(' ', '', $list_typepay));
+      }
+      $hasMandatory = in_array("ติดค้าง", $list_typepay);
+      $hasOption = !empty(array_intersect(["โอน", "จ่ายสด"], $list_typepay));
+      if($hasMandatory && $hasOption){
+          return "<span class='text-danger'>จ่ายแล้วแต่ยังติดค้างอยู่</span>";
+      } else if(in_array("โอน", $list_typepay)){
+          return "<span class='text-success'>โอนจ่ายแล้ว</span>";
+      } else if(in_array("จ่ายสด", $list_typepay)){
+          return "<span class='text-success'>จ่ายสดแล้ว</span>";
+      } else if(in_array("ติดค้าง", $list_typepay)){
+          return "<span class='text-danger'>ติดค้าง</span>";
+      } else {
+          return "<span class='text-secondary'>ไม่มีข้อมูล</span>";
+      }
+  }
 
 ?>
 <!DOCTYPE html>
@@ -76,11 +102,12 @@ foreach($res_acc as $rows){
           <div class="col-md-12 mt-4 card shadow-lg rounded">
             
               <?php 
-                
                 detailOrderSell(
-                  $order['id_ordersell'],$order['ordersell_name'],$order['is_totalprice'],$order['custome_name'],$order['tell_custome'],$order['date_time_sell'],$count_row['total'],
-                  $order['shipping_note'],$order['sender'],$order['wages'],$order['reason'],$order['slip_ordersell'],$order['adder_id'],$order['create_at'],$sell_type
-                ); 
+                  $order['id_ordersell'],$order['ordersell_name'],$order['is_totalprice'],$order['custome_name'],$order['tell_custome'],$order['location_send'],
+                  $order['date_time_sell'],$count_row['total'],$count_row['total_product'],$order['reason'],$order['sender'],$order['tell_sender'],$order['count_totalpays'],
+                  $order['count_stuck'],$order['slip_ordersell'],$order['adder_id'],$order['create_at'],$sell_type,
+                );
+                
               ?>
           </div>
 

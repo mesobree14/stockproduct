@@ -413,9 +413,12 @@ function status_deliver($shippingnote, $sender, $wages){
   }
 }
   function set_type($sell_types){
-    $list = "<tr>";
+    $list = "<tr>
+        <td>ตัวเลือกการจ่าย: </td>
+    ";
+      
       foreach($sell_types as $type){
-        $list .= '<td>'. htmlspecialchars($type['list_typepay'], ENT_QUOTES) .'</td>';
+        $list .= '<td class=\"font-weight-bold"\">'. htmlspecialchars($type['list_typepay'], ENT_QUOTES) .'</td>';
       }
     $list.="</tr>";
     return $list;
@@ -431,7 +434,94 @@ function status_deliver($shippingnote, $sender, $wages){
         <img src=\"http://localhost/stockproduct/db/slip-sellorder/$img_slip \" class=\"img-sell\"/> ";
     }
   }
-function detailOrderSell($id_ordersell,$ordersell_name,$is_totalprice,$custome_name,$tell_custome,$date_time_sell,$total,$shipping_note,$sender,$wages,$reason,$slip_ordersell,$adder_id,$create_at,$sell_type){
+function status_pays($totalprice,$custompay,$countstuck){
+  if($totalprice == $custompay){
+    return "<p class=\"text-success font-weight-bold\">[ จ่ายครบถ้วน ]</p>";
+  }elseif($totalprice == $countstuck){
+    return "<p class=\"text-danger font-weight-bold\">[ ติดค้าง ]</p>";
+  }else{
+    return "<p class=\"text-danger font-weight-bold\">[ จ่ายแล้วแต่ยังติดค้าง ]</p>";
+  }
+}
+function detailOrderSell($id_ordersell,$ordersell_name,$is_totalprice,$custome_name,$tell_custome,$location_send,$date_time_sell,$total,$totalproduct,$reasons,$sender,$tell_sender,$count_totalpays,$count_stuck,$slip_ordersell,$adder_id,$create_at,$sell_type){
+  $list = "
+    <div class=\"col-12 p-0 m-0\">
+      <div class=\"col-12 row\">
+         <a href=\"PDF/PDF_ordersell.php?ordersell_id=$id_ordersell\" target=\"_blank\" class=\"ml-auto px-5 mt-4\">
+            <i class=\"fas fa-file-code\"></i>
+            Print PDF
+          </a>
+      </div>
+      <div class=\"col-12 row p-0 m-0\">
+        <div class=\"col-lg-3 row\">
+          รายการ: <p class=\"font-weight-bold\" style=\"color:#cc00ff\">[ $ordersell_name ]</p>
+        </div>
+
+        <div class=\"col-lg-3 row\">
+          จำนวนรายการ: <p class=\"font-weight-bold\">[ $total ] รายการ</p>
+        </div>
+        <div class=\"col-lg-3 row\">
+          ราคารวม: <p class=\"font-weight-bold\">[ $is_totalprice ]</p> บาท
+        </div>
+        <div class=\"col-lg-3 p-0 m-0 row\">
+          วันที่ชื่อ: <p class=\"font-weight-bold\">[ $date_time_sell ]</p>
+        </div>
+      </div>
+      <div class=\"row p-0 m-0\">
+        <div class=\"col-sm-12 col-md-7 col-lg-9 p-0 m-0 row\">
+          <div class=\"col-lg-6 col-xl-4 row\">
+            ชื่อผู้ซื้อ: <p class=\"font-weight-bold text-primary\">[ $custome_name ]</p>
+          </div>
+          <div class=\"col-lg-6 col-xl-4 row\">
+            เบอร์โทร: <p class=\"font-weight-bold p-0 m-0\">[ $tell_custome ]</p>
+          </div>
+          
+          <div class=\"col-lg-6 col-xl-4 row p-0 m-0\">
+            สถานะ: ".status_pays($is_totalprice,$count_totalpays,$count_stuck)."
+          </div>
+          <div class=\"col-lg-6 col-xl-4 row\">
+              จำนวนกล่องทั้งหมด <p class=\"font-weight-bold\">[ $totalproduct ] </p> ชิ้น
+          </div>
+          <div class=\"col-sm-6 col-lg-5 col-xl-4 row p-0 m-0\">
+            จำนวนเงินที่จ่าย: <p class=\"font-weight-bold text-success\">[ $count_totalpays ] </p> บาท
+          </div>
+          <div class=\"col-sm-6 col-lg-5 col-xl-4 row p-0 m-0\">
+            จำนวนเงินที่ค้าง: <p class=\"font-weight-bold text-danger\">[ $count_stuck ] </p> บาท
+          </div>
+          <div class=\"col-12 row m-0 p-0\">
+            
+              ที่อยู่ในการจัดส่ง: <p class=\"font-wight-bold text-info\">[ $location_send ] </p>
+
+          </div>
+          <div class=\"col-xl-3 row p-0 m-0\">
+            ผู้ส่ง: <p class=\"font-weight-bold\">[ $sender ] </p>
+          </div>
+          <div class=\"col-xl-4 row p-0 m-0\">
+            เบอร์โทรผู้ส่ง: <p class=\"font-weight-bold\">[ $tell_sender ] </p>
+          </div>
+          <div class=\"col-md-12 col-lg-6 col-xl-5 m-0 p-0 \">
+            <table class=\"table table-data-pay\">
+              <tbody>
+                ". set_type($sell_type) ."
+              </tbody>
+            </table>
+          </div>
+          <div class=\"col-12\">                         
+              <div class=\"col-12 row p-0 m-0\">[ $reasons ]</div>
+          </div>
+        </div>
+        <div class=\"col-sm-12 col-md-5 col-lg-3\">
+          <div class=\"div-img\">
+            ". slip($slip_ordersell) ."
+          </div>
+        </div>
+      </div>
+    </div>
+  ";
+  echo $list;
+}
+
+function detailOrderSell2($id_ordersell,$ordersell_name,$is_totalprice,$custome_name,$tell_custome,$date_time_sell,$total,$shipping_note,$sender,$wages,$reason,$slip_ordersell,$adder_id,$create_at,$sell_type){
 
   $list_detail = "
       <div class=\"col-12\">

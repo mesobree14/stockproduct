@@ -34,6 +34,8 @@ include_once("../../../backend/config.php");
             'tell_custome' => $rows['tell_custome'],
             'date_time_sell' => $rows['date_time_sell'],
             'shipping_note' => $rows['shipping_note'],
+            'count_totalpays' => $rows['count_totalpays'],
+            'count_stuck' => $rows['count_stuck'],
             'sender' => $rows['sender'],
             'tell_sender' => $rows['tell_sender'],
             'location_send' => $rows['location_send'],

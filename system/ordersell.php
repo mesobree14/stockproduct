@@ -95,9 +95,8 @@ if(!isset($_SESSION['users_order'])){
                               }
                           }
                           foreach($orders_ass as $key =>$res){
-                                $method = explode(",",str_replace(' ','', $res['list_typepay']));
- 
-                                status_pay($method);
+                                // $method = explode(",",str_replace(' ','', $res['list_typepay']));
+                                // status_pay($method);
                               listOrderSell(
                                 ($key+1), $res['id_ordersell'],$res['ordersell_name'],$res['item_count'],
                                 $res['is_totalprice'],$res['custome_name'],$res['date_time_sell'],status_pay($res['list_typepay'])

@@ -58,8 +58,6 @@
   font-weight: 600;
   vertical-align: top;
   padding: 15px 10px;
-  //padding-right: 10px;
-  //text-align: center;
 }
 
 .table-data2.table thead th:first-child {
@@ -78,6 +76,58 @@
   -moz-border-radius-bottomleft: 3px;
   border-bottom-left-radius: 3px;
   vertical-align: top;
+}
+
+.table-data-pay {
+  border-collapse: collapse;
+  overflow: visible;
+}
+
+.table-data-pay.table thead th {
+  font-size: 14px;
+  color: #181717;
+  text-transform: uppercase;
+  border: none;
+  font-weight: 600;
+  vertical-align: top;
+  padding: 10px 10px;
+}
+
+.table-data-pay.table thead th:first-child {
+  padding-right: 0;
+}
+
+.table-data-pay.table tbody {
+  background: #fff;
+}
+
+.table-data-pay.table tbody tr td:first-child {
+  -webkit-border-top-left-radius: 3px;
+  -moz-border-radius-topleft: 3px;
+  border-top-left-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  border-bottom-left-radius: 3px;
+  vertical-align: top;
+}
+
+.table-data-pay.table tbody tr td:last-child {
+  -webkit-border-top-right-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  border-top-right-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  border-bottom-right-radius: 3px;
+  padding-right: 35px;
+}
+.table-data-pay.table tbody td {
+  font-size: 14px;
+  color: #191212;
+  vertical-align: middle;
+  padding: 7px 10px;
+  //padding-right: 10px;
+  border: none;
+  //text-align: center;
 }
 
 .table-data2.table tbody tr td:first-child .au-checkbox {

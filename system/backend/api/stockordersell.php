@@ -38,10 +38,6 @@ include_once("../../../backend/config.php");
               'deletetype_pay' => 'false'
             ];
           }
-          // $list_products = mysqli_query($conn,"SELECT list_sellid,productname,ordersell_id FROM list_productsell WHERE ordersell_id=$id_ordersell");
-          // $rows_product = mysqli_num_rows($list_products);
-          // if($rows_product > 0){
-          //   foreach($list_products as $res){
               $trash_productsell = mysqli_query($conn,"DELETE FROM list_productsell WHERE ordersell_id=$id_ordersell");
               if($trash_productsell){
                 $arrays[] = [

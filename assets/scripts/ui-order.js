@@ -801,7 +801,6 @@ class modelUpdateOrder extends HTMLElement {
 
         count_product.addEventListener("input", (e) => {
           let value = e.target.value;
-          console.log("t=", expenses.value);
           price_product.value = Number((expenses.value / value).toFixed(2));
           updateGrandTotal(this.financedata);
         });

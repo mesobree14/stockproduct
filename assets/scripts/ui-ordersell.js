@@ -146,7 +146,6 @@ class formOrDerSell extends HTMLElement {
     this.scriptjs();
     this.isSelectPrice();
     this.removeform();
-    this.valueDataProduct();
   }
 
   async loadDataStock() {
@@ -428,7 +427,7 @@ class formOrDerSell extends HTMLElement {
           `#costommerd-${this.numbers}`
         );
         if (hiddenInput && smallValue) {
-          hiddenInput.value = smallValue.replace(/\D/g, "");
+          hiddenInput.value = smallValue.replace(/[^0-9.]/g, "");
         }
 
         this.input_cutommer = li.id;
@@ -451,7 +450,7 @@ class formOrDerSell extends HTMLElement {
     if (this.numbers > 0) {
       let div = this.querySelector(".btn-remove");
       const btn = document.createElement("button");
-      btn.textContent = "delete";
+      btn.textContent = "❌ ลบ";
       btn.classList.add("ml-auto");
       btn.addEventListener("click", () => {
         this.remove();
@@ -461,13 +460,7 @@ class formOrDerSell extends HTMLElement {
       div.appendChild(btn);
     }
   }
-  valueDataProduct() {
-    const product_data = this.data ?? [];
-    if (product_data) {
-      let selectedData = this.querySelector(`.selectedData-${this.numbers}`);
-      selectedData.value = `${product_data.productname ?? ""}`;
-    }
-  }
+
   renderCreateOrderSell() {
     this.innerHTML = `
             <div class="col-md-12 row mb-3 formGroups" id="formGroup-${
@@ -643,7 +636,6 @@ class modelSetOrderSell extends HTMLElement {
     let res = document.getElementById("totalPrice");
     let results = document.getElementById("results");
     let count_stuck = document.getElementById("count_stuck");
-
     $(function () {
       $select.change(function () {
         var result = $select.multipleSelect("getSelects", "text");
@@ -756,7 +748,7 @@ class modelSetOrderSell extends HTMLElement {
                           <div class="col-12" id="status_payment">
                               <label for="" class="small">จำนวนเงินที่ลูกค้าจ่าย <span class="text-danger">*</span></label>
                               <input type="text" class="form-control" name="count_totalpays" id="count_totalpays" placeholder="จำนวนเงินที่ลูกค้าจ่าย" required>
-                              <input type="hidden" class="form-control" name="count_stuck" id="count_stuck" value="0" placeholder="จำนวนเงินที่ลูกค้าจ่าย">
+                              <input type="hidden" class="form-control" name="count_stuck" id="count_stuck" value="0" placeholder="หนี้ค้าง">
                               <div class="align-self-center row mt-2 ml-2" id="is_stock">
                                 <b id="txt-status"></b> <span class="ml-2 font-weight-bold" id="results"></span>
                               </div>
@@ -777,31 +769,6 @@ class modelSetOrderSell extends HTMLElement {
 }
 
 customElements.define("mian-form-ordersell", modelSetOrderSell);
-
-// <div class="col-xl-5 col-md-7">
-//      <div class="form-group mb-2">
-//        <label class="mt-0 mb-0 font-weight-bold text-dark">ชื่อลูกค้า <span class="text-danger">*</span></label>
-//        <input type="text" class="form-control" name="custome_name" id="custome_name" placeholder="ชื่อ" required>
-//      </div>
-//    </div>
-//    <div class="col-xl-4 col-md-5">
-//      <div class="form-group mb-2">
-//        <label class="mt-0 mb-0 font-weight-bold text-dark">เบอร์โทร <span class="text-danger">*</span></label>
-//        <input type="text" class="form-control" name="tell_custome" id="tell_custome" placeholder="เบอร์โทร" required>
-//      </div>
-//    </div>
-//  <div class="col-xl-3 col-md-5">
-//    <div class="form-group mb-2">
-//      <label class="mt-0 mb-0 font-weight-bold text-dark">วันที่และเวลา <span class="text-danger">*</span></label>
-//      <input type="datetime-local" class="form-control" name="date_time_sell" id="date_time_sell" placeholder="วันที่และเวลา" required>
-//    </div>
-//  </div>
-{
-  /* <div class="col-12">
-                                    <label class="mt-0 mb-0 font-weight-bold text-dark">ที่อยู่ในการจัดส่ง</label>
-                                    <input type="text" class="form-control" name="location_send" id="location_send" placeholder="ที่อยู่ในการจัดส่ง">
-                              </div> */
-}
 
 class SelectCustome extends HTMLElement {
   constructor() {
@@ -831,7 +798,6 @@ class SelectCustome extends HTMLElement {
     }
   }
   updateData(data_custome, index, group) {
-    console.log({ data_custome });
     this.scriptTell(data_custome);
     this.scriptLocation(data_custome);
     let selectedData = group.querySelector(`.IsselectedData-${index}`);
@@ -895,6 +861,7 @@ class SelectCustome extends HTMLElement {
     ul.querySelectorAll("li").forEach((li) => {
       li.addEventListener("click", () => {
         let spanTxt = li.querySelector("span").innerText;
+        console.log("FG=", spanTxt);
         this.scriptTell(spanTxt);
         this.scriptLocation(spanTxt);
         selectedData.value = spanTxt;
@@ -947,7 +914,7 @@ class SelectCustome extends HTMLElement {
     if (customename) {
       const index = 2;
       const customes = this.customdata[0].filter((data) =>
-        data.custome_name.toLowerCase().includes(customename)
+        data.custome_name.toLowerCase().includes(customename.toLowerCase())
       );
       const isTell = document.querySelector(".is-tell");
       let getSelectTell = isTell.querySelector(".getSelectTell");
@@ -1059,7 +1026,7 @@ class SelectCustome extends HTMLElement {
     if (customername) {
       const index = 3;
       const customes = this.customdata[0].filter((data) =>
-        data.custome_name.toLowerCase().includes(customername)
+        data.custome_name.toLowerCase().includes(customername.toLowerCase())
       );
       const isLocation = document.querySelector(".is-loaction");
       let getSelectLocation = isLocation.querySelector(".getSelectLocation");
@@ -1196,7 +1163,7 @@ class SelectCustome extends HTMLElement {
             <label class="mt-0 mb-0 font-weight-bold text-dark">ที่อยู่ในการจัดส่ง</label>
             <div class="customInputContainer">
               <div class="customInput searchInput">
-                  <input class="selectedData form-control location_send"  type="text" name="location_send" placeholder="ที่อยู่ในการจัดส่ง" required/>
+                  <input class="selectedData form-control location_send"  type="text" name="location_send" placeholder="ที่อยู่ในการจัดส่ง"/>
               </div>
               <div class="options">
                   <ul></ul>
