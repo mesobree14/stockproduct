@@ -56,7 +56,7 @@ if(!isset($_SESSION['users_order'])){
                             <th>ราคาจ่าย</th>
                             <th>ชื่อผู้ซื้้อ</th>
                             <th>สถานะการจ่าย</th>
-                            <th>วันที่-เวลาที่ขาย</th>
+                            <th>วันที่-เวลาที่ขาย <i class="fa-solid fa-arrow-up"></i></th>
                             <th>จัดการ</th>
                         </tr>
                     </thead>

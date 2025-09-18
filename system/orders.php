@@ -51,7 +51,7 @@ if(!isset($_SESSION['users_order'])){
                                     <th style="width:22%">คำสั่งซื้อ</th>
                                     <th>ค่าใช้จ่าย</th>
                                     <th>รายการสินค้า</th>
-                                    <th>เวลา</th>
+                                    <th>วันที่สั่งซื้อ <i class="fa-solid fa-arrow-up"></i></th>
                                     <th>สลิปเงินทุน</th>
                                     <th>จัดการ</th>
                                 </tr>

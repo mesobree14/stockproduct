@@ -240,7 +240,8 @@
   padding: 0 20px;
 }
 
-#tab-button {
+#tab-button,
+#tab-button-custom {
   display: table;
   table-layout: fixed;
   width: 50%;
@@ -248,11 +249,13 @@
   padding: 0;
   list-style: none;
 }
-#tab-button li {
+#tab-button li,
+#tab-button-custom li {
   display: table-cell;
   width: 20%;
 }
-#tab-button li a {
+#tab-button li a,
+#tab-button-custom li a {
   display: block;
   padding: 0.5em;
   background: #eee;
@@ -261,11 +264,14 @@
   color: #000;
   text-decoration: none;
 }
-#tab-button li:not(:first-child) a {
+#tab-button li:not(:first-child) a,
+#tab-button-custom li:not(:first-child) a {
   border-left: none;
 }
 #tab-button li a:hover,
-#tab-button .is-active a {
+#tab-button-custom li a:hover,
+#tab-button .is-active a,
+#tab-button-custom .is-active a {
   border-bottom-color: transparent;
   background: #fff;
 }

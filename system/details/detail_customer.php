@@ -26,6 +26,7 @@ if(!isset($_SESSION['users_order'])){
     <link rel="stylesheet" href="../../assets/scss/revenue.scss">
     <link rel="stylesheet" href="../../assets/scss/index.u.scss">
     <script src="../../assets/scripts/script-bash.js"></script>
+    <link rel="stylesheet" href="../../assets/scripts/module/select-picker/select.scss">
   <title>Document</title>
 </head>
 <body>
@@ -40,25 +41,111 @@ if(!isset($_SESSION['users_order'])){
               $query_sqli = mysqli_query($conn,$sql) or die(mysqli_error($conn));
               $rows = mysqli_fetch_assoc($query_sqli);
 
-              $sql_tell = mysqli_query($conn,"SELECT tell_custome FROM orders_sell WHERE custome_name='$custom_name' GROUP BY tell_custome");
-              $sql_location = mysqli_query($conn,"SELECT location_send FROM orders_sell WHERE custome_name='$custom_name' GROUP BY location_send");
+              $sql_tell = mysqli_query($conn,"SELECT tell_custome,location_send FROM orders_sell WHERE custome_name='$custom_name' ORDER BY create_at DESC LIMIT 1");
+              $rows_tell = mysqli_fetch_assoc($sql_tell);
             ?>
+            <div class="col-12 shadow-lg row">
+              <div class="col-12 row">
+                <a href="PDF/PDF_ordersell.php?ordersell_id=$id_ordersell" target="_blank" class="ml-auto px-5 mt-4">
+                   <i class="fas fa-file-code\"></i>
+                   Print PDF
+                </a>
+                <div class="col-12 row p-0 m-0">
+                    <div class="col-sm-12 col-md-5 col-lg-4">
+                      <div class="card shadow  border col-12" style="min-height:195px;">
+                        <div class="card-body">
+                          <div class="row align-items-center">
+                            <div class="text-xs font-weight-bold text-uppercase">
+                              ชือลูกค้า : [ <?php echo $rows['custome_name'] ?> ]
+                            </div>
+                            <div class="text-xs font-weight-bold text-uppercase mt-3">
+                              เบอร์โทร(ล่าสุด) :  <?php echo $rows_tell['tell_custome'] ?>
+                            </div>
+                            <div class="text-xs font-weight-bold text-uppercase mt-3">
+                              ที่อยู่(ล่าสุด) :  <?php echo $rows_tell['location_send'] ?>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-md-7 col-lg-8 row">
+                      <?php 
+                        boxCustom("จำนวนรายการที่ซื้อ",$rows['count_order'], "ครั้ง");
+                        boxCustom("จำนวนหนี้ที่ติด",$rows['count_stuck'],"บาท");
+                        boxCustom("จ่ายหนี้ [100 ครั้ง]",4000,"บาท");
+                        boxCustom("จำนวนเงินที่จ่าย",$rows['prices_pay'],"บาท");
+                        boxCustom("จำนวนเงินทั้งหมด",$rows['prices_sell'],"บาท");
+                        boxCustom("หนี้คงเหลือ",2000,"บาท");
+                      ?>
+                    </div>
+                </div>
+              </div>
+            </div>
           </div>
-          
-            <div id="tab02" class="tab-contents">
+          <div class="col-12">
+              <div class="col-12 row">
+                <div class="tabs">
+                  <div class="tab-button-outer">
+                    <ul id="tab-button-custom">
+                      <li><a href="#tabC01">ประวัติการสั่งซื้อ</a></li>
+                      <li><a href="#tabC02">ประวัติการจ่ายหนี้</a></li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="ml-auto border">
+                  <button class="bd-none au-btn au-btn-icon au-btn--green au-btn--small" 
+                      data-toggle="modal" data-custome='<?php echo $custom_name ?>' data-debt='3000' 
+                      data-target="#modalFormPayOffDebt"
+                      id="modelpayoff_debt"
+                  >
+                      <i class="fas fa-plus"></i>
+                        เพิ่มการจ่ายหนี้
+                  </button>
+                </div>
+              </div>
+              <div id="tabC01" class="tab-contents">
                 <div class="table-responsive table-responsive-data2 mt-2">
-                  <span>ประวัติการสั่งซื้อ</span>
                   <table class="table table-data2 mydataTablePatron">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>ลำดับ</th> 
-                            <th>รหัสรายการขาย</th>
-                            <th>วันที่สั่งซื้อ</th>
-                            <th>ราคา</th>
+                            <th style="width:20%;">รหัสรายการขาย</th>
+                            <th>วันที่สั่งซื้อ <i class="fa-solid fa-arrow-up"></i></th>
+                            <th>ราคาทั้งหมด</th>
                             <th>ราคาที่จ่าย</th>
                             <th>ราคาที่ติดค้าง</th>
                             <th>รายการสินค้า</th>
-                            <th>จำนวนชิ้น</th>
+                            <th>กดดูรายละเอีด</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      <?php 
+                        $sql = "SELECT * FROM orders_sell WHERE custome_name='$custom_name' ORDER BY create_at";
+                        $query = mysqli_query($conn,$sql) or die(mysqli_error($conn));
+                        foreach($query as $key => $list_order){
+                          listOrderForCustomer(
+                            ($key+1),$list_order['id_ordersell'],$list_order['ordersell_name'],$list_order['date_time_sell'],
+                            $list_order['is_totalprice'],$list_order['count_totalpays'],$list_order['count_stuck'],3
+                          );
+                        }
+                      ?>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div id="tabC02" class="tab-contents">
+                <div class="table-responsive table-responsive-data2 mt-2">
+                  <table class="table table-data2 mydataTablePatron">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>ลำดับ</th> 
+                            <th>รหัสการจ่าย</th>
+                            <th>จำนวนเงินที่จ่าย</th>
+                            <th>วันที่จ่าย <i class="fa-solid fa-arrow-up"></i></th>
+                            <th>เหตุผล</th>
+                            <th>จัดการ</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -66,12 +153,14 @@ if(!isset($_SESSION['users_order'])){
                     </tbody>
                   </table>
                 </div>
-            </div>
+              </div>
           </div>
+        </div>
       </div>
-      <main-rate-price></main-rate-price>
+      <main-pay-debt></main-pay-debt>
     </main>
   </div>
-  <script src="../../assets/scripts/ui-stock.js"></script>
+  <script src="../../assets/scripts/ui-custom.js"></script>
+  
 </body>
 </html>

@@ -521,67 +521,27 @@ function detailOrderSell($id_ordersell,$ordersell_name,$is_totalprice,$custome_n
   echo $list;
 }
 
-function detailOrderSell2($id_ordersell,$ordersell_name,$is_totalprice,$custome_name,$tell_custome,$date_time_sell,$total,$shipping_note,$sender,$wages,$reason,$slip_ordersell,$adder_id,$create_at,$sell_type){
+function detailCustomer($customname){
 
-  $list_detail = "
-      <div class=\"col-12\">
-        <div class=\"col-12 row\">
-          <a href=\"PDF/PDF_ordersell.php?ordersell_id=$id_ordersell\" target=\"_blank\" class=\"ml-auto px-5 mt-4\">
-            <i class=\"fas fa-file-code\"></i>
-            Print PDF
-          </a>
-        </div>
-        <div class=\"col-12 row\">
-          <div class=\"row \">
-            <h3 class=\"fs-3 font-thi\">รายการ : </h3>
-              <h3 class=\"fs-3 font-thi\">$ordersell_name</h3>
-          </div>
-          <div class=\"ml-auto row\">
-            <h3 class=\"fs-3 font-thi\"></h3>
-            <h3 class=\"fs-3 font-thi\">ราคาที่ต้องจ่าย $is_totalprice บาท</h3>
-          </div>
-          <div class=\"ml-auto row\">
-            <h3 class=\"fs-3 font-thi\"></h3>
-            <h3 class=\"fs-3 font-thi\">วันที่ขาย $date_time_sell</h3>
-          </div>
-        </div>
-        <div class=\"col-12 row\">
-          <div class=\"\">
-              <h3 class=\"fs-3 font-thi\">จำนวนสินค้า $total รายการ</h3>
-          </div>
-          <div class=\"ml-auto \">
-            <h3 class=\"fs-3 font-thi\">ผู้ซื้อ $custome_name</h3>
-          </div>
-          <div class=\"ml-auto \">
-            
-            <h3 class=\"fs-3 font-thi\">เบอรืโทร $tell_custome</h3>
-          </div>
-        </div>
-        <div class=\"col-12 row pb-4\">
-          <div class=\"col-5\">
-            <span>ตัวเลือกการจ่าย</span>
-            <table class=\"table table-data2 mydataTablePatron\">
-              <tbody>
-                ". set_type($sell_type) ."
-              </tbody>
-            </table>
-          </div>
-          <div class=\"col-7\">
-            <label for=\"exampleFormControlTextarea1\">เหตุผล</label>
-            <textarea class=\"form-control\" id=\"exampleFormControlTextarea1\" rows=\"2\">$reason</textarea>
-          </div>
-        </div>
-        <div class=\"col-12 row mb-4\">
-            ". status_deliver($shipping_note,$sender,$wages) ."
-            <div class=\"col-sm-12 col-lg-4 div-img\">
-            ". slip($slip_ordersell) ."
+}
+function boxCustom($titleText, $data, $type){
+  $listData = "
+      <div class=\"col-xl-4 col-md-6 mb-2\">
+        <div class=\"card shadow  border\">
+            <div class=\"card-body\">
+                <div class=\"row no-gutters align-items-center\">
+                    <div class=\"col mr-2\">
+                        <div class=\"text-xs font-weight-bold text-primary text-uppercase mb-1\">
+                            $titleText
+                        </div>
+                        <div class=\"h5 mb-0 font-weight-bold text-gray-800\">$data $type</div>
+                    </div>
+                </div>
             </div>
         </div>
-      </div>
-  ";
-  echo $list_detail;
+      </div>";
+    echo $listData;
 }
-
 
 function listProductSell($number,$product_id, $product_anme, $rate_customerprice, $type_custom, $lotal_product, $price_topay){
 
@@ -681,5 +641,32 @@ function listCustomer($number,$custom_name,$count_order,$pricessell,$pricespay,$
   ";
   echo $list;
 }
+
+function listOrderForCustomer($number, $order_id,$order_name,$date_sell,$prices_all,$price_pay,$price_stuck,$count_product,){
+  $list = "
+    <tr>
+      <td></td>
+      <td class=\"font-weight-bold\">$number</td>
+      <td class=\"font-weight-bold\">$order_name</td>
+      <td class=\"font-weight-bold\">$date_sell</td>
+      <td class=\"font-weight-bold\">$prices_all</td>
+      <td class=\"font-weight-bold\">$price_pay</td>
+      <td class=\"font-weight-bold\">$price_stuck</td>
+      <td class=\"font-weight-bold\">$count_product</td>
+      <td class='text-center'>
+          <div class=\"table-data-feature\" >
+              <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"../details/detail_ordersell.php?ordersell_id=$order_id \">
+                <i class=\"fas fa-list-alt\"></i>
+              </a>
+          </div>
+        </td>
+    </tr>
+  ";
+  echo $list;
+}
+
+// function detailCustomer(){
+
+// }
 
 ?>

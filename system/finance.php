@@ -123,7 +123,7 @@ if(!isset($_SESSION['users_order'])){
                         <tr>
                             <th></th>
                             <th>จำนวนทุน</th>
-                            <th>เวลาเพิ่มทุน</th>
+                            <th>เวลาเพิ่มทุน <i class="fa-solid fa-arrow-up"></i></th>
                             <th>จัดการ</th>
                         </tr>
                     </thead>
@@ -157,7 +157,7 @@ if(!isset($_SESSION['users_order'])){
                             <th></th>
                             <th>จำนวน</th>
                             <th>สาเหุต</th>
-                            <th>เวลาเบิกถอน</th>
+                            <th>เวลาเบิกถอน <i class="fa-solid fa-arrow-up"></i></th>
                             <th>จัดการ</th>
                         </tr>
                     </thead>
