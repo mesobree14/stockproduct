@@ -216,7 +216,7 @@ function tablelistStock ($number, $product_name, $total_order, $total_count, $to
     <tr>
       <td class=\"font-weight-bold\">$number</td>
       <td class=\"font-weight-bold\">$product_name</td>
-      <td class=\"font-weight-bold\">$total_count บาท</td> 
+      <td class=\"font-weight-bold\">$total_count ชิ้น</td> 
       <td class=\"font-weight-bold\">$total_sell ชิ้น</td> 
       <td class=\"font-weight-bold\">$remaining_amount ชิ้น</td> 
       <td class='text-center'>
@@ -686,12 +686,15 @@ function listhistoryPayDebt($number,$id_paydebt,$serial_number,$customer_name,$t
       </td>
       <td class='text-center'>
           <div class=\"table-data-feature\" >
+              <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"../details/detail_ordersell.php?ordersell_id=$id_paydebt \">
+                <i class=\"fa-solid fa-file-pdf\"></i>
+              </a>
               <button type=\"button\" id=\"update_order_sell\" data-target=\"#modalFormUpdateOrderSell\" data-toggle=\"modal\"  
                  class=\"item\" data-id=\"$id_paydebt\"
               >
                   <i class=\"fas fa-pencil-alt text-warning\"></i>
               </button>
-              <button type=\"button\" class=\"item\" id=\"falseTrashBtnProject\" data-id=\"$id_paydebt\">
+              <button type=\"button\" class=\"item\" id=\"confirmTrashPayOffDebt\" data-id=\"$id_paydebt\" data-count=\"$count_paydebt\" data-name=\"$customer_name\" data-img=\"$img_pay\" >
                 <i class=\"fas fa-trash-alt text-danger\"></i>
               </button>
            </div>

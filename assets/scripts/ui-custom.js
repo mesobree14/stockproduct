@@ -147,8 +147,8 @@ class ModelPayOffDebt extends HTMLElement {
     );
     count_paydebt.addEventListener("input", function () {
       let result = Number(count_debt.textContent) - Number(count_paydebt.value);
-      debtpaid_balance.value =
-        debtpaid_balance_html.textContent = `เหลืออีก ${result} บาท`;
+      debtpaid_balance.value = result;
+      debtpaid_balance_html.textContent = `เหลืออีก ${result} บาท`;
       console.log(
         count_paydebt.value,
         " : ",
@@ -170,7 +170,7 @@ class ModelPayOffDebt extends HTMLElement {
             <form  method="POST" action="../backend/customer.php" enctype="multipart/form-data">
               <input type="hidden" name="type_page" id="type_page"/>
               <input type="hidden" name="customer_name" id="customer_name" />
-              <input type="hidden" name="debtpaid_balance" id="debtpaid_balance" />
+              <input type="text" name="debtpaid_balance" id="debtpaid_balance" />
               <input type="hidden" name="serial_number" id="serial_number" />
               <div class="modal-body">
                 <div class="modal-body">
@@ -235,4 +235,53 @@ $(document).on("click", "#modelpayoff_debt", function (e) {
   $("#customname").html(customname);
   $("#custom_name").html(customname);
   $("#count_debt").html(countdebt);
+});
+
+$(document).on("click", "#confirmTrashPayOffDebt", function (e) {
+  let ID = $(this).data("id");
+  let name = $(this).data("name");
+  let img = $(this).data("img");
+  let count_debt = $(this).data("count");
+  console.log({ img });
+  Swal.fire({
+    title: "คุณแน่ใจไหม ?",
+    text: `คุณยืนยันที่จะลบประวัติจ่ายหนี้ของ ${name} จำนวน ${count_debt} บ. นี้ ใช่ไหม`,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#65696cff",
+    cancelButtonColor: "#d33",
+    cancelButtonText: "ยกเลิก",
+    confirmButtonText: "ยืนยัน",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const responseapi = await fetch(
+          `http://localhost/stockproduct/system/backend/api/customer_api.php`,
+          {
+            method: "DELETE",
+            credentials: "include",
+            body: JSON.stringify({
+              id: ID,
+              name: name,
+              image: img,
+            }),
+          }
+        );
+        const responsedata = await responseapi.json();
+        if (responsedata.status === 201) {
+          console.log(responsedata);
+          Swal.fire({
+            title: "เรียบร้อย",
+            text: responsedata.message,
+            icon: "success",
+            showConfirmButton: false,
+          }).then(() => {
+            window.location.reload();
+          });
+        }
+      } catch (e) {
+        throw new Error(`Is Delete Error : ${e}`);
+      }
+    }
+  });
 });

@@ -36,12 +36,10 @@ if(!isset($_SESSION['users_order'])){
       <?php navbar("รายการสินค้า"); ?>
       <div class="container-fluid row">
           <div class="ml-auto border">
-            <button class="bd-none au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" 
-                data-target="#modalFormCreateOrder"
-            >
-                <i class="fas fa-plus"></i>
-                  เพิ่มข้อมูล
-            </button>
+            <a href="details/PDF/PDF_stocks.php" target="_blank" class="font-weight-bold remove-btn ml-auto px-5 mt-4">
+                <i class="fa-solid fa-file-pdf"></i>
+                  print pdf
+            </a>
           </div>
           <div class="col-md-12 mt-4">
             <div class="table-responsive table-responsive-data2 mt-2">

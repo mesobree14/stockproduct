@@ -28,5 +28,29 @@
         'data' => $result_data
       ],JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
       mysqli_close($conn);
+    }elseif($_SERVER['REQUEST_METHOD'] === "DELETE"){
+      $data = json_decode(file_get_contents("php://input"), true);
+      $id = $data['id'];
+      $name = $data['name'];
+      $sql_del = mysqli_query($conn,"DELETE FROM custom_debtpaid WHERE id_debtpaid=$id");
+      if($sql_del){
+        if($data['image'] !== ''){
+          if(file_exists(__DIR__ . "/../../../db/slip-paydebt/" . $data['image'])){
+            if(unlink(__DIR__ . "/../../../db/slip-paydebt/" . $data['image'])){
+              $status_del = "del img capital";
+            };
+          }
+        }
+        print json_encode(array(
+            "status"=>201,
+            "message"=>"ลบประวัติจ่ายหนี้เรียบร้อย",
+            "del_img" => $status_del
+          ));
+      }else{
+        print json_encode(array(
+            "status"=>404,
+            "message"=>"delete data in table debt is error"
+          ));
+      }
     }
 ?>
