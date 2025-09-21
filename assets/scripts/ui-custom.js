@@ -149,11 +149,6 @@ class ModelPayOffDebt extends HTMLElement {
       let result = Number(count_debt.textContent) - Number(count_paydebt.value);
       debtpaid_balance.value = result;
       debtpaid_balance_html.textContent = `เหลืออีก ${result} บาท`;
-      console.log(
-        count_paydebt.value,
-        " : ",
-        count_debt.textContent - count_paydebt.value
-      );
     });
   }
   renderUi() {
@@ -170,7 +165,7 @@ class ModelPayOffDebt extends HTMLElement {
             <form  method="POST" action="../backend/customer.php" enctype="multipart/form-data">
               <input type="hidden" name="type_page" id="type_page"/>
               <input type="hidden" name="customer_name" id="customer_name" />
-              <input type="text" name="debtpaid_balance" id="debtpaid_balance" />
+              <input type="hidden" name="debtpaid_balance" id="debtpaid_balance" />
               <input type="hidden" name="serial_number" id="serial_number" />
               <div class="modal-body">
                 <div class="modal-body">
