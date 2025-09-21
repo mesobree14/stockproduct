@@ -117,7 +117,7 @@ class Capital extends HTMLElement {
         <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
           <div class="modal-content" id="">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLongTitle">เพิ่มเรทราคา <span id="productname"></span></h5>
+              <h5 class="modal-title" id="exampleModalLongTitle">เพิ่มจำนวนทุน <span id="productname"></span></h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
               </button>
@@ -125,6 +125,7 @@ class Capital extends HTMLElement {
             <form  method="POST" action="backend/finance.php" enctype="multipart/form-data">
               <input type="hidden" name="status_form" value="capital"/>
               <input type="hidden" name="capital_id" id="capital_id" />
+              <input type="text" name="capital_img" id="capital_img" />
               <div class="modal-body">
                 <div class="modal-body">
                     <div class="col-md-12 row mb-3">
@@ -172,12 +173,14 @@ $(document).on("click", "#update_capital", function (e) {
   let img_capital = $(this).data("img");
   let count_capital = $(this).data("count");
   let date_capital = $(this).data("date");
+  console.log({ img_capital });
 
   $("#capital_id").val(id_capital);
   $("#count_capital").val(count_capital);
   $("#date_time_capital").val(date_capital);
 
   e.preventDefault();
+  $("#capital_img").val(img_capital);
   $("#slip_capital").val(img_capital);
   $(".slip_capital").attr("src", `../db/slip-finance/${img_capital}`);
   $(".ux-wrap").last().addClass("active");
@@ -274,7 +277,7 @@ class Withdraw extends HTMLElement {
         <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
           <div class="modal-content" id="">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLongTitle">เพิ่มเรทราคา <span id="productname"></span></h5>
+              <h5 class="modal-title" id="exampleModalLongTitle">เพิ่มจำนวนเบิกถอน <span id="productname"></span></h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
               </button>
@@ -282,6 +285,7 @@ class Withdraw extends HTMLElement {
             <form  method="POST" action="backend/finance.php" id="is_form" enctype="multipart/form-data">
               <input type="hidden" name="status_form" value="withdraw"/>
               <input type="hidden" name="withdraw_id" id="withdraw_id"/>
+              <input type="text" name="withdraw_img" id="withdraw_img"/>
               <div class="modal-body">
                 <div class="modal-body">
                     <div class="col-md-12 row mb-3">
@@ -338,7 +342,7 @@ $(document).on("click", "#update_withraw", function (e) {
   $("#withdraw_id").val(withdraw_id);
   $("#count_withdraw").val(count_withdraw);
   $("#date_time_withdraw").val(date_withraw);
-  //$("#withdraw_id").val(img_withdraw);
+  $("#withdraw_img").val(img_withdraw);
   $("#reason").val(reason);
 });
 

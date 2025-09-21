@@ -51,38 +51,84 @@
   if($_SERVER['REQUEST_METHOD'] === "POST"){
     if($_POST['status_form'] === "capital"){
 
-        $count_capital = $_POST['count_capital'];
-        $date_time_capital = $_POST['date_time_capital'];
-        $sql = "INSERT INTO capital(count_capital,slip_capital,date_time_ad,adder_id,create_at)
-          VALUES('$count_capital','".setImgpath("capital_slip")."','$date_time_capital','$id_user','$day_add')
-          ";
-        $query = mysqli_query($conn,$sql) or die(mysqli_error($conn));
-        if($query){
-          echo "<script type=\"text/javascript\">
-                    MySetSweetAlert(\"success\",\"เรียบร้อย\",\"เพิ่มทุนเรียบร้อยแล้ว\",\"../finance.php\")
-                </script>";
+      $count_capital = $_POST['count_capital'];
+      $date_time_capital = $_POST['date_time_capital'];
+        if($_POST['capital_id']){
+          $capital_id = $_POST['capital_id'];
+          $img_name = $_POST['capital_img'] ?? "";
+
+          if(isset($_FILES['capital_slip']) && $_FILES['capital_slip']['error'] == 0){
+            $sql_edit = "UPDATE capital SET count_capital='$count_capital', slip_capital='".setImgpath("capital_slip")."', date_time_ad='$date_time_capital',adder_id='$id_user' WHERE capital_id='$capital_id'";
+          }else{
+            $sql_edit = "UPDATE capital SET count_capital='$count_capital', slip_capital='$img_name', date_time_ad='$date_time_capital',adder_id='$id_user' WHERE capital_id='$capital_id'";
+          }
+          $query_edit = mysqli_query($conn,$sql_edit) or die(mysqli_error($conn));
+           if($query_edit){
+            echo "<script type=\"text/javascript\">
+                      MySetSweetAlert(\"success\",\"เรียบร้อย\",\"เพิ่มทุนเรียบร้อยแล้ว\",\"../finance.php\")
+                  </script>";
+          }else{
+             echo "<script type=\"text/javascript\">
+                      MySetSweetAlert(\"warning\",\"ล้มเหลว!\",\"เพิ่มทุนล้มเหลว\",\"../finance.php\")
+                  </script>";
+          }
+
+
         }else{
-           echo "<script type=\"text/javascript\">
-                    MySetSweetAlert(\"warning\",\"ล้มเหลว!\",\"เพิ่มทุนล้มเหลว\",\"../finance.php\")
-                </script>";
+          $sql = "INSERT INTO capital(count_capital,slip_capital,date_time_ad,adder_id,create_at)
+            VALUES('$count_capital','".setImgpath("capital_slip")."','$date_time_capital','$id_user','$day_add')
+          ";
+          $query = mysqli_query($conn,$sql) or die(mysqli_error($conn));
+          if($query){
+            echo "<script type=\"text/javascript\">
+                      MySetSweetAlert(\"success\",\"เรียบร้อย\",\"เพิ่มทุนเรียบร้อยแล้ว\",\"../finance.php\")
+                  </script>";
+          }else{
+             echo "<script type=\"text/javascript\">
+                      MySetSweetAlert(\"warning\",\"ล้มเหลว!\",\"เพิ่มทุนล้มเหลว\",\"../finance.php\")
+                  </script>";
+          }
         }
+        
+        
     }elseif($_POST['status_form'] === "withdraw"){
       $count_withdraw = $_POST['count_withdraw'];
       $date_time_withdraw = $_POST['date_time_withdraw'];
       $reason = $_POST['reason'];
-      $sql = "INSERT INTO withdraw(count_withdraw,slip_withdraw,date_withdrow,reason,id_adder,create_at)
-        VALUES('$count_withdraw','".setImgpath("withdraw_slip")."','$date_time_withdraw','$reason','$id_user','$day_add')
-      ";
-      $query = mysqli_query($conn,$sql) or die(mysqli_error($conn));
-      if($query){
-          echo "<script type=\"text/javascript\">
-                    MySetSweetAlert(\"success\",\"เรียบร้อย\",\"เพิ่มเบิกถอนเรียบร้อยแล้ว\",\"../finance.php\")
-                </script>";
+      if($_POST['withdraw_id']){
+        $withdraw_id = $_POST['withdraw_id'];
+        $withdraw_img = $_POST['withdraw_img'] ?? "";
+        if(isset($_FILES['withdraw_slip']) && $_FILES['withdraw_slip']['error'] == 0){
+          $sql_edit = "UPDATE withdraw SET count_withdraw='$count_withdraw', slip_withdraw='".setImgpath("withdraw_slip")."', date_withdrow='$date_time_withdraw',id_adder='$id_user' WHERE withdraw_id='$withdraw_id'";
         }else{
-           echo "<script type=\"text/javascript\">
-                    MySetSweetAlert(\"warning\",\"ล้มเหลว!\",\"เพิ่มเบิกถอนล้มเหลว\",\"../finance.php\")
-                </script>";
+          $sql_edit = "UPDATE withdraw SET count_withdraw='$count_withdraw', slip_withdraw='$withdraw_img', date_withdrow='$date_time_withdraw',id_adder='$id_user' WHERE withdraw_id='$withdraw_id'";
         }
+        $query_edit = mysqli_query($conn,$sql_edit) or die(mysqli_error($conn));
+        if($query_edit){
+            echo "<script type=\"text/javascript\">
+                      MySetSweetAlert(\"success\",\"เรียบร้อย\",\"เพิ่มเบิกถอนเรียบร้อยแล้ว\",\"../finance.php\")
+                  </script>";
+          }else{
+             echo "<script type=\"text/javascript\">
+                      MySetSweetAlert(\"warning\",\"ล้มเหลว!\",\"เพิ่มเบิกถอนล้มเหลว\",\"../finance.php\")
+                  </script>";
+          }
+      }else{
+        $sql = "INSERT INTO withdraw(count_withdraw,slip_withdraw,date_withdrow,reason,id_adder,create_at)
+          VALUES('$count_withdraw','".setImgpath("withdraw_slip")."','$date_time_withdraw','$reason','$id_user','$day_add')
+        ";
+        $query = mysqli_query($conn,$sql) or die(mysqli_error($conn));
+          if($query){
+            echo "<script type=\"text/javascript\">
+                      MySetSweetAlert(\"success\",\"เรียบร้อย\",\"เพิ่มเบิกถอนเรียบร้อยแล้ว\",\"../finance.php\")
+                  </script>";
+          }else{
+             echo "<script type=\"text/javascript\">
+                      MySetSweetAlert(\"warning\",\"ล้มเหลว!\",\"เพิ่มเบิกถอนล้มเหลว\",\"../finance.php\")
+                  </script>";
+          }
+        
+      }
     }
   }
 ?>

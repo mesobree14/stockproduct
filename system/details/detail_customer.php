@@ -43,6 +43,9 @@ if(!isset($_SESSION['users_order'])){
 
               $sql_tell = mysqli_query($conn,"SELECT tell_custome,location_send FROM orders_sell WHERE custome_name='$custom_name' ORDER BY create_at DESC LIMIT 1");
               $rows_tell = mysqli_fetch_assoc($sql_tell);
+
+              $sqli_debt = mysqli_query($conn,"SELECT COUNT(*) AS total_pay, SUM(count_debtpaid) AS count_dabtprice FROM custom_debtpaid WHERE name_customer='$custom_name'");
+              $row_pay = mysqli_fetch_assoc($sqli_debt);
             ?>
             <div class="col-12 shadow-lg row">
               <div class="col-12 row">
@@ -70,12 +73,13 @@ if(!isset($_SESSION['users_order'])){
                     </div>
                     <div class="col-sm-12 col-md-7 col-lg-8 row">
                       <?php 
+                        $debtpay_balance = $rows['count_stuck'] - $row_pay['count_dabtprice'];
                         boxCustom("จำนวนรายการที่ซื้อ",$rows['count_order'], "ครั้ง");
                         boxCustom("จำนวนหนี้ที่ติด",$rows['count_stuck'],"บาท");
-                        boxCustom("จ่ายหนี้ [100 ครั้ง]",4000,"บาท");
+                        boxCustom("จ่ายหนี้ [ ".$row_pay['total_pay']." ครั้ง]",$row_pay['count_dabtprice'],"บาท");
                         boxCustom("จำนวนเงินที่จ่าย",$rows['prices_pay'],"บาท");
                         boxCustom("จำนวนเงินทั้งหมด",$rows['prices_sell'],"บาท");
-                        boxCustom("หนี้คงเหลือ",2000,"บาท");
+                        boxCustom("หนี้คงเหลือ",number_format($debtpay_balance,2,'.',','),"บาท");
                       ?>
                     </div>
                 </div>
@@ -94,8 +98,8 @@ if(!isset($_SESSION['users_order'])){
                 </div>
                 <div class="ml-auto border">
                   <button class="bd-none au-btn au-btn-icon au-btn--green au-btn--small" 
-                      data-toggle="modal" data-custome='<?php echo $custom_name ?>' data-debt='3000' 
-                      data-target="#modalFormPayOffDebt"
+                      data-toggle="modal" data-custome='<?php echo $custom_name ?>' data-debt='<?php echo $debtpay_balance ?>' 
+                      data-types="IN" data-target="#modalFormPayOffDebt"
                       id="modelpayoff_debt"
                   >
                       <i class="fas fa-plus"></i>
@@ -143,13 +147,21 @@ if(!isset($_SESSION['users_order'])){
                             <th>ลำดับ</th> 
                             <th>รหัสการจ่าย</th>
                             <th>จำนวนเงินที่จ่าย</th>
+                            
                             <th>วันที่จ่าย <i class="fa-solid fa-arrow-up"></i></th>
-                            <th>เหตุผล</th>
+                            <th style="width:35%">เหตุผล</th>
+                            <th>รูปภาพ</th>
                             <th>จัดการ</th>
                         </tr>
                     </thead>
                     <tbody>
-                
+                        <?php
+                          $query_debt = mysqli_query($conn,"SELECT * FROM custom_debtpaid WHERE name_customer='$custom_name'");
+                          foreach($query_debt as $key => $result){
+                            listhistoryPayDebt(($key+1),$result['id_debtpaid'],$result['serial_number'],$result['name_customer'],
+                            $result['text_reason'],$result['count_debtpaid'],$result['debtpaid_balance'],$result['datetime_pays'],$result['img_debt']);
+                          }
+                        ?>
                     </tbody>
                   </table>
                 </div>

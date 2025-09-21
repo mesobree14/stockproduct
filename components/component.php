@@ -565,7 +565,7 @@ function listProductSell($number,$product_id, $product_anme, $rate_customerprice
               <button type=\"button\" class=\"item\" id=\"falseTrashBtnProject\" data-id=\"$product_id\">
                 <i class=\"fas fa-trash-alt text-danger\"></i>
               </button>
-          </div>
+           </div>
         </td>
     </tr>
   ";
@@ -616,7 +616,8 @@ function listProductBuy($number,$product_id, $product_name, $cost_price, $total_
   echo $list;
 }
 
-function listCustomer($number,$custom_name,$count_order,$pricessell,$pricespay,$countstuck){
+function listCustomer($number,$custom_name,$count_order,$pricessell,$pricespay,$countstuck,$count_debt,$count_paydebt){
+  $price_balnce_stuck = $countstuck - $count_debt;
   $list = "
     <tr>
       <td class=\"font-weight-bold\"></td>
@@ -626,7 +627,8 @@ function listCustomer($number,$custom_name,$count_order,$pricessell,$pricespay,$
       <td class=\"font-weight-bold\">$pricessell บาท</td>
       <td class=\"font-weight-bold\">$pricespay บาท</td>
       
-      <td class=\"font-weight-bold\">$countstuck บาท</td>
+      <td class=\"font-weight-bold\">$price_balnce_stuck บาท</td>
+      <td class=\"font-weight-bold\">$count_paydebt ครั้ง</td>
       <td class='text-center'>
             <div class=\"table-data-feature\" >
               <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"details/detail_customer.php?custom_name=".urlencode($custom_name)." \">
@@ -665,8 +667,38 @@ function listOrderForCustomer($number, $order_id,$order_name,$date_sell,$prices_
   echo $list;
 }
 
-// function detailCustomer(){
-
-// }
+function listhistoryPayDebt($number,$id_paydebt,$serial_number,$customer_name,$text_orther,$count_paydebt,$debt_balance,$date_pay,$img_pay){
+  $list = "
+    <tr>
+      <td></td>
+      <td class=\"font-weight-bold\">$number</td>
+      <td class=\"font-weight-bold\">$serial_number</td>
+      <td class=\"font-weight-bold\">$count_paydebt บาท</td>
+      
+      <td class=\"font-weight-bold\">$date_pay</td>
+      <td class=\"font-weight-bold\">$text_orther</td>
+      <td>
+        <div class=\"account-item account-item--style2 clearfix js-item-menu\">
+              <div class=\"image\">
+                  <img src=\"../../db/slip-paydebt/$img_pay \" alt=\"John Doe\" />
+              </div>
+          </div>
+      </td>
+      <td class='text-center'>
+          <div class=\"table-data-feature\" >
+              <button type=\"button\" id=\"update_order_sell\" data-target=\"#modalFormUpdateOrderSell\" data-toggle=\"modal\"  
+                 class=\"item\" data-id=\"$id_paydebt\"
+              >
+                  <i class=\"fas fa-pencil-alt text-warning\"></i>
+              </button>
+              <button type=\"button\" class=\"item\" id=\"falseTrashBtnProject\" data-id=\"$id_paydebt\">
+                <i class=\"fas fa-trash-alt text-danger\"></i>
+              </button>
+           </div>
+        </td>
+    </tr>
+  ";
+  echo $list;
+}
 
 ?>

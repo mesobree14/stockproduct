@@ -43,22 +43,50 @@ if(!isset($_SESSION['users_order'])){
                         <tr>
                             <th></th>
                             <th></th>
-                            <th style="width:27%">ชื่อลูกค้า</th>
-                            <th style="width:15%">รายการที่ซื้อ</th>
+                            <th style="width:20%">ชื่อลูกค้า</th>
+                            <th style="width:12%">รายการที่ซื้อ</th>
                             <th style="width:15%">รวมค่าใช้จ่าย</th>
                             <th style="width:15%">จำนวนเงินที่จ่ายแล้ว</th>
                             <th style="width:15%">จำนวนหนี้ที่ติดค้างอยู่</th>
+                            <th style="width:15%">จำนวนครั้งที่จ่ายหนี้</th>
                             <th style="width:13%">จัดการ</th>
                         </tr>
                     </thead>
                     <tbody>
                       <?php
-                        $sql = "SELECT COUNT(*) AS count_order, SUM(is_totalprice) AS prices_sell, custome_name, SUM(count_totalpays) AS prices_pay, SUM(count_stuck) AS count_stuck FROM orders_sell GROUP BY custome_name";
+                        $sql = "SELECT 
+                            o.custome_name,
+                            o.count_order,
+                            o.prices_sell,
+                            o.prices_pay,
+                            o.count_stuck,
+                            COALESCE(d.total_debt, 0) AS total_debt,
+                            COALESCE(d.count_debt, 0) AS count_debt
+                        FROM (
+                            SELECT 
+                                custome_name,
+                                COUNT(id_ordersell) AS count_order,
+                                SUM(is_totalprice) AS prices_sell,
+                                SUM(count_totalpays) AS prices_pay,
+                                SUM(count_stuck) AS count_stuck
+                            FROM orders_sell
+                            GROUP BY custome_name
+                        ) o
+                        LEFT JOIN (
+                            SELECT 
+                                name_customer AS custome_name,
+                                COUNT(*) AS total_debt,
+                                SUM(count_debtpaid) AS count_debt
+                            FROM custom_debtpaid
+                            GROUP BY name_customer
+                        ) d ON o.custome_name = d.custome_name;
+                        ";
                         $query_sql = mysqli_query($conn,$sql) or die(mysqli_error($conn));
                         $nums = mysqli_num_rows($query_sql);
                         if($nums > 0){
+                          
                           foreach($query_sql as $key => $res){
-                            listCustomer(($key+1),$res['custome_name'],$res['count_order'],$res['prices_sell'],$res['prices_pay'],$res['count_stuck']);
+                            listCustomer(($key+1),$res['custome_name'],$res['count_order'],$res['prices_sell'],$res['prices_pay'],$res['count_stuck'],$res['count_debt'],$res['total_debt']);
                           }
                         }
                       ?>

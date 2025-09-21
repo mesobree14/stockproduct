@@ -41,74 +41,73 @@ if(!isset($_SESSION['users_order'])){
             $acc_capintal = mysqli_fetch_assoc($capitals);
             
 
-            $res_total = mysqli_query($conn,"SELECT SUM(product_count) as totalproduct FROM stock_product");
-            $acc_totals = mysqli_fetch_assoc($res_total);
-
             $used_capital = mysqli_query($conn,"SELECT SUM(totalcost_order) as costordercount FROM order_box");
             $acc_usecapital = mysqli_fetch_assoc($used_capital);
-
-            $profit = mysqli_query($conn,"SELECT SUM(is_totalprice) as totalpices, SUM(count_totalpays) as custom_pay, SUM(count_stuck) as countstuck FROM orders_sell");
-            $acc_qlprofits = mysqli_fetch_assoc($profit);
-
-            $total_psell = mysqli_query($conn,"SELECT SUM(tatol_product) as totalproductsell FROM list_productsell");
-            $acc_total_psell = mysqli_fetch_assoc($total_psell);
 
             $quall = "SELECT SUM(is_totalprice) as is_prices, SUM(count_totalpays) as custom_pay, SUM(count_stuck) as countstuck FROM orders_sell";
             $is_quall = mysqli_query($conn,$quall);
             $is_accquall = mysqli_fetch_assoc($is_quall);
 
             $costordercount = $acc_usecapital['costordercount'] ?? 0;
-            $totalproduct = $acc_totals['totalproduct'] ?? 0;
-
-            $totalpices = $acc_qlprofits['totalpices'] ?? 0;
-            $totalproductsell = $acc_total_psell['totalproductsell'] ?? 0;
+            
             $countcapital = $acc_capintal['countcapital'] ?? 0;
             $countstuck = $is_accquall['countstuck'] ?? 0;
-            if($totalproduct > 0 ){
-              $average_cost = $costordercount  / $totalproduct;
-            }else {
-              $average_cost = 0;
-            }
-            if($totalproductsell > 0){
-              $average_sell = $totalpices /  $totalproductsell;
-            }else{
-              $average_sell = 0;
-            }
-
-            $total_capitals = $average_cost * $totalproductsell;
-            $total_profit = $totalpices - $total_capitals;
-
-            
-
-            setData("ทุนทั้งหมด",number_format($countcapital,2,'.',','));
-            $costorder = $costordercount - $total_capitals;
-            setData("ทุนที่กำลังใช้",number_format($costorder ?? 0,2,'.',','));
-
-            setData("หนี้ลูกค้ายังไม่จ่าย",number_format($countstuck,2,'.',','));
-
-            $available = $countcapital - $costorder;
-            $remain_capital =bcsub($countcapital,bcadd($costorder,$countstuck, 2), 2);
-            setData("ทุนที่ยังใช้ได้",number_format($remain_capital ?? 0 ,2,'.',','));
-            
-          ?>
-        </div>
-        <div class="col-12 row">
-          <?php
-
-
             $sql_useprofit = mysqli_query($conn,"SELECT SUM(count_withdraw) as use_prefit FROM withdraw");
             $acc_useprofit = mysqli_fetch_assoc($sql_useprofit);
-            setData("กำไรทั้งหมด",number_format($total_profit ?? 0,2,'.',','));
             
+            $sql_capital = mysqli_query($conn,"SELECT COUNT(*) AS total_capital,product_name, SUM(expenses) / SUM(product_count) AS avg_rate_price FROM stock_product GROUP BY product_name");
+            $sql_profit = mysqli_query($conn,"SELECT COUNT(*) AS total_profit,productname, SUM(tatol_product) AS total_product, SUM(price_to_pay) AS price_sell FROM list_productsell GROUP BY productname");
+            $capitalData = [];
+
+            $sum_totalsell = 0;
+            $sum_pricesell = 0;
+            $sun_pricebuy = 0;
+            $average_pay = 0;
+            while($row = mysqli_fetch_assoc($sql_capital)){
+              $capitalData[$row['product_name']] = [
+                'avg_rate_price' => $row['avg_rate_price'],
+                'total_capital' => $row['total_capital']
+              ];
+            }
+          
+            while($row = mysqli_fetch_assoc($sql_profit)){
+              $product = $row['productname'];
+              $totalProduct = $row['total_product'];
+              $totalSell = $row['total_profit'];
+              $priceSell = $row['price_sell'];
+              $avgRate = isset($capitalData[$product]) ? $capitalData[$product]['avg_rate_price'] : 0;
+              $totalPay = isset($capitalData[$product]) ? $capitalData[$product]['total_capital'] : 0;
+              $totalCost = $avgRate * $totalProduct;
+            
+              $sum_totalsell += $totalProduct;
+              $sum_pricesell += $priceSell;
+              $sun_pricebuy += $totalCost;
+              //echo "สินค้า: $product จำนวนครั้งซื้อ $totalPay |จำนวนครั้งขาย $totalSell | ขาย: $totalProduct | ขายรวม: $priceSell | ทุนเฉลี่ย: $avgRate | ต้นทุนรวม: $totalCost <br>";
+            }
+            $sql_debt = mysqli_query($conn,"SELECT SUM(count_debtpaid) AS count_debtpaid FROM custom_debtpaid");
+            $acc_debt = mysqli_fetch_assoc($sql_debt);
+            $pay_debt = $acc_debt['count_debtpaid'] ?? 0;
+        
+            $res_pricecapital = ($costordercount - $sun_pricebuy);
+            $res_pricedebt = ($countstuck - $pay_debt);
+            $res_circulating =$countcapital - ($res_pricecapital + $res_pricedebt);
+            $res_priceprofit = ($sum_pricesell - $res_pricedebt) - $sun_pricebuy;
+
+            setData("ทุนทั้งหมด",number_format($countcapital,2,'.',','));
+            setData("ทุนที่กำลังใช้",number_format($res_pricecapital ?? 0,2,'.',','));
+            setData("จำนวนค้างชำระ",number_format($res_pricedebt ?? 0,2,'.',','));
+            setData("ทุนที่ยังใช้ได้",number_format($res_circulating ?? 0 ,2,'.',','));
+            setData("กำไรทั้งหมด",number_format($res_priceprofit ?? 0,2,'.',','));
             setData("เบิกถอนไปแล้ว",number_format($acc_useprofit['use_prefit'] ?? 0,2,'.',','));
-            setData("สามารถใช้ได้",number_format($total_profit - $acc_useprofit['use_prefit'],2,'.',','));
-            uiWorking("ค่าเฉลี่ยขาย ".$totalproductsell ." ชิ้น",number_format($average_cost ?? 0 ,2,'.',','),number_format($average_sell ?? 0,2,'.',','))
+            setData("สามารถใช้ได้",number_format($res_priceprofit - $acc_useprofit['use_prefit'],2,'.',','));
+            uiWorking("ค่าเฉลี่ยขาย ".$sum_totalsell ." ชิ้น",number_format($sun_pricebuy / $sum_totalsell ?? 0 ,2,'.',','),number_format($sum_pricesell / $sum_totalsell ?? 0,2,'.',','))
           ?>
         </div>
-        <div class="col-12 row mt-2">
+      
+        <div class="col-12 row mt-2 bg-white">
           <div class="col-md-12 col-lg-5 border-right">
             <div class="col-12 row">
-            <div class="ml-auto">
+            <div class="ml-auto mt-3">
               <button class="bd-none au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" 
                   data-target="#modalFormCapital"
               >
@@ -141,7 +140,7 @@ if(!isset($_SESSION['users_order'])){
 
           <div class="col-md-12 col-lg-7">
             <div class="col-12 row">
-              <div class="ml-auto">
+              <div class="ml-auto mt-3">
                 <button class="bd-none au-btn au-btn-icon au-btn-orange au-btn--small mx-4" data-toggle="modal" 
                     data-target="#modalFormWithdraw"
                 >
@@ -176,8 +175,8 @@ if(!isset($_SESSION['users_order'])){
         </div>
       </div>
     </main>
-    <main-create-capital availablecapital="<?php echo number_format($remain_capital ?? 0 ,2,'.',',') ?>"></main-create-capital>
-    <main-create-withdraw usableprofit="<?php echo number_format($total_profit - $acc_useprofit['use_prefit'],2,'.',','); ?>"></main-create-withdraw>
+    <main-create-capital availablecapital="<?php echo number_format($res_circulating ?? 0 ,2,'.',',') ?>"></main-create-capital>
+    <main-create-withdraw usableprofit="<?php echo number_format($res_priceprofit - $acc_useprofit['use_prefit'],2,'.',','); ?>"></main-create-withdraw>
   </div>
 </body>
 </html>
