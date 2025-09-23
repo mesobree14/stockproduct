@@ -689,7 +689,7 @@ function listhistoryPayDebt($number,$id_paydebt,$serial_number,$customer_name,$t
       </td>
       <td class='text-center'>
           <div class=\"table-data-feature\" >
-              <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"../details/PDF/PDF_historydebt.php?id_paydebt=$id_paydebt \">
+              <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" target=\"_blank\" href=\"../details/PDF/PDF_historydebt.php?id_paydebt=$id_paydebt \">
                 <i class=\"fa-solid fa-file-pdf\"></i>
               </a>
               <button type=\"button\" id=\"update_order_sell\" data-target=\"#modalFormUpdateOrderSell\" data-toggle=\"modal\"  

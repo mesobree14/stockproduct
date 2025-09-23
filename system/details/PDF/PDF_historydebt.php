@@ -52,7 +52,7 @@ function formatThaiDateTime($datetime) {
 
     // Array ของวันและเดือนภาษาไทย
     $thaiDays = [
-        "อา", "จ", "อ", "พ", "พฤ", "ศ", "ส"
+        "อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."
     ];
     $thaiMonths = [
         "", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
@@ -99,6 +99,16 @@ $html = '
         <div style="width:100%;display:flex;">
           <b>ที่อยู่ : </b> [  '.$res_custom['location_send'].'  ]
         </div>
+        <div style="width:100%;display:flex;font-size:20px;"> 
+          <p style="font-size:20px;font-weight: bold;float: left;width:57%;padding:0%; margin:0%;"> ประเภทการจ่าย : [ ';
+            while($rows = $type_debt->fetch_assoc()){
+                $html .= $rows['type_pay'] .', ';
+            }
+          $html.=' ]</p>
+        </div>
+        <div style="width:100%;display:flex;font-size:20px;height:120px">
+            <p style="font-size:20px;font-weight: bold;float: left;width:100%;padding:0%; margin:0%">หมายเหตุ : ['.$his_debt['text_reason'].']</p>
+        </div>
         <hr/>
     </div>
     <div style="width:100%;display:flex;font-size:20px;">
@@ -114,18 +124,13 @@ $html = '
         <p style="font-size:20px;font-weight: bold;float: left;width:40%;padding:0%; margin:0%"> ยอดคงเหลือ : </p>
         <p style="font-size:20px;font-weight: bold;float: right%;width:50%;text-align:right;padding:0%; margin:0%"> '.number_format($his_debt['debtpaid_balance'] ?? 0,2,'.',',').' บาท</p>
       </div>
+      <hr/>
       <br/>
       <div style="width:100%;display:flex;font-size:20px;">
         <p style="font-size:20px;font-weight: bold;float: left;width:27%;padding:0%; margin:0%;"> วันที่จ่าย : </p>
         <p style="font-size:20px;font-weight: bold;float: right;width:70%;padding:0%; margin:0%;text-align:right;"> '.formatThaiDateTime($his_debt['datetime_pays']).'</p>
       </div>
-      <div style="width:100%;display:flex;font-size:20px;"> 
-        <p style="font-size:20px;font-weight: bold;border:1px solid red;float: left;width:57%;padding:0%; margin:0%;"> ประเภทการจ่าย : [ ';
-          while($rows = $type_debt->fetch_assoc()){
-              $html .= $rows['type_pay'] .', ';
-          }
-        $html.=' ]</p>
-      </div>
+      
     </div>
 </div>
 ';
