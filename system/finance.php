@@ -63,6 +63,7 @@ if(!isset($_SESSION['users_order'])){
             $sum_pricesell = 0;
             $sun_pricebuy = 0;
             $average_pay = 0;
+            $resutl_profit = 0;
             while($row = mysqli_fetch_assoc($sql_capital)){
               $capitalData[$row['product_name']] = [
                 'avg_rate_price' => $row['avg_rate_price'],
@@ -81,7 +82,9 @@ if(!isset($_SESSION['users_order'])){
             
               $sum_totalsell += $totalProduct;
               $sum_pricesell += $priceSell;
-              $sun_pricebuy += $totalCost;
+              $sun_pricebuy += $totalCost; //ต้นทุนที่ได้กลับมา
+
+              $resutl_profit += ($priceSell - $totalCost);
               //echo "สินค้า: $product จำนวนครั้งซื้อ $totalPay |จำนวนครั้งขาย $totalSell | ขาย: $totalProduct | ขายรวม: $priceSell | ทุนเฉลี่ย: $avgRate | ต้นทุนรวม: $totalCost <br>";
             }
             $sql_debt = mysqli_query($conn,"SELECT SUM(count_debtpaid) AS count_debtpaid FROM custom_debtpaid");
@@ -91,16 +94,18 @@ if(!isset($_SESSION['users_order'])){
             $res_pricecapital = ($costordercount - $sun_pricebuy);
             $res_pricedebt = ($countstuck - $pay_debt);
             $res_circulating =$countcapital - ($res_pricecapital + $res_pricedebt);
-            $res_priceprofit = ($sum_pricesell - $res_pricedebt) - $sun_pricebuy;
+
+
 
             setData("ทุนทั้งหมด",number_format($countcapital,2,'.',','));
-            setData("ทุนที่กำลังใช้",number_format($res_pricecapital ?? 0,2,'.',','));
+            setData("ทุนที่กำลังใช้(<small class='text-danger font-weight-bold'>".number_format($sun_pricebuy ?? 0,2,'.',',').".บ</small>)",number_format($res_pricecapital ?? 0,2,'.',','));
             setData("จำนวนค้างชำระ",number_format($res_pricedebt ?? 0,2,'.',','));
             setData("ทุนที่ยังใช้ได้",number_format($res_circulating ?? 0 ,2,'.',','));
-            setData("กำไรทั้งหมด",number_format($res_priceprofit ?? 0,2,'.',','));
+            setData("กำไร(<small class='text-success font-weight-bold'>ขายได้ : ".number_format($sum_pricesell ?? 0,2,'.',',').".บ</small>)",number_format($resutl_profit ?? 0,2,'.',','));
+            
             setData("เบิกถอนไปแล้ว",number_format($acc_useprofit['use_prefit'] ?? 0,2,'.',','));
-            setData("สามารถใช้ได้",number_format($res_priceprofit - $acc_useprofit['use_prefit'],2,'.',','));
-            uiWorking("ค่าเฉลี่ยขาย ".$sum_totalsell ." ชิ้น",number_format($sun_pricebuy / $sum_totalsell ?? 0 ,2,'.',','),number_format($sum_pricesell / $sum_totalsell ?? 0,2,'.',','))
+            setData("สามารถใช้ได้",number_format($resutl_profit - $acc_useprofit['use_prefit'],2,'.',','));
+            uiWorking("ค่าเฉลี่ยขาย ".number_format($sum_totalsell) ." ชิ้น",number_format($sun_pricebuy / $sum_totalsell ?? 0 ,2,'.',','),number_format($sum_pricesell / $sum_totalsell ?? 0,2,'.',','))
           ?>
         </div>
       
@@ -176,7 +181,7 @@ if(!isset($_SESSION['users_order'])){
       </div>
     </main>
     <main-create-capital availablecapital="<?php echo number_format($res_circulating ?? 0 ,2,'.',',') ?>"></main-create-capital>
-    <main-create-withdraw usableprofit="<?php echo number_format($res_priceprofit - $acc_useprofit['use_prefit'],2,'.',','); ?>"></main-create-withdraw>
+    <main-create-withdraw usableprofit="<?php echo number_format($resutl_profit - $acc_useprofit['use_prefit'],2,'.',','); ?>"></main-create-withdraw>
   </div>
 </body>
 </html>
