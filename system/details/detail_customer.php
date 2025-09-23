@@ -75,11 +75,11 @@ if(!isset($_SESSION['users_order'])){
                       <?php 
                         $debtpay_balance = $rows['count_stuck'] - $row_pay['count_dabtprice'];
                         boxCustom("จำนวนรายการที่ซื้อ",$rows['count_order'], "ครั้ง");
-                        boxCustom("จำนวนหนี้ที่ติด",$rows['count_stuck'],"บาท");
-                        boxCustom("จ่ายหนี้ [ ".$row_pay['total_pay']." ครั้ง]",$row_pay['count_dabtprice'],"บาท");
-                        boxCustom("จำนวนเงินที่จ่าย",$rows['prices_pay'],"บาท");
-                        boxCustom("จำนวนเงินทั้งหมด",$rows['prices_sell'],"บาท");
-                        boxCustom("หนี้คงเหลือ",number_format($debtpay_balance,2,'.',','),"บาท");
+                        boxCustom("จำนวนหนี้ที่ติด",number_format($rows['count_stuck'] ?? 0,2,'.',','),"บาท");
+                        boxCustom("จ่ายหนี้ [ ".number_format($row_pay['total_pay'] ?? 0)." ครั้ง]",number_format($row_pay['count_dabtprice'] ?? 0,2,'.',','),"บาท");
+                        boxCustom("จำนวนเงินที่จ่าย",number_format($rows['prices_pay'] ?? 0,2,'.',','),"บาท");
+                        boxCustom("จำนวนเงินทั้งหมด",number_format($rows['prices_sell'] ?? 0,2,'.',','),"บาท");
+                        boxCustom("หนี้คงเหลือ",number_format($debtpay_balance ?? 0,2,'.',','),"บาท");
                       ?>
                     </div>
                 </div>
@@ -125,7 +125,7 @@ if(!isset($_SESSION['users_order'])){
                     </thead>
                     <tbody>
                       <?php 
-                        $sql = "SELECT * FROM orders_sell WHERE custome_name='$custom_name' ORDER BY create_at";
+                        $sql = "SELECT * FROM orders_sell WHERE custome_name='$custom_name' ORDER BY create_at DESC";
                         $query = mysqli_query($conn,$sql) or die(mysqli_error($conn));
                         foreach($query as $key => $list_order){
                           listOrderForCustomer(
@@ -156,7 +156,7 @@ if(!isset($_SESSION['users_order'])){
                     </thead>
                     <tbody>
                         <?php
-                          $query_debt = mysqli_query($conn,"SELECT * FROM custom_debtpaid WHERE name_customer='$custom_name'");
+                          $query_debt = mysqli_query($conn,"SELECT * FROM custom_debtpaid WHERE name_customer='$custom_name' ORDER BY create_at DESC");
                           foreach($query_debt as $key => $result){
                             listhistoryPayDebt(($key+1),$result['id_debtpaid'],$result['serial_number'],$result['name_customer'],
                             $result['text_reason'],$result['count_debtpaid'],$result['debtpaid_balance'],$result['datetime_pays'],$result['img_debt']);

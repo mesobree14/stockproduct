@@ -634,7 +634,10 @@ function listCustomer($number,$custom_name,$count_order,$pricessell,$pricespay,$
               <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"details/detail_customer.php?custom_name=".urlencode($custom_name)." \">
                 <i class=\"fas fa-list-alt\"></i>
               </a>
-              <button type=\"button\" class=\"item\" id=\"falseTrashBtnProject\" data-custom=\"$custom_name\">
+              <button 
+                type=\"button\" data-toggle=\"modal\" class=\"item\" data-custome=\"$custom_name\" data-debt=\"$price_balnce_stuck\"
+                data-types=\"OUT\" data-target=\"#modalFormPayOffDebt\" id=\"modelpayoff_debt\"
+              >
                 <i class=\"fa-solid fa-circle-dollar-to-slot\"></i>
               </button>
           </div>
@@ -686,7 +689,7 @@ function listhistoryPayDebt($number,$id_paydebt,$serial_number,$customer_name,$t
       </td>
       <td class='text-center'>
           <div class=\"table-data-feature\" >
-              <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"../details/detail_ordersell.php?ordersell_id=$id_paydebt \">
+              <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"../details/PDF/PDF_historydebt.php?id_paydebt=$id_paydebt \">
                 <i class=\"fa-solid fa-file-pdf\"></i>
               </a>
               <button type=\"button\" id=\"update_order_sell\" data-target=\"#modalFormUpdateOrderSell\" data-toggle=\"modal\"  

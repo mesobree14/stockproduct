@@ -162,7 +162,7 @@ class ModelPayOffDebt extends HTMLElement {
                   <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <form  method="POST" action="../backend/customer.php" enctype="multipart/form-data">
+            <form id="myFormCustom" method="POST" enctype="multipart/form-data">
               <input type="hidden" name="type_page" id="type_page"/>
               <input type="hidden" name="customer_name" id="customer_name" />
               <input type="hidden" name="debtpaid_balance" id="debtpaid_balance" />
@@ -223,13 +223,19 @@ $(document).on("click", "#modelpayoff_debt", function (e) {
   let typepage = $(this).data("types");
   let customname = $(this).data("custome");
   let countdebt = $(this).data("debt");
-  console.log({ customname });
+  console.log({ customname, typepage });
 
   $("#customer_name").val(customname);
   $("#type_page").val(typepage);
   $("#customname").html(customname);
   $("#custom_name").html(customname);
   $("#count_debt").html(countdebt);
+  let myForm = document.getElementById("myFormCustom");
+  if (typepage === "IN") {
+    myForm.action = "../backend/customer.php";
+  } else {
+    myForm.action = "backend/customer.php";
+  }
 });
 
 $(document).on("click", "#confirmTrashPayOffDebt", function (e) {
