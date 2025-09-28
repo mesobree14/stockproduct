@@ -85,8 +85,13 @@ if(!isset($_SESSION['users_order'])){
               $sun_pricebuy += $totalCost; //ต้นทุนที่ได้กลับมา
 
               $resutl_profit += ($priceSell - $totalCost);
-              //echo "สินค้า: $product จำนวนครั้งซื้อ $totalPay |จำนวนครั้งขาย $totalSell | ขาย: $totalProduct | ขายรวม: $priceSell | ทุนเฉลี่ย: $avgRate | ต้นทุนรวม: $totalCost <br>";
+              $kumrai = $priceSell - $totalCost;
+              echo "สินค้า: $product จำนวนครั้งซื้อ $totalPay |จำนวนครั้งขาย $totalSell | จำนวนขาย: $totalProduct | รายรับ: $priceSell | ทุนเฉลี่ย: $avgRate | ต้นทุนรวมทั้งหมด: $totalCost | กำไร:$kumrai <br><div class='border border-success col-12'></div><br/>";
             }
+            echo "<br/> sum_pricesell : ";
+            echo $sum_pricesell;
+            echo "<br/> sun_pricebuy : ";
+            echo $sun_pricebuy;
             $sql_debt = mysqli_query($conn,"SELECT SUM(count_debtpaid) AS count_debtpaid FROM custom_debtpaid");
             $acc_debt = mysqli_fetch_assoc($sql_debt);
             $pay_debt = $acc_debt['count_debtpaid'] ?? 0;

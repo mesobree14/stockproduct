@@ -59,21 +59,58 @@
           $debtpaid_balance = $_POST['debtpaid_balance'];
           $date_add = $_POST['date_add'];
           $orther_text = $_POST['orther_text'];
+
           $payment_option = $_POST['payment_option'];
+          $is_ordersell_id = $_POST['is_ordersell_id'];
+          //$priceordersell = $_POST['priceordersell'];
+          $count_order = count($is_ordersell_id);
+          
+          
 
           $check_payment = [];
+          $check_secc_count_order = [];
           if($type_page == "IN"){
-            echo "INDETAIL";
+            echo "INDETAIL<br/>";
           }else{
-            echo "OUTDETAIL";
+            echo "OUTDETAIL<br/>";
           }
-
-          $sql = "INSERT INTO custom_debtpaid(serial_number,name_customer,count_debtpaid,debtpaid_balance,datetime_pays,text_reason,img_debt,adder_id,create_at) 
-            VALUES('$serial_number','$customer_name','$count_paydebt','$debtpaid_balance','$date_add','$orther_text','".setImgpath("payoffdebt_slip")."','$id_user','$day_add')";
+          
+          $sql = "INSERT INTO custom_debtpaid(serial_number,name_customer,count_debtpaid,debtpaid_balance,count_order_pay,datetime_pays,text_reason,img_debt,adder_id,create_at) 
+            VALUES('$serial_number','$customer_name','$count_paydebt','$debtpaid_balance','$count_order','$date_add','$orther_text','".setImgpath("payoffdebt_slip")."','$id_user','$day_add')";
           
           $query_sql = mysqli_query($conn,$sql) or die(mysqli_error($conn));
-          if($query_sql){
+         if($query_sql){
+            $remaining = $count_paydebt;
             $id_debtpay = mysqli_insert_id($conn);
+            foreach($is_ordersell_id as $key => $val){
+            list($ids, $price, $text) = explode("|",$val);
+              if($remaining <= 0){
+                $paid = 0;
+              }elseif($remaining >= $price){
+                $paid = $price;
+                $remaining -= $price;
+              }else{
+                $paid = $remaining;
+                $remaining = 0;
+              }
+              $staus = ($paid == $price) ? 'paid' : 'partial';
+             
+              $sql_inserts = "INSERT INTO order_was_paid(debtpaid_id,ordersell_ids,ordersell_names,priceto_pay,amount_paid,status_pay,create_at)
+              VALUES('$id_debtpay','$ids','$text','$price','$paid','$staus','$day_add')";
+              $querys = mysqli_query($conn, $sql_inserts);
+              if($querys){
+                $check_secc_count_order[] = [
+                  'ids'=>$ids,
+                  'status'=>'success'
+                ];
+              }else{
+                $check_secc_count_order[] = [
+                  'ids'=>$ids,
+                  'status'=>'error'
+                ];
+              }
+            }
+
             for($i=0;$i < count($payment_option);$i++){
               $is_payment = mysqli_real_escape_string($conn,trim($payment_option[$i]));
               if($is_payment !== ""){

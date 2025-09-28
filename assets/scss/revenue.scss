@@ -391,6 +391,15 @@
   padding: 0;
 }
 
+.input-border-success,
+.input-border-success:hover {
+  border: 2px solid rgb(127, 250, 108);
+}
+.input-border-danger,
+.input-border-danger:hover {
+  border: 2px solid rgb(243, 87, 87);
+}
+
 /*|-------------------------------------------------------| Modal Sty Image Preview |-------------------------------------------------------|*/
 .container .wrapper {
   position: relative;

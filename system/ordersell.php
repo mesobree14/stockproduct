@@ -105,6 +105,7 @@ if(!isset($_SESSION['users_order'])){
                       ?>
                     </tbody>
                 </table> 
+               || <?php echo count($orders_ass); ?>
             </div>
           </div>
       </div>

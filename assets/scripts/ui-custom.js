@@ -119,10 +119,14 @@ class AddImage extends HTMLElement {
 customElements.define("mian-add-image", AddImage);
 
 class ModelPayOffDebt extends HTMLElement {
+  constructor() {
+    super();
+  }
   connectedCallback() {
     this.renderUi();
-    this.script();
+    //this.script();
     this.generateID();
+    this.getordersellDebt();
   }
 
   generateID() {
@@ -138,18 +142,112 @@ class ModelPayOffDebt extends HTMLElement {
     document.getElementById("serial_number").value = id;
   }
 
-  script() {
+  //script() {
+  // let count_paydebt = document.getElementById("count_paydebt");
+  // let count_debt = document.getElementById("count_debt");
+  // let debtpaid_balance = document.getElementById("debtpaid_balance");
+  // let debtpaid_balance_html = document.getElementById(
+  //   "debtpaid_balance_html"
+  // );
+  // count_paydebt.addEventListener("input", function () {
+  //   let result = Number(count_debt.textContent) - Number(count_paydebt.value);
+  //   debtpaid_balance.value = result;
+  //   //debtpaid_balance_html.textContent = `เหลืออีก ${result} บาท`;
+  // });
+  //}
+  async getordersellDebt() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const customName = urlParams.get("custom_name");
+    let total_order = document.getElementById("total_order");
+    let SelectedItem = document.getElementById("SelectedItem");
+
     let count_paydebt = document.getElementById("count_paydebt");
     let count_debt = document.getElementById("count_debt");
     let debtpaid_balance = document.getElementById("debtpaid_balance");
-    let debtpaid_balance_html = document.getElementById(
-      "debtpaid_balance_html"
+    count_paydebt.disabled = true;
+    const hiddenCountOrdersell = document.getElementById(
+      "hidden-count-ordersell"
     );
-    count_paydebt.addEventListener("input", function () {
-      let result = Number(count_debt.textContent) - Number(count_paydebt.value);
-      debtpaid_balance.value = result;
-      debtpaid_balance_html.textContent = `เหลืออีก ${result} บาท`;
-    });
+    hiddenCountOrdersell.innerHTML = "";
+
+    const $seleted = $("#is_ordersell_ids");
+    try {
+      const response = await fetch(
+        `http://localhost/stockproduct/system/backend/api/list_orderdebt.php?customers=${customName}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const responsedata = await response.json();
+      const optionData = responsedata.data.map((item) => ({
+        id: item.id_ordersell,
+        text: item.ordersell_name,
+        amount: item.debt_remaining,
+      }));
+      $seleted.multipleSelect("uncheckAll");
+      $seleted.empty();
+
+      optionData.forEach((item) => {
+        const values = btoa(
+          JSON.stringify({
+            id: item.id,
+            amount: item.amount,
+            text: item.text,
+          })
+        );
+
+        $seleted.append(
+          `<option value="${item.id}|${item.amount}|${item.text}" data-text="${item.text}" data-amount="${item.amount}">
+            ${item.text} <span class="text-danger font-weight-bold">(ค้าง:${item.amount} บาท )</span>
+          </option>`
+        );
+      });
+      $seleted.multipleSelect("refresh");
+
+      $seleted.change(function () {
+        var result = $(this).multipleSelect("getSelects");
+        let datas = [];
+        let responses = 0;
+        result.map((id) => {
+          let inputs = document.createElement("input");
+          inputs.type = "hidden";
+          inputs.name = "priceordersell[]";
+
+          hiddenCountOrdersell.appendChild(inputs);
+          let text = $(this).find(`option[value="${id}"]`).data("text");
+          let amount = $(this).find(`option[value="${id}"]`).data("amount");
+          datas.push(amount);
+          responses += Number(amount);
+          inputs.value = amount;
+          return text;
+        });
+        SelectedItem.textContent = `จำนวนที่ต้องจ่าย ${responses} บ.`;
+        console.log(datas, responses);
+
+        total_order.textContent = `${result.length} รายการ`;
+        if (datas.length > 0) {
+          count_paydebt.disabled = false;
+        } else {
+          count_paydebt.disabled = true;
+        }
+        count_paydebt.addEventListener("input", function () {
+          let result =
+            Number(count_debt.textContent) - Number(count_paydebt.value);
+          debtpaid_balance.value = result;
+          if (responses === Number(count_paydebt.value)) {
+            count_paydebt.classList.add("input-border-success");
+            count_paydebt.classList.remove("input-border-danger");
+          } else {
+            count_paydebt.classList.add("input-border-danger");
+            count_paydebt.classList.remove("input-border-success");
+          }
+          //debtpaid_balance_html.textContent = `เหลืออีก ${result} บาท`;
+        });
+      });
+    } catch (e) {
+      console.error("IS ORROR :: ", e);
+    }
   }
   renderUi() {
     this.innerHTML = `
@@ -170,17 +268,28 @@ class ModelPayOffDebt extends HTMLElement {
               <div class="modal-body">
                 <div class="modal-body">
                     <div class="col-md-12 row mb-3">
-                    <div class="col-md-7 row py-2">
+                      <div class="col-md-7 row py-2">
                         <span class=" text-primary font-weight-bold">จำนวนหนี้ที่ <span id="custom_name"></span> เหลืออยู่ <span id="count_debt"></span> บาท</span>
                       </div>
                       <div class="col-md-5"></div>
-                      <div class="col-md-7">
+                      <div class="col-md-9">
+                        <label class="mt-0 mb-0 font-weight-bold text-dark">เลือกรายการที่ต้องการจ่าย <span class="text-danger">*</span></label>
+                          <select class="form-control multiple-select" name="is_ordersell_id[]" id="is_ordersell_ids" placeholder="เลือกรายการที่ต้องการจ่าย" multiple="multiple" required></select>
+                          <div id="hidden-count-ordersell"></div>
+                      </div>
+                      <div class="col-md-3">
+                          <label class="mt-0 mb-0 font-weight-bold text-dark">รายการที่เลือก</label>
+                          <div class="form-control py-2">
+                            <span id="total_order" class="py-1">0 รายการ</span>
+                          </div>
+                      </div>
+                      <div class="col-md-7 mt-3">
                         <div class="form-group mb-2">
-                          <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนเงินที่ต้องการจ่าย / .บ  <span id="debtpaid_balance_html" class="text-success"></span></label>
+                          <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนเงินที่ต้องการจ่าย / .บ  <span id="SelectedItem" class="text-success"></span></label>
                           <input type="text" class="form-control" name="count_paydebt" id="count_paydebt" placeholder="จำนวนเงิน" required>
                         </div>  
                       </div>
-                      <div class="col-md-5">
+                      <div class="col-md-5 mt-3">
                           <div class="form-group mb-2">
                             <label class="mt-0 mb-0 font-weight-bold text-dark">เวลา</label>
                             <input type="datetime-local" class="form-control" name="date_add" id="date_add" placeholder="วันที่และเวลา" required>
@@ -188,7 +297,7 @@ class ModelPayOffDebt extends HTMLElement {
                       </div>
                       <div class="col-md-7">
                         
-                          <label class="mt-0 mb-0 col-12 font-weight-bold text-dark">ตัวเลือกการจ่าย <span class="text-danger">*</span></label>
+                          <label class="mt-0 mb-0 font-weight-bold text-dark">ตัวเลือกการจ่าย <span class="text-danger">*</span></label>
                           <select class="form-control multiple-select" name="payment_option[]" id="payment_options" placeholder="ตัวเลือกการจ่าย" multiple="multiple" required>
                             <option value="โอน">โอน</option>
                             <option value="จ่ายสด">จ่ายสด</option>
