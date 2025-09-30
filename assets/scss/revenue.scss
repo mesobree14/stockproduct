@@ -400,6 +400,14 @@
   border: 2px solid rgb(243, 87, 87);
 }
 
+.btn-print {
+  border: 3px solid gray;
+  font-weight: bold;
+}
+.btn-print:hover {
+  background-color: #afb1b1;
+}
+
 /*|-------------------------------------------------------| Modal Sty Image Preview |-------------------------------------------------------|*/
 .container .wrapper {
   position: relative;

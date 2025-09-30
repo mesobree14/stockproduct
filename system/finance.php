@@ -86,12 +86,12 @@ if(!isset($_SESSION['users_order'])){
 
               $resutl_profit += ($priceSell - $totalCost);
               $kumrai = $priceSell - $totalCost;
-              echo "สินค้า: $product จำนวนครั้งซื้อ $totalPay |จำนวนครั้งขาย $totalSell | จำนวนขาย: $totalProduct | รายรับ: $priceSell | ทุนเฉลี่ย: $avgRate | ต้นทุนรวมทั้งหมด: $totalCost | กำไร:$kumrai <br><div class='border border-success col-12'></div><br/>";
+              //echo "สินค้า: $product จำนวนครั้งซื้อ $totalPay |จำนวนครั้งขาย $totalSell | จำนวนขาย: $totalProduct | รายรับ: $priceSell | ทุนเฉลี่ย: $avgRate | ต้นทุนรวมทั้งหมด: $totalCost | กำไร:$kumrai <br><div class='border border-success col-12'></div><br/>";
             }
-            echo "<br/> sum_pricesell : ";
-            echo $sum_pricesell;
-            echo "<br/> sun_pricebuy : ";
-            echo $sun_pricebuy;
+            //echo "<br/> sum_pricesell : ";
+            //echo $sum_pricesell;
+            //echo "<br/> sun_pricebuy : ";
+            //echo $sun_pricebuy;
             $sql_debt = mysqli_query($conn,"SELECT SUM(count_debtpaid) AS count_debtpaid FROM custom_debtpaid");
             $acc_debt = mysqli_fetch_assoc($sql_debt);
             $pay_debt = $acc_debt['count_debtpaid'] ?? 0;
@@ -99,9 +99,14 @@ if(!isset($_SESSION['users_order'])){
             $res_pricecapital = ($costordercount - $sun_pricebuy);
             $res_pricedebt = ($countstuck - $pay_debt);
             $res_circulating =$countcapital - ($res_pricecapital + $res_pricedebt);
+           ?> 
+          <div class="col-12 row mb-2">
+            <a class="ml-auto px-4 py-1 w-22 btn-print" href="details/PDF/PDF_finance.php" target="_blank">
+                <i class="fas fa-file-code px-2"></i> PDF
+            </a>
+          </div>
 
-
-
+          <?php
             setData("ทุนทั้งหมด",number_format($countcapital,2,'.',','));
             setData("ทุนที่กำลังใช้(<small class='text-danger font-weight-bold'>".number_format($sun_pricebuy ?? 0,2,'.',',').".บ</small>)",number_format($res_pricecapital ?? 0,2,'.',','));
             setData("จำนวนค้างชำระ",number_format($res_pricedebt ?? 0,2,'.',','));
@@ -183,6 +188,9 @@ if(!isset($_SESSION['users_order'])){
           </div>
 
         </div>
+        <!-- <div class="col-12">
+          <input type="text" id="datepicker" placeholder="เลือกวันที่">
+        </div> -->
       </div>
     </main>
     <main-create-capital availablecapital="<?php echo number_format($res_circulating ?? 0 ,2,'.',',') ?>"></main-create-capital>
@@ -190,5 +198,20 @@ if(!isset($_SESSION['users_order'])){
   </div>
 </body>
 </html>
+<script>
+  <?php
+    $query_date = mysqli_query($conn,"SELECT MIN(date_time_sell) as min_date, MAX(date_time_sell) as max_date FROM orders_sell");
+    $row = mysqli_fetch_assoc($query_date);
 
+  ?>
+  const minDate = "<?= $row['min_date'] ?>";
+  const maxDate = "<?= $row['max_date'] ?>";
+   $(function () {
+    $("#datepicker").datepicker({
+      dateFormat: "yy-mm-dd",
+      minDate: new Date(minDate),
+      maxDate: new Date(maxDate)
+    });
+  });
+</script>
 <script src="../assets/scripts/ui-finance.js"></script>
