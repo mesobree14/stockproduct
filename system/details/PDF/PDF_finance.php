@@ -93,6 +93,34 @@ if ($conn->connect_error) {
   table.slip-table td.total {
     width: 15%;
   }
+  table.slip-table td.result-name {
+    width: 25%;
+    text-align: left;
+    border:none;
+  }
+  table.slip-table td.resutl-qty{
+    width: 15%;
+    border:none;
+  }
+  table.slip-table td.resutl-qtys{
+    width: 15%;
+  }
+  .fontbold{
+    font-weight: bold;
+    color:blue;
+    font-size:18px;
+  }
+  table.price-table{
+    width: 50%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  table.price-table th,
+  table.price-table td {
+    border: 1px solid #000;
+    padding: 6px;
+    text-align: center;
+  }
   </style>
   <div>
     <div style="width:100%;display:flex">
@@ -149,9 +177,61 @@ if ($conn->connect_error) {
             $in++;
             //echo "สินค้า: $product จำนวนครั้งซื้อ $totalPay |จำนวนครั้งขาย $totalSell | จำนวนขาย: $totalProduct | รายรับ: $priceSell | ทุนเฉลี่ย: $avgRate | ต้นทุนรวมทั้งหมด: $totalCost | กำไร:$kumrai <br><div class='border border-success col-12'></div><br/>";
           }
+          $sql_debt = mysqli_query($conn,"SELECT SUM(count_debtpaid) AS count_debtpaid FROM custom_debtpaid");
+          $acc_debt = mysqli_fetch_assoc($sql_debt);
+          $pay_debt = $acc_debt['count_debtpaid'] ?? 0;
+      
+          $res_pricecapital = ($costordercount - $sun_pricebuy);
+          $res_pricedebt = ($countstuck - $pay_debt);
+          $res_circulating =$countcapital - ($res_pricecapital + $res_pricedebt);
 $html .= '
+            <tr>
+              <td class="num;" style="border-right: none;"></td>
+              <td class="fontbold name" style="border-bottom:1px solid black;border-left: none;border-right: none;">ผลรวม</td>
+              <td class="price" style="border-bottom:1px solid black;border-left: none;border-right: none;"></td>
+              <td class="fontbold qty" >'.number_format($sum_totalsell).'</td>
+              <td class="fontbold total">'.number_format($sum_pricesell ?? 0,2,'.',',').'</td>
+              <td class="fontbold total">'.number_format($sun_pricebuy ?? 0,2,'.',',').'</td>
+              <td class="fontbold total">'.number_format($resutl_profit ?? 0,2,'.',',').'</td>
+            </tr>
         </tbody>
       </table>
+        <div style="width:100%;display:flex;">
+          <table class="price-table" style="margin-top:5%;float:left;">
+              <thead>
+                <tr style="background-color:#ffb3ff;">
+                  <th style="font-weight: bold;">รายการ</th>
+                  <th style="font-weight: bold;">จำนวน</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="color:blue;font-weight:bold">จำนวนทุน</td>
+                  <td>'.number_format($countcapital,2,'.',',').'</td>
+                </tr>
+                <tr>
+                  <td style="color:blue;font-weight:bold">กำลังใช้</td>
+                  <td>'.number_format($res_pricecapital ?? 0,2,'.',',').'</td>
+                </tr>
+                <tr>
+                  <td style="color:blue;font-weight:bold">ทุนที่ยังใช้ได้</td>
+                  <td>'.number_format($res_circulating ?? 0,2,'.',',').'</td>
+                </tr>
+                <tr>
+                  <td style="color:blue;font-weight:bold">จำนวนค้างชำระ</td>
+                  <td>'.number_format($res_pricedebt ?? 0,2,'.',',').'</td>
+                </tr>
+                <tr>
+                    <td style="color:blue;font-weight:bold">เบิกถอนไปแล้ว</td>
+                    <td>'.number_format($acc_useprofit['use_prefit'] ?? 0,2,'.',',').'</td>
+                  </tr>
+                <tr>
+                    <td style="color:blue;font-weight:bold">สามารถใช้ได้</td>
+                    <td>'.number_format($resutl_profit - $acc_useprofit['use_prefit'] ?? 0,2,'.',',').'</td>
+                  </tr>
+              </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
