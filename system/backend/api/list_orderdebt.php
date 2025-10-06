@@ -10,6 +10,7 @@
     date_default_timezone_set("Asia/Bangkok");
     if($_SERVER['REQUEST_METHOD'] === "GET"){
       $customers = $_GET['customers'];
+      //echo $customers;
       $sql = "SELECT 
         OS.id_ordersell,OS.ordersell_name,OS.is_totalprice,OS.custome_name,OS.date_time_sell,OS.count_totalpays,OS.count_stuck,
         IFNULL(SUM(OP.amount_paid), 0) AS total_paid,

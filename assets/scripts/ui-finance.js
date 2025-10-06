@@ -125,7 +125,7 @@ class Capital extends HTMLElement {
             <form  method="POST" action="backend/finance.php" enctype="multipart/form-data">
               <input type="hidden" name="status_form" value="capital"/>
               <input type="hidden" name="capital_id" id="capital_id" />
-              <input type="text" name="capital_img" id="capital_img" />
+              <input type="hidden" name="capital_img" id="capital_img" />
               <div class="modal-body">
                 <div class="modal-body">
                     <div class="col-md-12 row mb-3">
@@ -285,7 +285,7 @@ class Withdraw extends HTMLElement {
             <form  method="POST" action="backend/finance.php" id="is_form" enctype="multipart/form-data">
               <input type="hidden" name="status_form" value="withdraw"/>
               <input type="hidden" name="withdraw_id" id="withdraw_id"/>
-              <input type="text" name="withdraw_img" id="withdraw_img"/>
+              <input type="hidden" name="withdraw_img" id="withdraw_img"/>
               <div class="modal-body">
                 <div class="modal-body">
                     <div class="col-md-12 row mb-3">
@@ -344,6 +344,11 @@ $(document).on("click", "#update_withraw", function (e) {
   $("#date_time_withdraw").val(date_withraw);
   $("#withdraw_img").val(img_withdraw);
   $("#reason").val(reason);
+
+  $("#slip_withdraw").val(img_withdraw);
+  $(".slip_withdraw").attr("src", `../db/slip-finance/${img_withdraw}`);
+  $(".ux-wrap").last().addClass("active");
+  $(".uimgname-withdraw").html(img_withdraw);
 });
 
 // เช็กว่า jQuery มีหรือยัง

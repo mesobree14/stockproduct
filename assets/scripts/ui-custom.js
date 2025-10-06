@@ -158,6 +158,7 @@ class ModelPayOffDebt extends HTMLElement {
   async getordersellDebt() {
     const urlParams = new URLSearchParams(window.location.search);
     const customName = urlParams.get("custom_name");
+    console.log({ customName });
     let total_order = document.getElementById("total_order");
     let SelectedItem = document.getElementById("SelectedItem");
 
@@ -203,6 +204,7 @@ class ModelPayOffDebt extends HTMLElement {
           </option>`
         );
       });
+      console.log({ optionData });
       $seleted.multipleSelect("refresh");
 
       $seleted.change(function () {
