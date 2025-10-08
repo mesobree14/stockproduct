@@ -21,6 +21,9 @@ $sql_query = mysqli_query($conn,$sql) or die(mysqli_error($conn));
 $count_query = mysqli_query($conn, "SELECT COUNT(*) AS total, SUM(tatol_product) AS total_product FROM list_productsell WHERE ordersell_id='$ordersell_id'");
 $count_row = mysqli_fetch_assoc($count_query);
 
+$ispay_debtquery = mysqli_query($conn,"SELECT COUNT(waspaid_id) AS count_pays, COALESCE(SUM(amount_paid), 0) AS sum_amount_paid FROM order_was_paid WHERE ordersell_ids='$ordersell_id'");
+$row_ispays = mysqli_fetch_assoc($ispay_debtquery);
+
 $res_acc = [];
 while($row = mysqli_fetch_assoc($sql_query)){
 
@@ -104,8 +107,8 @@ foreach($res_acc as $rows){
               <?php 
                 detailOrderSell(
                   $order['id_ordersell'],$order['ordersell_name'],$order['is_totalprice'],$order['custome_name'],$order['tell_custome'],$order['location_send'],
-                  $order['date_time_sell'],$count_row['total'],$count_row['total_product'],$order['reason'],$order['sender'],$order['tell_sender'],$order['count_totalpays'],
-                  $order['count_stuck'],$order['slip_ordersell'],$order['adder_id'],$order['create_at'],$sell_type,
+                  $order['date_time_sell'],$count_row['total'],$count_row['total_product'],$order['reason'],$order['sender'],$order['tell_sender'],($order['count_totalpays'] + $row_ispays['sum_amount_paid']),
+                  ($order['count_stuck'] - $row_ispays['sum_amount_paid']),$order['slip_ordersell'],$order['adder_id'],$order['create_at'],$sell_type,
                 );
                 
               ?>

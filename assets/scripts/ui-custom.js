@@ -1,3 +1,5 @@
+"use strict";
+
 $(function () {
   var $tabButtonItem = $("#tab-button-custom li"),
     $tabSelect = $("#tab-select-custom"),
@@ -155,10 +157,7 @@ class ModelPayOffDebt extends HTMLElement {
   //   //debtpaid_balance_html.textContent = `เหลืออีก ${result} บาท`;
   // });
   //}
-  async getordersellDebt() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const customName = urlParams.get("custom_name");
-    console.log({ customName });
+  async getordersellDebt(custom_names = "") {
     let total_order = document.getElementById("total_order");
     let SelectedItem = document.getElementById("SelectedItem");
 
@@ -174,7 +173,7 @@ class ModelPayOffDebt extends HTMLElement {
     const $seleted = $("#is_ordersell_ids");
     try {
       const response = await fetch(
-        `http://localhost/stockproduct/system/backend/api/list_orderdebt.php?customers=${customName}`,
+        `http://localhost/stockproduct/system/backend/api/list_orderdebt.php?customers=${custom_names}`,
         {
           method: "GET",
           credentials: "include",
@@ -204,7 +203,7 @@ class ModelPayOffDebt extends HTMLElement {
           </option>`
         );
       });
-      console.log({ optionData });
+
       $seleted.multipleSelect("refresh");
 
       $seleted.change(function () {
@@ -225,7 +224,6 @@ class ModelPayOffDebt extends HTMLElement {
           return text;
         });
         SelectedItem.textContent = `จำนวนที่ต้องจ่าย ${responses} บ.`;
-        console.log(datas, responses);
 
         total_order.textContent = `${result.length} รายการ`;
         if (datas.length > 0) {
@@ -334,7 +332,8 @@ $(document).on("click", "#modelpayoff_debt", function (e) {
   let typepage = $(this).data("types");
   let customname = $(this).data("custome");
   let countdebt = $(this).data("debt");
-  console.log({ customname, typepage });
+  const compo_modalpay_debt = document.querySelector("main-pay-debt");
+  compo_modalpay_debt.getordersellDebt(customname);
 
   $("#customer_name").val(customname);
   $("#type_page").val(typepage);
@@ -354,7 +353,6 @@ $(document).on("click", "#confirmTrashPayOffDebt", function (e) {
   let name = $(this).data("name");
   let img = $(this).data("img");
   let count_debt = $(this).data("count");
-  console.log({ img });
   Swal.fire({
     title: "คุณแน่ใจไหม ?",
     text: `คุณยืนยันที่จะลบประวัติจ่ายหนี้ของ ${name} จำนวน ${count_debt} บ. นี้ ใช่ไหม`,
@@ -381,7 +379,6 @@ $(document).on("click", "#confirmTrashPayOffDebt", function (e) {
         );
         const responsedata = await responseapi.json();
         if (responsedata.status === 201) {
-          console.log(responsedata);
           Swal.fire({
             title: "เรียบร้อย",
             text: responsedata.message,

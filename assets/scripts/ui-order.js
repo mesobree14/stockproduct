@@ -1,3 +1,5 @@
+"use strict";
+
 class AddImage extends HTMLElement {
   constructor() {
     super();

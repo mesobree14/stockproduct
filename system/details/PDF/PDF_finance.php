@@ -76,12 +76,12 @@ if ($conn->connect_error) {
   }
   table.slip-table th.num,
   table.slip-table td.num {
-    width: 5%;
+    width: 8%;
   }
 
   table.slip-table th.name,
   table.slip-table td.name {
-    width: 25%;
+    width: 20%;
     text-align: left;
   }
 
@@ -91,7 +91,7 @@ if ($conn->connect_error) {
   table.slip-table td.qty,
   table.slip-table th.total,
   table.slip-table td.total {
-    width: 15%;
+    width: 17%;
   }
   table.slip-table td.result-name {
     width: 25%;
@@ -133,7 +133,7 @@ if ($conn->connect_error) {
           <tr style="background-color:#ffb3ff;">
             <th class="num">ลำดับ</th>
             <th class="name">สินค้า</th>
-            <th class="price">ราคาทุนเฉลี่ยต่อชิ้น</th>
+            <th class="price">ทุนเฉลี่ยต่อชิ้น <span style="color:red">*</span></th>
             <th class="qty">จำนวนชิ้นที่ขาย</th>
             <th class="total">รายรับ</th>
             <th class="total">ต้นทุน</th>

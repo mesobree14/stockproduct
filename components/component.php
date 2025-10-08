@@ -365,7 +365,7 @@ function listRatePrice($rate_id="",$rate_storefront_price="",$rate_vip_price="",
 
 }
 
-function listOrderSell($number, $ordersell_id, $ordersell_name,$count_item, $price_total,$customer_name,$date_sell,$list_typepays){
+function listOrderSell($number, $ordersell_id, $ordersell_name,$count_item, $price_total,$customer_name,$date_sell,$list_typepays,$sum_amount_paid){
 
   $listorder = "
       <tr>
@@ -373,6 +373,7 @@ function listOrderSell($number, $ordersell_id, $ordersell_name,$count_item, $pri
         <td class=\"font-weight-bold\">$ordersell_name</td>
         <td class=\"font-weight-bold\">$count_item รายการ</td> 
         <td class=\"font-weight-bold\">$price_total บาท</td> 
+        <td class=\"font-weight-bold\">$sum_amount_paid บาท</td> 
         <td class=\"font-weight-bold\">$customer_name</td> 
         <td class=\"font-weight-bold\">$list_typepays</td> 
         <td class=\"font-weight-bold\">$date_sell</td> 

@@ -1,3 +1,5 @@
+"use strict";
+
 class UpdateImage extends HTMLElement {
   constructor() {
     super();
@@ -975,7 +977,6 @@ class EditSelectCustome extends HTMLElement {
     customInputContainer.classList.toggle("show");
   }
   scriptCodeCustome() {
-    console.log("LL[", this.customer);
     const index = 1;
     let isForm = document.querySelector(".e-is-form");
     let getSelect = isForm.querySelector(".getSelect");
