@@ -1,4 +1,6 @@
 "use strict";
+// import {useState} from "./modules/state"
+// const [] = useState(0,)
 
 $(function () {
   var $tabButtonItem = $("#tab-button-custom li"),
@@ -124,6 +126,7 @@ class ModelPayOffDebt extends HTMLElement {
   constructor() {
     super();
   }
+
   connectedCallback() {
     this.renderUi();
     //this.script();
@@ -160,6 +163,8 @@ class ModelPayOffDebt extends HTMLElement {
   async getordersellDebt(custom_names = "") {
     let total_order = document.getElementById("total_order");
     let SelectedItem = document.getElementById("SelectedItem");
+    let buttom_issubmit = document.getElementById("buttom_issubmit");
+    let message_dis = document.getElementById("message_dis");
 
     let count_paydebt = document.getElementById("count_paydebt");
     let count_debt = document.getElementById("count_debt");
@@ -189,14 +194,6 @@ class ModelPayOffDebt extends HTMLElement {
       $seleted.empty();
 
       optionData.forEach((item) => {
-        const values = btoa(
-          JSON.stringify({
-            id: item.id,
-            amount: item.amount,
-            text: item.text,
-          })
-        );
-
         $seleted.append(
           `<option value="${item.id}|${item.amount}|${item.text}" data-text="${item.text}" data-amount="${item.amount}">
             ${item.text} <span class="text-danger font-weight-bold">(ค้าง:${item.amount} บาท )</span>
@@ -228,8 +225,10 @@ class ModelPayOffDebt extends HTMLElement {
         total_order.textContent = `${result.length} รายการ`;
         if (datas.length > 0) {
           count_paydebt.disabled = false;
+          buttom_issubmit.disabled = false;
         } else {
           count_paydebt.disabled = true;
+          buttom_issubmit.disabled = true;
         }
         count_paydebt.addEventListener("input", function () {
           let result =
@@ -241,6 +240,13 @@ class ModelPayOffDebt extends HTMLElement {
           } else {
             count_paydebt.classList.add("input-border-danger");
             count_paydebt.classList.remove("input-border-success");
+          }
+          if (Number(count_paydebt.value) > responses) {
+            buttom_issubmit.disabled = true;
+            message_dis.textContent = `ห้ามจ่ายเกิน ${responses} บาท`;
+          } else {
+            buttom_issubmit.disabled = false;
+            message_dis.textContent = "";
           }
           //debtpaid_balance_html.textContent = `เหลืออีก ${result} บาท`;
         });
@@ -315,7 +321,10 @@ class ModelPayOffDebt extends HTMLElement {
                 </div>
               </div>
               <div class="modal-footer">
-                  <button type="submit" class="btn btn-primary ml-auto mr-4">บันทึกข้อมูล</button>
+                  <div class="row w-100">
+                    <div class="ml-auto d-flex align-items-center px-4 text-danger font-bold" id="message_dis"></div>
+                    <button type="submit" class="btn btn-primary mr-4 border" id="buttom_issubmit">บันทึกข้อมูล</button>
+                  </div>
                 </div>
             </form>
           </div>

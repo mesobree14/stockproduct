@@ -196,6 +196,9 @@ $html .= '
             </tr>
         </tbody>
       </table>
+        <div style="width:100%;margin-top:5px;">
+          <span style="color:red;font-size:20px;">&#42;</span> การคำนวนค่าเฉลี่ยต้นทุนแต่ละชิ้น คือ เอาจำนวนสินค้าที่ซื้อมาทั้งหมดมาหารด้วยราคารวมทั้งทั้งหมด เช่นจำนวนสิ้นค้า J10 ทั้งหมด 10 ชิ้น รวมราคาทั้งหมด 10000 บาท 10000 / 10 = (1000) ราคาต้นทุนคือ1000 บ.
+        </div>
         <div style="width:100%;display:flex;">
           <table class="price-table" style="margin-top:5%;float:left;">
               <thead>

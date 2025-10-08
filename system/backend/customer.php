@@ -22,11 +22,7 @@
           icon: Icons,
           title: Titles,
           confirmButtonText:"OK",
-          html: `
-            You can use <b>bold text</b>,
-            <a href="#" autofocus>links</a>,
-            and other HTML tags
-          `,
+          html: Texts,
       }).then((result)=>{
            window.location = `${location}`
       })
@@ -84,9 +80,7 @@
 
           $check_payment = [];
           $check_secc_count_order = [];
-          // echo "<script type=\"text/javascript\">
-          //               MySetSweetAlertSuccess('success', 'เรียบร้อย', 'เพิ่มข้อมูลการจ่ายหนี้ของก เรียบร้อย xxx', '../customer.php?custom_name=".urlencode($customer_name)."')
-          //           </script>";
+         
           
           $sql = "INSERT INTO custom_debtpaid(serial_number,name_customer,count_debtpaid,debtpaid_balance,count_order_pay,datetime_pays,text_reason,img_debt,adder_id,create_at) 
             VALUES('$serial_number','$customer_name','$count_paydebt','$debtpaid_balance','$count_order','$date_add','$orther_text','".setImgpath("payoffdebt_slip")."','$id_user','$day_add')";
@@ -106,7 +100,7 @@
                 $paid = $remaining;
                 $remaining = 0;
               }
-              $staus = ($paid == $price) ? 'paid' : 'partial';
+              $staus = ($paid == $price) ? 'ครบถ้วน' : 'จ่ายไม่ครบ';
              
               $sql_inserts = "INSERT INTO order_was_paid(debtpaid_id,ordersell_ids,ordersell_names,priceto_pay,amount_paid,status_pay,create_at)
               VALUES('$id_debtpay','$ids','$text','$price','$paid','$staus','$day_add')";
@@ -136,12 +130,12 @@
               }
             }
             if($type_page == "IN"){
-              echo "<script type=\"text/javascript\">
-                        MySetSweetAlert('success', 'เรียบร้อย', 'เพิ่มข้อมูลการจ่ายหนี้ของก $customer_name เรียบร้อย', '../details/detail_customer.php?custom_name=".urlencode($customer_name)."')
+               echo "<script type=\"text/javascript\">
+                        MySetSweetAlertSuccess('success', 'เรียบร้อย', 'เพิ่มข้อมูลการจ่ายหนี้ของ $customer_name เรียบร้อย <a href=\"../details/PDF/PDF_historydebt.php?id_paydebt=$id_debtpay\" target=\"_blank\" class=\"text-uppercase\"> print pdf</a>', '../details/customer.php?custom_name=".urlencode($customer_name)."')
                     </script>";
             }else{
               echo "<script type=\"text/javascript\">
-                        MySetSweetAlert('success', 'เรียบร้อย', 'เพิ่มข้อมูลการจ่ายหนี้ของก $customer_name เรียบร้อย', '../customer.php?custom_name=".urlencode($customer_name)."')
+                        MySetSweetAlertSuccess('success', 'เรียบร้อย', 'เพิ่มข้อมูลการจ่ายหนี้ของก $customer_name เรียบร้อย <a href=\"../details/PDF/PDF_historydebt.php?id_paydebt=$id_debtpay\" target=\"_blank\" class=\"text-uppercase\"> print pdf </a>', '../customer.php')
                     </script>";
             }
           }else{

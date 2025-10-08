@@ -46,6 +46,8 @@ $custom = $conn->query("SELECT custome_name,tell_custome,location_send FROM orde
 $res_custom = $custom->fetch_assoc();
 $type_debt = $conn->query("SELECT * FROM type_paydebt WHERE debtpay_id=$hist_debt_id");
 
+$order_waspaid = $conn->query("SELECT ordersell_names,priceto_pay,amount_paid,status_pay FROM order_was_paid WHERE debtpaid_id=$hist_debt_id");
+
 function formatThaiDateTime($datetime) {
     // แปลงเป็น timestamp
     $timestamp = strtotime($datetime);
@@ -72,7 +74,32 @@ function formatThaiDateTime($datetime) {
 
 $html = '
 <style>
+  table.slip-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  table.slip-table th,
+  table.slip-table td {
+    border: 1px solid #000;
+    padding: 6px;
+    text-align: center;
+  }
 
+  table.slip-table th.name,
+  table.slip-table td.name {
+    width: 45%;
+    text-align: left;
+  }
+
+  table.slip-table th.price,
+  table.slip-table td.price,
+  table.slip-table th.qty,
+  table.slip-table td.qty,
+  table.slip-table th.total,
+  table.slip-table td.total {
+    width: 17%;
+  }
 </style>
 <div>
     <div style="width:100%;display:flex">
@@ -106,11 +133,40 @@ $html = '
             }
           $html.=' ]</p>
         </div>
-        <div style="width:100%;display:flex;font-size:20px;height:120px">
+        <div style="width:100%;display:flex;font-size:20px;height:20px">
             <p style="font-size:20px;font-weight: bold;float: left;width:100%;padding:0%; margin:0%">หมายเหตุ : ['.$his_debt['text_reason'].']</p>
         </div>
         <hr/>
+            <table class="slip-table">
+              <thead>
+                <tr style="background-color:#ff751a;">
+                  <th class="name">รหัสคำสังขาย</th>
+                  <th class="price">ราคาเดิมที่ค้าง</th>
+                  <th class="qty">จำนวนที่จ่าย</th>
+                  <th class="total">คงเหลือ</th>
+                </tr>
+              </thead>
+              <tbody>
+';
+  $is = 1;
+  while($rows = $order_waspaid->fetch_assoc()){
+    $debt_balane = $rows['priceto_pay'] - $rows['amount_paid'];
+    $html .="
+      <tr>
+        <td class=\"name\"><b>{$rows['ordersell_names']}</b></td>
+        <td class=\"price\">{$rows['priceto_pay']}</td>
+        <td class=\"qty\">{$rows['amount_paid']}</td>
+        <td class=\"total\">{$debt_balane}</td>
+      </tr>
+    ";
+    $is++;
+  }
+$html .='
+              </tbody>
+            </table>
+        <hr/>
     </div>
+    
     <div style="width:100%;display:flex;font-size:20px;">
       <div style="width:100%;display:flex;font-size:20px;">
         <p style="font-size:20px;font-weight: bold;float: left;width:40%;padding:0%; margin:0%"> ยอดค้างชำระ : </p>
