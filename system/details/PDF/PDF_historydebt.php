@@ -88,7 +88,7 @@ $html = '
 
   table.slip-table th.name,
   table.slip-table td.name {
-    width: 45%;
+    width: 37%;
     text-align: left;
   }
 
@@ -144,6 +144,7 @@ $html = '
                   <th class="price">ราคาเดิมที่ค้าง</th>
                   <th class="qty">จำนวนที่จ่าย</th>
                   <th class="total">คงเหลือ</th>
+                  <th class="total">สถานะ</th>
                 </tr>
               </thead>
               <tbody>
@@ -157,6 +158,7 @@ $html = '
         <td class=\"price\">{$rows['priceto_pay']}</td>
         <td class=\"qty\">{$rows['amount_paid']}</td>
         <td class=\"total\">{$debt_balane}</td>
+        <td class=\"total\">{$rows['status_pay']}</td>
       </tr>
     ";
     $is++;
