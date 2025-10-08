@@ -120,11 +120,11 @@ if(!isset($_SESSION['users_order'])){
         </div>
       
         <div class="col-12 row mt-2 bg-white">
-          <div class="col-md-12 col-lg-5 border-right">
+          <div class="col-md-12 col-lg-6 border-right">
             <div class="col-12 row">
             <div class="ml-auto mt-3">
               <button class="bd-none au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" 
-                  data-target="#modalFormCapital"
+                  data-target="#modalFormCapital" id="modal_formcapital" data-balance="<?php echo $res_circulating ?? 0; ?>"
               >
                   <i class="fa-solid fa-sack-dollar"></i>
                     เพิ่มข้อมูลทุน
@@ -136,16 +136,17 @@ if(!isset($_SESSION['users_order'])){
                     <thead>
                         <tr>
                             <th></th>
+                            <th>ทุนเดิม</th>
                             <th>จำนวนทุน</th>
                             <th>เวลาเพิ่มทุน <i class="fa-solid fa-arrow-up"></i></th>
-                            <th>จัดการ</th>
+                            <th style="width:22%;">จัดการ</th>
                         </tr>
                     </thead>
                     <tbody>
                       <?php 
                         $query_capital = mysqli_query($conn,"SELECT * FROM capital ORDER BY create_at DESC") or die(mysqli_error($conn));
                         foreach($query_capital as $key => $rows){
-                          tableCapital(($key+1),$rows['capital_id'],$rows['count_capital'],$rows['slip_capital'],$rows['date_time_ad']);
+                          tableCapital(($key+1),$rows['capital_id'],$rows['capital_balance'],$rows['count_capital'],$rows['slip_capital'],$rows['date_time_ad']);
                         }
                       ?>
                     </tbody>
@@ -153,11 +154,11 @@ if(!isset($_SESSION['users_order'])){
             </div>
           </div>
 
-          <div class="col-md-12 col-lg-7">
+          <div class="col-md-12 col-lg-6">
             <div class="col-12 row">
               <div class="ml-auto mt-3">
                 <button class="bd-none au-btn au-btn-icon au-btn-orange au-btn--small mx-4" data-toggle="modal" 
-                    data-target="#modalFormWithdraw"
+                    data-target="#modalFormWithdraw" id="modal_formwithdraw" data-balance="<?php echo $resutl_profit - $acc_useprofit['use_prefit']; ?>"
                 >
                     <i class="fa-solid fa-hand-holding-dollar"></i>
                       เพิ่มข้อมูลเบิกถอน
@@ -169,17 +170,18 @@ if(!isset($_SESSION['users_order'])){
                     <thead>
                         <tr>
                             <th></th>
-                            <th>จำนวน</th>
-                            <th>สาเหุต</th>
+                            <th>จำนวนเดิม</th>
+                            <th>จำนวนถอน</th>
+                            <!-- <th>สาเหุต</th> -->
                             <th>เวลาเบิกถอน <i class="fa-solid fa-arrow-up"></i></th>
-                            <th>จัดการ</th>
+                            <th style="width:22%;">จัดการ</th>
                         </tr>
                     </thead>
                     <tbody>
                       <?php 
                         $query_withdraw = mysqli_query($conn,"SELECT * FROM withdraw ORDER BY create_at DESC") or die(mysqli_error($conn));
                         foreach($query_withdraw as $key=>$rows){
-                          tableWithDraw(($key+1),$rows['withdraw_id'],$rows['count_withdraw'],$rows['reason'],$rows['slip_withdraw'],$rows['date_withdrow']);
+                          tableWithDraw(($key+1),$rows['withdraw_id'],$rows['withdraw_balance'],$rows['count_withdraw'],$rows['reason'],$rows['slip_withdraw'],$rows['date_withdrow']);
                         }
                       ?>
                     </tbody>

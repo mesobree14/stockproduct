@@ -108,7 +108,7 @@ foreach($res_acc as $rows){
                 detailOrderSell(
                   $order['id_ordersell'],$order['ordersell_name'],$order['is_totalprice'],$order['custome_name'],$order['tell_custome'],$order['location_send'],
                   $order['date_time_sell'],$count_row['total'],$count_row['total_product'],$order['reason'],$order['sender'],$order['tell_sender'],($order['count_totalpays'] + $row_ispays['sum_amount_paid']),
-                  ($order['count_stuck'] - $row_ispays['sum_amount_paid']),$order['slip_ordersell'],$order['adder_id'],$order['create_at'],$sell_type,
+                  ($order['count_stuck'] - $row_ispays['sum_amount_paid']),$order['slip_ordersell'],$order['adder_id'],$order['create_at'],$sell_type,$row_ispays['count_pays']
                 );
                 
               ?>

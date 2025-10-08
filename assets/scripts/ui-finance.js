@@ -128,13 +128,13 @@ class Capital extends HTMLElement {
               <input type="hidden" name="status_form" value="capital"/>
               <input type="hidden" name="capital_id" id="capital_id" />
               <input type="hidden" name="capital_img" id="capital_img" />
+              <input type="hidden" name="capital_balance" id="capital_balance" />
               <div class="modal-body">
                 <div class="modal-body">
                     <div class="col-md-12 row mb-3">
-                    <div class="col-md-7 row py-2">
-                        <span class="ml-auto text-primary font-weight-bold">จำนวนทุนที่สามารถใช้ได้ : ${this.availableCapital} บาท</span>
+                      <div class="col-md-12 row py-2">
+                        <span class="ml-auto text-primary font-weight-bold">จำนวนทุนที่สามารถใช้ได้ : <span class="border" id="res_capital"></span></span>
                       </div>
-                      <div class="col-md-5"></div>
                       <div class="col-md-7">
                         <div class="form-group mb-2">
                           <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนทุน / .บ</label>
@@ -170,16 +170,25 @@ class Capital extends HTMLElement {
 
 customElements.define("main-create-capital", Capital);
 
+$(document).on("click", "#modal_formcapital", function (e) {
+  let capital_balance = $(this).data("balance");
+  console.log({ capital_balance });
+  $("#capital_balance").val(capital_balance);
+  $("#res_capital").html(`${capital_balance.toLocaleString()} บาท`);
+});
+
 $(document).on("click", "#update_capital", function (e) {
   let id_capital = $(this).data("id");
   let img_capital = $(this).data("img");
   let count_capital = $(this).data("count");
   let date_capital = $(this).data("date");
+  let balance_capital = $(this).data("balance");
   console.log({ img_capital });
 
   $("#capital_id").val(id_capital);
   $("#count_capital").val(count_capital);
   $("#date_time_capital").val(date_capital);
+  $("#capital_balance").val();
 
   e.preventDefault();
   $("#capital_img").val(img_capital);
@@ -288,13 +297,15 @@ class Withdraw extends HTMLElement {
               <input type="hidden" name="status_form" value="withdraw"/>
               <input type="hidden" name="withdraw_id" id="withdraw_id"/>
               <input type="hidden" name="withdraw_img" id="withdraw_img"/>
+              <input type="text" name="withdraw_balance" id="withdraw_balance"/>
               <div class="modal-body">
                 <div class="modal-body">
                     <div class="col-md-12 row mb-3">
-                      <div class="col-md-7 row py-2">
-                        <span class="ml-auto text-primary font-weight-bold">จำนวนเงินที่สามารถเบิกถอนได้ : ${this.usableProfit} บาท</span>
+                      <div class="col-md-12 row py-2">
+                        <p class="ml-auto text-primary font-weight-bold">จำนวนเงินที่สามารถเบิกถอนได้ : <span id="res_withdraw"></span></p>
                       </div>
-                      <div class="col-md-5"></div>
+                      
+                      
                       <div class="col-md-7">
                         <div class="form-group mb-2">
                           <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนเงินที่เบิกถอน / .บ <span id="res-value"></span></label>
@@ -333,6 +344,13 @@ class Withdraw extends HTMLElement {
 
 customElements.define("main-create-withdraw", Withdraw);
 
+$(document).on("click", "#modal_formwithdraw", function (e) {
+  let withdraw_balance = $(this).data("balance");
+  console.log({ withdraw_balance });
+  $("#withdraw_balance").val(withdraw_balance);
+  $("#res_withdraw").html(`${withdraw_balance.toLocaleString()} บาท`);
+});
+
 $(document).on("click", "#update_withraw", function (e) {
   //document.getElementById("is_form").id = "is_update_form";
   let withdraw_id = $(this).data("id");
@@ -340,8 +358,10 @@ $(document).on("click", "#update_withraw", function (e) {
   let date_withraw = $(this).data("date");
   let img_withdraw = $(this).data("img");
   let reason = $(this).data("reason");
+  let withdraw_balance = $(this).data("balance");
 
   $("#withdraw_id").val(withdraw_id);
+  $("#withdraw_balance").val(withdraw_balance);
   $("#count_withdraw").val(count_withdraw);
   $("#date_time_withdraw").val(date_withraw);
   $("#withdraw_img").val(img_withdraw);

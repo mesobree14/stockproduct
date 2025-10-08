@@ -83,18 +83,22 @@ function navbar($logo, $path=""){
 
 }
 
-function tableCapital($number, $capital_id, $count_capital,$slip, $date_time_ad){
+function tableCapital($number, $capital_id,$balance_capital, $count_capital,$slip, $date_time_ad){
   $list = "
     <tr>
       <td></td>
+      <td class=\"font-weight-bold\">$balance_capital</td>
       <td class=\"font-weight-bold\">$count_capital</td>
       <td class=\"font-weight-bold\">$date_time_ad</td>
 
       <td>
-        <div class=\"table-data-feature\" >
+        <div class=\"table-data-feature row\" >
+            <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"pdf\" target=\"_blank\" href=\"details/PDF/PDF_capital.php?capital_id=$capital_id\">
+              <i class=\"fa-solid fa-file-pdf\"></i>
+            </a>
             <button type=\"button\" id=\"update_capital\" data-target=\"#modalFormCapital\" data-toggle=\"modal\"  
                    class=\"item\" data-id=\"$capital_id\" data-count=\"$count_capital\" data-date=\"$date_time_ad\" 
-                   data-img=\"$slip\"
+                   data-img=\"$slip\" data-balance=\"$balance_capital\"
             >
                 <i class=\"fas fa-pencil-alt text-warning\"></i>
             </button>
@@ -107,18 +111,22 @@ function tableCapital($number, $capital_id, $count_capital,$slip, $date_time_ad)
   ";
   echo $list;
 }
-function tableWithDraw($number, $withdraw_id, $count_withdraw,$reason,$slip_withdrow, $date_time_ad){
+function tableWithDraw($number, $withdraw_id, $withdraw_balance, $count_withdraw,$reason,$slip_withdrow, $date_time_ad){
   $list = "
     <tr>
       <td></td>
+      <td class=\"font-weight-bold\">$withdraw_balance</td>
       <td class=\"font-weight-bold\">$count_withdraw</td>
-      <td class=\"font-weight-bold\">$reason</td>
+      
       <td class=\"font-weight-bold\">$date_time_ad</td>
       <td>
-        <div class=\"table-data-feature\" >
+        <div class=\"table-data-feature row \" >
+            <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"pdf\" target=\"_blank\" href=\"details/PDF/PDF_withdraw.php?withdraw_id=$withdraw_id\">
+              <i class=\"fa-solid fa-file-pdf\"></i>
+            </a>
             <button type=\"button\" id=\"update_withraw\" data-target=\"#modalFormWithdraw\" data-toggle=\"modal\"  
                    class=\"item\" data-id=\"$withdraw_id\" data-count=\"$count_withdraw\" data-date=\"$date_time_ad\"
-                   data-img=\"$slip_withdrow\" data-reason=\"$reason\" 
+                   data-img=\"$slip_withdrow\" data-reason=\"$reason\" data-balance=\"$withdraw_balance\"
             >
                 <i class=\"fas fa-pencil-alt text-warning\"></i>
             </button>
@@ -445,14 +453,23 @@ function status_pays($totalprice,$custompay,$countstuck){
     return "<p class=\"text-danger font-weight-bold\">[ จ่ายแล้วแต่ยังติดค้าง ]</p>";
   }
 }
-function detailOrderSell($id_ordersell,$ordersell_name,$is_totalprice,$custome_name,$tell_custome,$location_send,$date_time_sell,$total,$totalproduct,$reasons,$sender,$tell_sender,$count_totalpays,$count_stuck,$slip_ordersell,$adder_id,$create_at,$sell_type){
+function detailOrderSell($id_ordersell,$ordersell_name,$is_totalprice,$custome_name,$tell_custome,$location_send,$date_time_sell,$total,$totalproduct,$reasons,$sender,$tell_sender,$count_totalpays,$count_stuck,$slip_ordersell,$adder_id,$create_at,$sell_type,$count_pays){
   $list = "
     <div class=\"col-12 p-0 m-0\">
       <div class=\"col-12 row\">
-         <a href=\"PDF/PDF_ordersell.php?ordersell_id=$id_ordersell\" target=\"_blank\" class=\"ml-auto px-5 mt-4\">
+         <a href=\"PDF/PDF_ordersell.php?ordersell_id=$id_ordersell\" target=\"_blank\" class=\"ml-auto px-4 py-1 w-22 btn-print mt-4\">
             <i class=\"fas fa-file-code\"></i>
             Print PDF
           </a>
+          ";
+          if($count_pays > 0){
+            $list .= "<a href=\"PDF/PDF_ordersell.php?ordersell_id=$id_ordersell\" target=\"_blank\" class=\"ml-1 px-4 py-1 w-22 btn-print mt-4\">
+              <i class=\"fas fa-file-code\"></i>
+              New Print PDF
+            </a>";
+          }
+        $list .="
+          
       </div>
       <div class=\"col-12 row p-0 m-0\">
         <div class=\"col-lg-3 row\">
@@ -508,8 +525,8 @@ function detailOrderSell($id_ordersell,$ordersell_name,$is_totalprice,$custome_n
               </tbody>
             </table>
           </div>
-          <div class=\"col-12\">                         
-              <div class=\"col-12 row p-0 m-0\">[ $reasons ]</div>
+          <div class=\"col-12 row\">                         
+            หมายเหตุ: <div class=\"col-10 row p-0 m-0\">[ $reasons ]</div>
           </div>
         </div>
         <div class=\"col-sm-12 col-md-5 col-lg-3\">
@@ -691,7 +708,7 @@ function listhistoryPayDebt($number,$id_paydebt,$serial_number,$customer_name,$t
       </td>
       <td class='text-center'>
           <div class=\"table-data-feature\" >
-              <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" target=\"_blank\" href=\"../details/PDF/PDF_historydebt.php?id_paydebt=$id_paydebt \">
+              <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"pdf\" target=\"_blank\" href=\"../details/PDF/PDF_historydebt.php?id_paydebt=$id_paydebt \">
                 <i class=\"fa-solid fa-file-pdf\"></i>
               </a>
               <button type=\"button\" id=\"update_order_sell\" data-target=\"#modalFormUpdateOrderSell\" data-toggle=\"modal\"  
