@@ -41,12 +41,12 @@ include_once("../../../backend/config.php");
               $trash_productsell = mysqli_query($conn,"DELETE FROM list_productsell WHERE ordersell_id=$id_ordersell");
               if($trash_productsell){
                 $arrays[] = [
-                  'name' => $res['productname'],
+                  'name' => 'test',
                   'status'=> 'success'
                 ];
               }else{
                 $arrays[] = [
-                    'name' => $res['productname'],
+                    'name' => 'test',
                     'status' => 'fail'
                   ];
               }

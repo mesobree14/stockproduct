@@ -111,7 +111,7 @@ if ($conn->connect_error) {
     font-size:18px;
   }
   table.price-table{
-    width: 50%;
+    width: 100%;
     border-collapse: collapse;
     font-size: 14px;
   }
@@ -200,7 +200,8 @@ $html .= '
           <span style="color:red;font-size:20px;">&#42;</span> การคำนวนค่าเฉลี่ยต้นทุนแต่ละชิ้น คือ เอาจำนวนสินค้าที่ซื้อมาทั้งหมดมาหารด้วยราคารวมทั้งทั้งหมด เช่นจำนวนสิ้นค้า J10 ทั้งหมด 10 ชิ้น รวมราคาทั้งหมด 10000 บาท 10000 / 10 = (1000) ราคาต้นทุนคือ1000 บ.
         </div>
         <div style="width:100%;display:flex;">
-          <table class="price-table" style="margin-top:5%;float:left;">
+        <div style="width: 49%;float:left;">
+          <table class="price-table" style="margin-top:5%;">
               <thead>
                 <tr style="background-color:#ffb3ff;">
                   <th style="font-weight: bold;">รายการ</th>
@@ -220,6 +221,18 @@ $html .= '
                   <td style="color:blue;font-weight:bold">ทุนที่ยังใช้ได้</td>
                   <td>'.number_format($res_circulating ?? 0,2,'.',',').'</td>
                 </tr>
+              </tbody>
+          </table>
+          </div>
+          <div style="width: 49%;float:right;">
+          <table class="price-table" style="margin-top:5%;">
+              <thead>
+                <tr style="background-color:#ffb3ff;">
+                  <th style="font-weight: bold;">รายการ</th>
+                  <th style="font-weight: bold;">จำนวน</th>
+                </tr>
+              </thead>
+              <tbody>
                 <tr>
                   <td style="color:blue;font-weight:bold">จำนวนค้างชำระ</td>
                   <td>'.number_format($res_pricedebt ?? 0,2,'.',',').'</td>
@@ -227,13 +240,14 @@ $html .= '
                 <tr>
                     <td style="color:blue;font-weight:bold">เบิกถอนไปแล้ว</td>
                     <td>'.number_format($acc_useprofit['use_prefit'] ?? 0,2,'.',',').'</td>
-                  </tr>
+                </tr>
                 <tr>
                     <td style="color:blue;font-weight:bold">สามารถใช้ได้</td>
                     <td>'.number_format($resutl_profit - $acc_useprofit['use_prefit'] ?? 0,2,'.',',').'</td>
-                  </tr>
+                </tr>
               </tbody>
           </table>
+          </div>
         </div>
       </div>
     </div>

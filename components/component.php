@@ -593,30 +593,38 @@ function listProductSell($number,$product_id, $product_anme, $rate_customerprice
 
 function listDetailOrderBuy($order_id, $order_name, $total_cost, $data_time_buy, $order_slipt, $total_product, $count_product){
   $list = "
-    <div class=\"col-12 shadow-sm row\">
-      <div class=\"col-4 p-2\">
-        <span class=\"my-3\">สลิป : </span>
-        <img class=\"card-img-top\" src=\"../../db/slip-orders/$order_slipt\"/>
-      </div>
-      <div class=\"col-7 py-4 mx-auto\">
-        <div class=\"col-12 row\">
+    <div class=\"col-12 p-0 m-0\">
+        <div class=\"col-12 row my-4\">
           <a href=\"PDF/PDF_orderbuy.php?order_id=$order_id\" target=\"_blank\" class=\"border ml-auto  py-2 px-5\">
             <i class=\"fas fa-file-code\"></i>
             Print PDF
           </a>
         </div>
-        <h2 class=\"card-title font-bold\">ชื่อรายการ : $order_name</h2>
-        <div class=\"col-12 row mx-2\">
-          <div class=\"col-4\">ค่าใช้จ่าย $total_cost บาท</div>
-          <div class=\"col-4\">สินค้า $total_product รายการ</div>
-          <div class=\"col-4\">จำนวน $count_product ชิ้น</div>
-        </div>
-        <div class=\"col-12 row mx-2 pt-4\">
-          <div class=\"border p-3 ml-auto rounded\">
-            สั่งซื้อเมื่อ : $data_time_buy
+        <div class=\"col-12 row\">
+          <div class=\"col-9 row\">
+            <div class=\"col-12\">
+              <h3 class=\"card-title font-bold row\">รายการคำสั่งซื้อ : 
+                <div class=\"mx-3\" style=\"color:#cc00ff\"> [&nbsp;&nbsp; $order_name &nbsp;&nbsp;] </div>
+              </h3>
+            </div>
+            <div class=\"col-12 row gap-x-4 my-4\">
+              <div> ค่าใช้จ่าย : <span style=\"color:#ff944d\"> [ $total_cost ] </span>บาท </div>
+              <div class=\"mx-5\"> ประเภทสินค้า : <span style=\"color:#9933ff\"> [ $total_product ] </span> รายการ</div>
+              <div> จำนวน : <span style=\"color:#ff0066\"> [ $count_product ] </span> ชิ้น</div>
+            </div>
+            <div class=\"col-12 row mb-4\">
+              <div class=\"font-bold\">
+                สั่งซื้อเมื่อ : <span style=\"color:#0066ff\" class=\"\"> $data_time_buy </span>
+              </div>
+            </div>
+          </div>
+          <div class=\"col-3 row\">
+            <div><span class=\"col-12\">หลักฐานการโอน</span></div>
+            <div class=\"img-buylist\">
+              <img class=\"\" width=\"120\" height=\"125\" src=\"../../db/slip-orders/$order_slipt\" />
+            </div>
           </div>
         </div>
-      </div>
     </div>
   ";
   echo $list;
