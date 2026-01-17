@@ -161,7 +161,7 @@ if(!isset($_SESSION['users_order'])){
           <div class="col-md-12 col-lg-6">
             <div class="col-12 row">
               <div class="ml-auto row mt-3">
-                <button type="button" class="ml-auto px-4 mx-2 py-1 w-18 btn-print" id="select_financedate"><i class="fas fa-file-code px-2"></i> PDF สรุปเป็นวัน</button>
+                <button type="button" class="ml-auto px-4 mx-2 py-1 w-18 btn-print" id="select_financedate_withdraw"><i class="fas fa-file-code px-2"></i> PDF สรุปเป็นวัน</button>
                 <a class="px-4 py-1 w-15 btn-print" href="details/PDF/PDF_allwithdraw.php" target="_blank">
                     <i class="fas fa-file-code px-2"></i> PDF
                 </a>
