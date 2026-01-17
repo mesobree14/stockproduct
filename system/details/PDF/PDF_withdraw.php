@@ -28,7 +28,7 @@ $mpdf = new \Mpdf\Mpdf([
     'default_font' => 'thsarabunnew',
     'tempDir' => __DIR__ . '/../../../tmp',
     'mode' => 'utf-8',
-    'format' => [70, 130],
+    'format' => [120, 180],
     'margin_left' => 5,
     'margin_right' => 5,
     'margin_top' => 5,
@@ -61,26 +61,32 @@ $html .='
   </div>
   <hr/>
   <div style="width:100%;display:flex;font-size:20px;">
-    <div style="width:100%;display:flex;font-size:20px;">
+    <div style="width:100%;display:flex;font-size:20px;padding:0%; margin:0%">
       <p style="font-size:20px;font-weight: bold;float: left;width:48%;padding:0%; margin:0%"> จำนวนเงินที่มี : </p>
       <p style="font-size:20px;font-weight: bold;float: right%;width:50%;text-align:right;padding:0%; margin:0%"> '.$withdraw_price['withdraw_balance'].' บาท</p>
     </div>
-    <div style="width:100%;display:flex;font-size:20px;">
+    <div style="width:100%;display:flex;font-size:20px;padding:0%; margin:0%">
       <p style="font-size:20px;font-weight: bold;float: left;width:50%;padding:0%; margin:0%"> จำนวนเงินที่เบิก : </p>
       <p style="font-size:20px;font-weight: bold;float: right%;width:48%;text-align:right;padding:0%; margin:0%"> '.$withdraw_price['count_withdraw'].' บาท</p>
     </div>
-    <div style="width:100%;display:flex;font-size:20px;">
+    <div style="width:100%;display:flex;font-size:20px;padding:0%; margin:0%">
       <p style="font-size:20px;font-weight: bold;float: left;width:48%;padding:0%; margin:0%"> จำนวนเงินที่เหลือ : </p>
       <p style="font-size:20px;font-weight: bold;float: right%;width:50%;text-align:right;padding:0%; margin:0%"> '.$withdraw_price['withdraw_balance'] - $withdraw_price['count_withdraw'].' บาท</p>
     </div>
-    <hr/>
-    <div style="width:100%;display:flex;font-size:20px;">
+    <hr style="padding:0%; margin:0%"/>
+    <div style="width:100%;display:flex;font-size:20px;padding:0%; margin:0%">
       <p style="font-size:20px;font-weight: bold;float: left;width:29%;padding:0%; margin:0%;"> วันที่เบิก : </p>
       <p style="font-size:20px;font-weight: bold;float: right;width:70%;text-align:right;padding:0%; margin:0%">  '.$withdraw_price['date_withdrow'].'</p>
     </div>
-    <hr/>
+    <hr style="padding:0%; margin:0%"/>
+    
+    <div style="width:100%;display:flex;padding:0%; margin:0%;justify-content: center;align-items: center;text-align: center;">
+      <img src="../../../db/slip-finance/'.$withdraw_price['slip_withdraw'].'" width="170" height="190" 
+        style="margin-left:10px;margin-right: 10px;margin-bottom:5%;margin-top:5%;"
+      />
+    </div>
     <div style="width:100%;display:flex;font-size:20px;">
-      <p style="padding:0%; margin:0%;font-weight: bold;color:green;">เหตุผล :</p>
+      <p style="padding:0%; margin:0%;font-weight: bold;color:green;">รายละเอียด :</p>
       <p style="padding:0%; margin:0%;">'.$withdraw_price['reason'].'</p>
     </div>
   </div>

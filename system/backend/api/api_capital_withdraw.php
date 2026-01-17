@@ -1,6 +1,8 @@
 <?php
 
   include_once("../../../backend/config.php");
+  error_reporting(E_ALL);
+  ini_set('display_errors', 1);
   if(!$conn){
     die("not conn");
     
@@ -25,14 +27,14 @@
       $is_quall = mysqli_query($conn,$quall);
       $is_accquall = mysqli_fetch_assoc($is_quall);
 
-      $average_cost = $acc_usecapital['costordercount'] / $acc_totals['totalproduct'];
-      $average_sell = $acc_qlprofits['totalpices'] / $acc_total_psell['totalproductsell'];
+      $average_cost = $acc_totals['totalproduct'] > 0 ? $acc_usecapital['costordercount'] / $acc_totals['totalproduct'] : 0;
+      $average_sell = $acc_total_psell['totalproductsell'] > 0 ? $acc_qlprofits['totalpices'] / $acc_total_psell['totalproductsell'] : 0;
       $total_capitals = $average_cost * $acc_total_psell['totalproductsell'];
       $total_profit = $acc_qlprofits['totalpices'] - $total_capitals;
 
       $costorder = $acc_usecapital['costordercount'] - $total_capitals;
       $available = $acc_capintal['countcapital'] - $costorder;
-      $remain_capital =bcsub($acc_capintal['countcapital'],bcadd($costorder,$is_accquall['countstuck'], 2), 2);
+      $remain_capital = bcsub($acc_capintal['countcapital'] ?? 0 ,bcadd($costorder,$is_accquall['countstuck'] ?? 0, 2), 2);
 
       $sql_useprofit = mysqli_query($conn,"SELECT SUM(count_withdraw) as use_prefit FROM withdraw");
       $acc_useprofit = mysqli_fetch_assoc($sql_useprofit);

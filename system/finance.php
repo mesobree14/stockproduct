@@ -101,7 +101,9 @@ if(!isset($_SESSION['users_order'])){
             $res_circulating =$countcapital - ($res_pricecapital + $res_pricedebt);
            ?> 
           <div class="col-12 row mb-2">
-            <a class="ml-auto px-4 py-1 w-22 btn-print" href="details/PDF/PDF_finance.php" target="_blank">
+            <button type="button" class="ml-auto px-4 mx-2 py-1 w-20 btn-print" id="select_financedate"><i class="fas fa-file-code px-2"></i> PDF สรุปเป็นวัน</button>
+            
+            <a class="px-4 py-1 w-22 btn-print" href="details/PDF/PDF_finance.php" target="_blank">
                 <i class="fas fa-file-code px-2"></i> PDF
             </a>
           </div>
@@ -115,7 +117,9 @@ if(!isset($_SESSION['users_order'])){
             
             setData("เบิกถอนไปแล้ว",number_format($acc_useprofit['use_prefit'] ?? 0,2,'.',','));
             setData("สามารถใช้ได้",number_format($resutl_profit - $acc_useprofit['use_prefit'],2,'.',','));
-            uiWorking("ค่าเฉลี่ยขาย ".number_format($sum_totalsell) ." ชิ้น",number_format($sun_pricebuy / $sum_totalsell ?? 0 ,2,'.',','),number_format($sum_pricesell / $sum_totalsell ?? 0,2,'.',','))
+            $res_buy = $sum_totalsell == 0 ? 0 : $sun_pricebuy / $sum_totalsell;
+            $res_sell = $sum_totalsell == 0 ? 0 : $sum_pricesell / $sum_totalsell;
+            uiWorking("ค่าเฉลี่ยขาย ".number_format($sum_totalsell ?? 0) ." ชิ้น",number_format($res_buy ,2,'.',','),number_format($res_sell,2,'.',','));
           ?>
         </div>
       
@@ -156,12 +160,16 @@ if(!isset($_SESSION['users_order'])){
 
           <div class="col-md-12 col-lg-6">
             <div class="col-12 row">
-              <div class="ml-auto mt-3">
+              <div class="ml-auto row mt-3">
+                <button type="button" class="ml-auto px-4 mx-2 py-1 w-18 btn-print" id="select_financedate"><i class="fas fa-file-code px-2"></i> PDF สรุปเป็นวัน</button>
+                <a class="px-4 py-1 w-15 btn-print" href="details/PDF/PDF_allwithdraw.php" target="_blank">
+                    <i class="fas fa-file-code px-2"></i> PDF
+                </a>
                 <button class="bd-none au-btn au-btn-icon au-btn-orange au-btn--small mx-4" data-toggle="modal" 
                     data-target="#modalFormWithdraw" id="modal_formwithdraw" data-balance="<?php echo $resutl_profit - $acc_useprofit['use_prefit']; ?>"
                 >
                     <i class="fa-solid fa-hand-holding-dollar"></i>
-                      เพิ่มข้อมูลเบิกถอน
+                      เพิ่มเบิกถอน
                 </button>
               </div>
             </div>

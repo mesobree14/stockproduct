@@ -141,7 +141,7 @@ const createGrandTotal = (capital = []) => {
 
   if (
     totalPrice >
-    Number(capital[0].funds_that_can_be_used.replace(/[^\d.-]/g, ""))
+    Number(capital[0]?.funds_that_can_be_used.replace(/[^\d.-]/g, ""))
   ) {
     valueInput.style.color = "red";
     valueInput.style.border = "2px solid red";
