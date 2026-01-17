@@ -274,3 +274,37 @@ $(function () {
     $(target).show();
   });
 });
+
+$(document).on("click", "#select_stockdates", function (e) {
+  Swal.fire({
+    showConfirmButton: false,
+    html: `
+      <form id="isPopupFormDate" class="mt-4 row text-center" method="POST" action="backend/PDF_stockdate.php" enctype="multipart/form-data" target="_blank">
+        <div class="form-group col-6">
+          <label for="" class="mr-auto str_date">เริ่มตั้งแต่วันที่</label>
+          <input type="date" name="start_date" class="form-control" placeholder="Start Date" required>
+        </div>
+        <div class="form-group col-6">
+          <label for="" class="mr-auto">จนถึงวันที่</label>
+          <input type="date" name="end_date" class="form-control" placeholder="End Date" required>
+        </div>
+        <div class="col-12">
+        <button type="submit" class="hidden-swall btn btn-success btn-block">ตกลง</button>
+        </div>
+      </form>
+      
+    `,
+    didOpen: () => {
+      // เมื่อ popup เปิด ให้ผูก event ให้ปุ่ม submit
+      document
+        .getElementById("isPopupFormDate")
+        .addEventListener("submit", function (e) {
+          e.preventDefault(); // กันไม่ให้ submit ก่อนเวลา
+          Swal.close(); // 🔥 ปิด SweetAlert ก่อน
+
+          // ส่งฟอร์มจริง (เปิดหน้าใหม่เพราะ target="_blank")
+          this.submit();
+        });
+    },
+  });
+});

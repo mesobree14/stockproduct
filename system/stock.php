@@ -27,6 +27,7 @@ if(!isset($_SESSION['users_order'])){
     <link rel="stylesheet" href="../assets/scripts/module/test/test.scss">
     <script src="../assets/scripts/module/test/test.js"></script>
     <script src="../assets/scripts/script-bash.js"></script>
+    
   <title>Document</title>
 </head>
 <body>
@@ -36,7 +37,10 @@ if(!isset($_SESSION['users_order'])){
       <?php navbar("รายการสินค้า"); ?>
       <div class="container-fluid row">
           <div class="ml-auto border">
-            <a href="details/PDF/PDF_stocks.php" target="_blank" class="font-weight-bold remove-btn ml-auto px-5 mt-4">
+            <button type="button" class="ml-auto px-4 mx-2 py-1 w-18 btn-print" id="select_stockdates">
+              <i class="fas fa-file-code px-2"></i> PDF สรุปเป็นวัน
+            </button>
+            <a href="details/PDF/PDF_stocks.php" target="_blank" class="font-weight-bold px-4 py-1 w-15 btn-print ml-auto">
                 <i class="fa-solid fa-file-pdf"></i>
                   print pdf
             </a>
@@ -82,6 +86,6 @@ if(!isset($_SESSION['users_order'])){
       
     </main>
   </div>
-  
+  <script src="../assets/scripts/ui-stock.js"></script>
 </body>
 </html>
