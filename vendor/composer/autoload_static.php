@@ -16,6 +16,11 @@ class ComposerStaticInit5ce13f389270716aa74fac6c4293dda4
         array (
             'setasign\\Fpdi\\' => 14,
         ),
+        'm' => 
+        array (
+            'mermshaus\\CRC\\Tests\\' => 20,
+            'mermshaus\\CRC\\' => 14,
+        ),
         'P' => 
         array (
             'Psr\\Log\\' => 8,
@@ -23,9 +28,14 @@ class ComposerStaticInit5ce13f389270716aa74fac6c4293dda4
         ),
         'M' => 
         array (
+            'Mpdf\\QrCode\\' => 12,
             'Mpdf\\PsrLogAwareTrait\\' => 22,
             'Mpdf\\PsrHttpMessageShim\\' => 24,
             'Mpdf\\' => 5,
+        ),
+        'K' => 
+        array (
+            'KS\\' => 3,
         ),
         'D' => 
         array (
@@ -38,6 +48,14 @@ class ComposerStaticInit5ce13f389270716aa74fac6c4293dda4
         array (
             0 => __DIR__ . '/..' . '/setasign/fpdi/src',
         ),
+        'mermshaus\\CRC\\Tests\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kittinan/php-crc/tests',
+        ),
+        'mermshaus\\CRC\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kittinan/php-crc/src',
+        ),
         'Psr\\Log\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/log/src',
@@ -45,6 +63,10 @@ class ComposerStaticInit5ce13f389270716aa74fac6c4293dda4
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'Mpdf\\QrCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mpdf/qrcode/src',
         ),
         'Mpdf\\PsrLogAwareTrait\\' => 
         array (
@@ -58,9 +80,23 @@ class ComposerStaticInit5ce13f389270716aa74fac6c4293dda4
         array (
             0 => __DIR__ . '/..' . '/mpdf/mpdf/src',
         ),
+        'KS\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kittinan/php-promptpay-qr/src',
+        ),
         'DeepCopy\\' => 
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
+        ),
+    );
+
+    public static $prefixesPsr0 = array (
+        'B' => 
+        array (
+            'BaconQrCode' => 
+            array (
+                0 => __DIR__ . '/..' . '/bacon/bacon-qr-code/src',
+            ),
         ),
     );
 
@@ -73,6 +109,7 @@ class ComposerStaticInit5ce13f389270716aa74fac6c4293dda4
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit5ce13f389270716aa74fac6c4293dda4::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit5ce13f389270716aa74fac6c4293dda4::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit5ce13f389270716aa74fac6c4293dda4::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit5ce13f389270716aa74fac6c4293dda4::$classMap;
 
         }, null, ClassLoader::class);

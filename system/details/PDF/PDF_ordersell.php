@@ -2,6 +2,9 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 require_once __DIR__ . '/../../../vendor/autoload.php';
+
+
+
 $defaultConfig = (new Mpdf\Config\ConfigVariables())->getDefaults();
 $fontDirs = $defaultConfig['fontDir'];
 
@@ -11,6 +14,11 @@ $fontData = $defaultFontConfig['fontdata'];
 if (!class_exists(\Mpdf\Mpdf::class)) {
     die("mPDF ไม่เจอ ลองเช็ค path vendor/autoload.php");
 }
+
+
+use Mpdf\QrCode\QrCode;
+use Mpdf\QrCode\Output\Png;
+use KS\PromptPayQr\PromptPayQr;
 
 $mpdf = new \Mpdf\Mpdf([
   'fontDir' => array_merge($fontDirs, [
@@ -36,7 +44,12 @@ $mpdf = new \Mpdf\Mpdf([
     'margin_footer' => 0,
 ]);
 
-$svgqr = file_get_contents(__DIR__ . '/../../../db/QR-code.svg');
+date_default_timezone_set('Asia/Bangkok');
+// สร้าง QR Code
+//function generateQrCodePromptpay($)
+
+
+//$svgqr = file_get_contents(__DIR__ . '/../../../db/QR-code.svg');
 
 $conn = new mysqli("localhost", "root", "", "box_stock_order");
 if ($conn->connect_error) {
@@ -59,6 +72,33 @@ $is_sum = $conn->query($sql_sun);
 $count_rows = $is_sum->fetch_assoc();
 
 $type_customer = [];
+
+$pp = new \KS\PromptPay();
+$promptPayPayload = $pp->generatePayload('0933080097', $order['count_totalpays']);
+$qrCode = new QrCode($promptPayPayload); // ใส่ข้อมูลมาตรฐาน PromptPay ลงไป
+$output = new Png();
+$qrCodeImageString = $output->output($qrCode, 300);
+$base64Image = 'data:image/png;base64,' . base64_encode($qrCodeImageString);
+
+// $promptPayPayload = "00020101021229370016A000000677010111011300" . 
+//                     // ส่วนข้อมูลผู้รับเงิน (Merchant Account Information)
+//                     // ID 30, Length 14 (081-189-9578), Mobile Number
+//                     "660933080097".
+//                     //"6693308009753037" . 
+//                     // Currency Code (THB)
+//                     "5303764" . 
+//                     // Transaction Amount (10.00, เราจะใช้ตัวแปรของเรา)
+//                     "54" . sprintf("%02d", strlen(number_format(10.00, 2, '.', ''))) . number_format(10.00, 2, '.', '') . 
+//                     // Country Code (TH)
+//                     "5802TH" . 
+//                     // CRC Checksum (จะถูกสร้างอัตโนมัติโดยไลบรารี QrCode)
+//                     "6304"; 
+// $qrCode = new QrCode($promptPayPayload); // ใส่ข้อมูลมาตรฐาน PromptPay ลงไป
+// $output = new Png();
+// $qrCodeImageString = $output->output($qrCode, 300);
+// $base64Image = 'data:image/png;base64,' . base64_encode($qrCodeImageString);
+
+
 
 function setTypeCustom($value){
   switch($value){
@@ -303,13 +343,7 @@ $unique = array_unique($type_customer);
  $html .=  '</small>
         </div>
       </div>
-    </div>
-    <div class="component">
-      <div class="left-qr">
-        <img src="../../../db/tqr.png" />
-      </div>
-      <div class="right-qr">
-        <div class="doc" style="margin-top:11px;">
+      <div class="doc" style="margin-top:11px;">
             <b class="label" style="font-size:17px;">ที่อยู่ผู้ซื้อ :</b>
             <small class="value">'.$order['location_send'].'</small>
         </div>
@@ -327,6 +361,29 @@ $unique = array_unique($type_customer);
             <b class="label" style="font-size:17px;">หมายเหตุ :</b>
             <small class="value">'.$order['reason'].'</small>
         </div>
+    </div>
+    <div class="component" >
+      <div class="left-qr">
+        <img src="' . $base64Image . '" alt="PromptPay QR Code">
+      </div>
+      <div class="right-qr">
+        <br/>
+        <div class="doc" style="margin-top:11px;">
+            <b class="label" style="font-size:17px;">สแกนเพื่อชำระเงินผ่านพร้อมเพย์ :</b>
+        </div>
+        <div class="doc" style="margin-top:1px;">
+            <b class="label" style="font-size:17px;">หมายเลขพร้อมเพย์ :</b>
+            <small class="value">093-308-0097</small>
+        </div>
+        <div class="doc" style="margin-top:1px;">
+            <b class="label" style="font-size:17px;">ชื่อเจ้าของบัญชี :</b>
+            <small class="value">อับดุลเราะมาน เส็นสอ</small>
+        </div>
+        <div class="doc" style="margin-top:1px;">
+            <b class="label" style="font-size:17px;color:red">จำนวนเงินที่ต้องจ่าย :</b>
+            <small class="value" style="text-decoration:underline;color:blue">'.$order['count_totalpays'].' บาท</small>
+        </div>
+        
       </div>
     </div>
   </div>
