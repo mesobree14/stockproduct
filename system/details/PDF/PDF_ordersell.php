@@ -356,7 +356,7 @@ $unique = array_unique($type_customer);
         </div>
         <div class="doc" style="margin-top:1px;">
             <b class="label" style="font-size:17px;">หมายเลขพร้อมเพย์ :</b>
-            <small class="value">09X-XXX-XX97</small>
+            <small class="value">093-308-0097</small>
         </div>
         <div class="doc" style="margin-top:1px;">
             <b class="label" style="font-size:17px;">บัญชีชื่อ :</b>
