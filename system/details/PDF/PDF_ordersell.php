@@ -80,23 +80,6 @@ $output = new Png();
 $qrCodeImageString = $output->output($qrCode, 300);
 $base64Image = 'data:image/png;base64,' . base64_encode($qrCodeImageString);
 
-// $promptPayPayload = "00020101021229370016A000000677010111011300" . 
-//                     // ส่วนข้อมูลผู้รับเงิน (Merchant Account Information)
-//                     // ID 30, Length 14 (081-189-9578), Mobile Number
-//                     "660933080097".
-//                     //"6693308009753037" . 
-//                     // Currency Code (THB)
-//                     "5303764" . 
-//                     // Transaction Amount (10.00, เราจะใช้ตัวแปรของเรา)
-//                     "54" . sprintf("%02d", strlen(number_format(10.00, 2, '.', ''))) . number_format(10.00, 2, '.', '') . 
-//                     // Country Code (TH)
-//                     "5802TH" . 
-//                     // CRC Checksum (จะถูกสร้างอัตโนมัติโดยไลบรารี QrCode)
-//                     "6304"; 
-// $qrCode = new QrCode($promptPayPayload); // ใส่ข้อมูลมาตรฐาน PromptPay ลงไป
-// $output = new Png();
-// $qrCodeImageString = $output->output($qrCode, 300);
-// $base64Image = 'data:image/png;base64,' . base64_encode($qrCodeImageString);
 
 
 
@@ -255,7 +238,7 @@ $html = '
         </div>
     </div>
   </div>
-  <div style="height: 220px;">
+  <div style="height: 40px;">
   <table class="slip-table">
     <thead>
       <tr style="background-color:#ffb3ff;">
@@ -369,14 +352,14 @@ $unique = array_unique($type_customer);
       <div class="right-qr">
         <br/>
         <div class="doc" style="margin-top:11px;">
-            <b class="label" style="font-size:17px;">สแกนเพื่อชำระเงินผ่านพร้อมเพย์ :</b>
+            <b class="label" style="font-size:17px;">สแกน QrCode เพื่อชำระเงินผ่านพร้อมเพย์ :</b>
         </div>
         <div class="doc" style="margin-top:1px;">
             <b class="label" style="font-size:17px;">หมายเลขพร้อมเพย์ :</b>
-            <small class="value">093-308-0097</small>
+            <small class="value">09X-XXX-XX97</small>
         </div>
         <div class="doc" style="margin-top:1px;">
-            <b class="label" style="font-size:17px;">ชื่อเจ้าของบัญชี :</b>
+            <b class="label" style="font-size:17px;">บัญชีชื่อ :</b>
             <small class="value">อับดุลเราะมาน เส็นสอ</small>
         </div>
         <div class="doc" style="margin-top:1px;">
