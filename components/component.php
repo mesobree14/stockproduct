@@ -375,6 +375,7 @@ function listRatePrice($rate_id="",$rate_storefront_price="",$rate_vip_price="",
 
 function listOrderSell($number, $ordersell_id, $ordersell_name,$count_item, $price_total,$customer_name,$date_sell,$list_typepays,$sum_amount_paid){
   $date = new DateTime($date_sell);
+  $set_date = $date->format('d/m/Y H:i');
   $listorder = "
       <tr>
         <td class=\"font-weight-bold \"> $number</td>
@@ -384,7 +385,7 @@ function listOrderSell($number, $ordersell_id, $ordersell_name,$count_item, $pri
         <td class=\"font-weight-bold\">$sum_amount_paid บาท</td> 
         <td class=\"font-weight-bold\">$customer_name</td> 
         <td class=\"font-weight-bold\">$list_typepays</td> 
-        <td class=\"font-weight-bold\">$date->format('d/m/Y H:i')</td> 
+        <td class=\"font-weight-bold\">$set_date</td> 
         <td class='text-center'>
             <div class=\"table-data-feature\" >
               <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"details/detail_ordersell.php?ordersell_id=".$ordersell_id." \">

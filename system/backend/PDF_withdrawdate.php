@@ -47,12 +47,16 @@ $query = $conn->query("SELECT * FROM withdraw WHERE date_withdrow BETWEEN '$star
 $resutl_profit = 0;
 $capitalData = [];
 $sql_capital = $conn->query("SELECT 
-        COUNT(*) AS total_capital,
-        SP.product_name,
-        SUM(SP.expenses) / SUM(SP.product_count) AS avg_rate_price
-    FROM stock_product SP INNER JOIN order_box OB ON SP.id_order = OB.order_id
-    WHERE OB.date_time_order BETWEEN '$startDateTime' AND '$endDateTime'
-    GROUP BY SP.product_name");
+    SP.product_name,
+    SUM(SP.product_count) AS total_product,
+    SUM(SP.expenses) AS total_capital,
+    SUM(SP.expenses) / NULLIF(SUM(SP.product_count), 0) AS avg_rate_price
+FROM stock_product SP
+INNER JOIN order_box OB ON SP.id_order = OB.order_id
+WHERE OB.date_time_order BETWEEN '$startDateTime' AND '$endDateTime'
+GROUP BY SP.product_name
+");
+
 $sql_profit = $conn->query("SELECT 
         COUNT(*) AS total_profit,
         LPS.productname,
@@ -61,12 +65,23 @@ $sql_profit = $conn->query("SELECT
     FROM list_productsell LPS INNER JOIN orders_sell ODS ON LPS.ordersell_id = ODS.id_ordersell
     WHERE ODS.date_time_sell BETWEEN '$startDateTime' AND '$endDateTime'
     GROUP BY LPS.productname");
+
 while($row = mysqli_fetch_assoc($sql_capital)){
   $capitalData[$row['product_name']] = [
     'avg_rate_price' => $row['avg_rate_price'],
     'total_capital' => $row['total_capital']
   ];
 }
+
+// echo '<pre>';
+// print_r($capitalData);
+// echo '</pre>';
+//exit;
+
+$kuntun = 0;
+$psell = 0;
+$tool = 0;
+
 while($row = mysqli_fetch_assoc($sql_profit)){
   $product = $row['productname'];
   $priceSell = $row['price_sell'];
@@ -74,7 +89,17 @@ while($row = mysqli_fetch_assoc($sql_profit)){
   $avgRate = isset($capitalData[$product]) ? $capitalData[$product]['avg_rate_price'] : 0;
   $totalCost = $avgRate * $totalProduct;
   $resutl_profit += ($priceSell - $totalCost);
+
+  $kuntun += $totalCost;
+  $psell += $priceSell;
+  $tool += $totalProduct;
 }
+$dates_st = new DateTime($startDateTime);
+$is_startDateTime = $dates_st->format('d/m/Y');
+
+$dates_end = new DateTime($endDateTime);
+$is_endDateTime = $dates_end->format('d/m/Y');
+
 $html = '
 <style>
   body { font-family: "THSarabunNew"; font-size: 14pt; }
@@ -169,6 +194,8 @@ $html = '
   }
 </style>';
 
+
+
 $html .='
 <div>
   <div class="" style="">
@@ -182,7 +209,7 @@ $html .='
   <div class="" style="padding:0px;margin:0px;">
 
     <div style="float: right; width: 100%; padding:0px;margin:0px;">
-      <p style="text-align: right;padding:0px;margin:0px;">ข้อมูลระหว่าง '.$startDateTime.' ถึง '.$endDateTime.'</p>
+      <p style="text-align: right;padding:0px;margin:0px;">ข้อมูลระหว่าง '.$is_startDateTime .' ถึง '.$is_endDateTime.'</p>
     </div>
   </div>
   <div style="width:100%; margin-top:10px; margin-bottom:10px;">
@@ -215,8 +242,21 @@ while ($row = $query->fetch_assoc()) {
     </div>
   </div>
   <hr/>
+  
   <b class="footer">จำนวนรายการเบิกถอนทั้งหมด '. $totalRow.' รายการ</b>
   <div style="">
+    <div style="float: left; width: 55%; margin-left:5px">
+      <b>คืนทุน</b>
+    </div>
+     <div style="float: right; width: 40%;">
+      <b style=" text-align: right;">'.number_format($kuntun ?? 0,2,'.',',').' บาท </b>
+    </div>
+    <div style="float: left; width: 55%; margin-left:5px">
+      <b>ยอดขาย</b>
+    </div>
+     <div style="float: right; width: 40%;">
+      <b style=" text-align: right;">'.number_format($psell ?? 0,2,'.',',').' บาท </b>
+    </div>
     <div style="float: left; width: 55%; margin-left:5px">
       <b>จำนวนเงินที่มี (อิงจากกำไร)</b>
     </div>

@@ -41,8 +41,16 @@ if ($conn->connect_error) {
 $query = $conn->query("SELECT * FROM withdraw");
 $resutl_profit = 0;
 $capitalData = [];
-$sql_capital = $conn->query("SELECT COUNT(*) AS total_capital,product_name, SUM(expenses) / SUM(product_count) AS avg_rate_price FROM stock_product GROUP BY product_name");
-$sql_profit = $conn->query("SELECT COUNT(*) AS total_profit,productname, SUM(tatol_product) AS total_product, SUM(price_to_pay) AS price_sell FROM list_productsell GROUP BY productname");
+$sql_capital = $conn->query("SELECT COUNT(*) AS total_capital,
+  product_name, 
+  SUM(expenses) / SUM(product_count) AS avg_rate_price 
+  FROM stock_product GROUP BY product_name");
+
+$sql_profit = $conn->query("SELECT COUNT(*) AS total_profit,
+  productname, 
+  SUM(tatol_product) AS total_product, 
+  SUM(price_to_pay) AS price_sell FROM list_productsell GROUP BY productname");
+  
 while($row = mysqli_fetch_assoc($sql_capital)){
   $capitalData[$row['product_name']] = [
     'avg_rate_price' => $row['avg_rate_price'],

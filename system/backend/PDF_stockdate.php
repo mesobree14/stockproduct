@@ -141,6 +141,12 @@ LEFT JOIN (
  ";
  $selectStockProduct = $conn->query($sql);
 
+ $dates_st = new DateTime($startDateTime);
+$is_startDateTime = $dates_st->format('d/m/Y');
+
+$dates_end = new DateTime($endDateTime);
+$is_endDateTime = $dates_end->format('d/m/Y');
+
 $html = '
 <style>
   body { font-family: "THSarabunNew"; font-size: 14pt; }
@@ -188,7 +194,7 @@ $html = '
     </div>
   </div>
 </div>
-<h2>ยอดขายของวันที่ '.$start_date.' ถึง '.$end_date.'</h2>
+<h2>ยอดขายของวันที่ '.$is_startDateTime.' ถึง '.$is_endDateTime.'</h2>
 <table class="slip-table">
   <thead>
       <tr style="background-color:#ffb3ff;">
