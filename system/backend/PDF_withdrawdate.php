@@ -44,56 +44,67 @@ $end_date = $_POST['end_date'];
 $startDateTime = $start_date . ' 00:00:00';
 $endDateTime   = $end_date . ' 23:59:59';
 $query = $conn->query("SELECT * FROM withdraw WHERE date_withdrow BETWEEN '$startDateTime' AND '$endDateTime'");
-$resutl_profit = 0;
-$capitalData = [];
-$sql_capital = $conn->query("SELECT 
+
+$sql_new = "SELECT
+ SPS.productname,
+ SPS.tatol_sell_qty,
+  SPS.total_sell_price,
+  -- ต้นทุนเฉลี่ย (ถ้าเดือนนี้ไม่มีซื้อ → ใช้ต้นทุนล่าสุด)
+  COALESCE(C1.avg_cost,C2.avg_cost,0) AS avg_cost_price,
+  SPS.tatol_sell_qty * COALESCE(C1.avg_cost,C2.avg_cost,0) AS capital_recovered,
+  SPS.total_sell_price - (SPS.tatol_sell_qty * COALESCE(C1.avg_cost,C2.avg_cost,0)) AS profit
+FROM (
+  SELECT 
+    LPS.productname,
+    SUM(LPS.tatol_product) AS tatol_sell_qty,
+    SUM(LPS.price_to_pay) AS total_sell_price
+  FROM list_productsell LPS
+  INNER JOIN orders_sell ODS 
+    ON LPS.ordersell_id = ODS.id_ordersell
+  WHERE ODS.date_time_sell BETWEEN '$startDateTime' AND '$endDateTime'
+  GROUP BY LPS.productname
+) SPS
+LEFT JOIN (
+  -- ต้นทุนเฉลี่ยเดือนนี้
+  SELECT 
     SP.product_name,
-    SUM(SP.product_count) AS total_product,
-    SUM(SP.expenses) AS total_capital,
-    SUM(SP.expenses) / NULLIF(SUM(SP.product_count), 0) AS avg_rate_price
-FROM stock_product SP
-INNER JOIN order_box OB ON SP.id_order = OB.order_id
-WHERE OB.date_time_order BETWEEN '$startDateTime' AND '$endDateTime'
-GROUP BY SP.product_name
-");
+    SUM(SP.expenses) / SUM(SP.product_count) AS avg_cost
+  FROM stock_product SP
+  INNER JOIN order_box OB 
+    ON SP.id_order = OB.order_id
+  WHERE OB.date_time_order BETWEEN '$startDateTime' AND '$endDateTime'
+  GROUP BY SP.product_name
+) C1 ON SPS.productname = C1.product_name
+LEFT JOIN (
+  -- ต้นทุนเฉลี่ยล่าสุด
+  SELECT 
+    SP.product_name,
+    SUM(SP.expenses) / SUM(SP.product_count) AS avg_cost
+  FROM stock_product SP
+  INNER JOIN order_box OB 
+    ON SP.id_order = OB.order_id
+  WHERE OB.date_time_order < '$startDateTime'
+  GROUP BY SP.product_name
+) C2 ON SPS.productname = C2.product_name
+ ";
+ $selectStockProduct = $conn->query($sql_new);
 
-$sql_profit = $conn->query("SELECT 
-        COUNT(*) AS total_profit,
-        LPS.productname,
-        SUM(LPS.tatol_product) AS total_product,
-        SUM(LPS.price_to_pay) AS price_sell
-    FROM list_productsell LPS INNER JOIN orders_sell ODS ON LPS.ordersell_id = ODS.id_ordersell
-    WHERE ODS.date_time_sell BETWEEN '$startDateTime' AND '$endDateTime'
-    GROUP BY LPS.productname");
+   $i = 0;
+  $sum_totalcount = 0;
+  $price_total_sell_amount = 0;
+  $sum_total_productsell = 0;
+  $price_total_productsell = 0;
+  $sum_totalremining = 0;
+  $profitAll = 0;
 
-while($row = mysqli_fetch_assoc($sql_capital)){
-  $capitalData[$row['product_name']] = [
-    'avg_rate_price' => $row['avg_rate_price'],
-    'total_capital' => $row['total_capital']
-  ];
-}
+ while($rows = $selectStockProduct->fetch_assoc()){
+  $price_total_sell_amount += $rows['capital_recovered'];
+    $sum_total_productsell += $rows['tatol_sell_qty'];
+    $price_total_productsell += $rows['total_sell_price'];
+    $profitAll += $rows['profit'];
+ }
 
-// echo '<pre>';
-// print_r($capitalData);
-// echo '</pre>';
-//exit;
 
-$kuntun = 0;
-$psell = 0;
-$tool = 0;
-
-while($row = mysqli_fetch_assoc($sql_profit)){
-  $product = $row['productname'];
-  $priceSell = $row['price_sell'];
-  $totalProduct = $row['total_product'];
-  $avgRate = isset($capitalData[$product]) ? $capitalData[$product]['avg_rate_price'] : 0;
-  $totalCost = $avgRate * $totalProduct;
-  $resutl_profit += ($priceSell - $totalCost);
-
-  $kuntun += $totalCost;
-  $psell += $priceSell;
-  $tool += $totalProduct;
-}
 $dates_st = new DateTime($startDateTime);
 $is_startDateTime = $dates_st->format('d/m/Y');
 
@@ -246,34 +257,35 @@ while ($row = $query->fetch_assoc()) {
   <b class="footer">จำนวนรายการเบิกถอนทั้งหมด '. $totalRow.' รายการ</b>
   <div style="">
     <div style="float: left; width: 55%; margin-left:5px">
-      <b>คืนทุน</b>
-    </div>
-     <div style="float: right; width: 40%;">
-      <b style=" text-align: right;">'.number_format($kuntun ?? 0,2,'.',',').' บาท </b>
-    </div>
-    <div style="float: left; width: 55%; margin-left:5px">
       <b>ยอดขาย</b>
     </div>
      <div style="float: right; width: 40%;">
-      <b style=" text-align: right;">'.number_format($psell ?? 0,2,'.',',').' บาท </b>
+      <b style=" text-align: right;color:blue;">'.number_format($price_total_productsell ?? 0,1,'.',',').' บาท </b>
     </div>
     <div style="float: left; width: 55%; margin-left:5px">
-      <b>จำนวนเงินที่มี (อิงจากกำไร)</b>
+      <b>คืนทุน</b>
+    </div>
+     <div style="float: right; width: 40%;">
+      <b style=" text-align: right;color:blue;">'.number_format($price_total_sell_amount ?? 0,1,'.',',').' บาท </b>
+    </div>
+    
+    <div style="float: left; width: 55%; margin-left:5px">
+      <b>ยอดกำไร</b>
     </div>
     <div style="float: right; width: 40%;">
-      <b style=" text-align: right;">'.number_format($resutl_profit ?? 0,2,'.',',').' บาท </b>
+    <b style=" text-align: right;color:blue;">'.number_format($profitAll ?? 0,1,'.',',').' บาท </b>
     </div>
     <div style="float: left; width: 55%; margin-left:5px">
-      <b>จำนวนเงินที่เบิกถอนทั้งหมด</b>
+      <b>จำนวนเงินที่เบิกถอนท</b>
     </div>
     <div style="float: right; width: 40%;">
-      <b style=" text-align: right;">'.number_format($totalCount ?? 0,2,'.',',').' บาท</b>
+      <b style=" text-align: right;color:blue;">'.number_format($totalCount ?? 0,1,'.',',').' บาท</b>
     </div>
     <div style="float: left; width: 55%; margin-left:5px">
       <b>จำนวนเงินคงเหลือ</b> 
     </div>
     <div style="float: right; width: 40%;">
-      <b style=" text-align: right;">'.number_format(($resutl_profit - $totalCount),2,'.',',').' บาท</b>
+      <b style=" text-align: right;color:blue;">'.number_format(($profitAll - $totalCount),1,'.',',').' บาท</b>
     </div>
   </div>
 </div>';

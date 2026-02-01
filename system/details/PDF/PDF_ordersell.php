@@ -80,6 +80,9 @@ $output = new Png();
 $qrCodeImageString = $output->output($qrCode, 300);
 $base64Image = 'data:image/png;base64,' . base64_encode($qrCodeImageString);
 
+ $dates = new DateTime($order['date_time_sell']);
+  $date_time_sell = $dates->format('d/m/Y H:i');
+
 
 
 
@@ -233,7 +236,7 @@ $html = '
           </div>
           <div class="doc">
               <b class="label" style="font-size:17px;">วันที่ออก :</b>
-              <small class="value">'.$order['date_time_sell'].'</small>
+              <small class="value">'. $date_time_sell .'</small>
           </div>
         </div>
     </div>
@@ -257,8 +260,8 @@ while($rows = $query_item->fetch_assoc()){
     <tr>
         <td class=\"name\">{$rows['productname']}</td>
         <td class=\"price\">{$rows['rate_customertype']}</td>
-        <td class=\"qty\">{$rows['tatol_product']}</td>
-        <td class=\"total\">{$rows['price_to_pay']}</td>
+        <td class=\"qty\">".number_format($rows['tatol_product'] ?? 0)."</td>
+        <td class=\"total\">".number_format($rows['price_to_pay'] ?? 0,2,'.',',')."</td>
       </tr>
   ";
   $i++;
@@ -275,10 +278,10 @@ $unique = array_unique($type_customer);
           <b>'.$count_rows['total'].' รายการ</b>
         </td>
         <td class="qty" style="width:25%;border:none;">
-          <b>'.$count_rows['totalproduct'].' ชิ้น</b>
+          <b>'.number_format($count_rows['totalproduct'] ?? 0).' ชิ้น</b>
         </td>
         <td class="total" style="width:25%;border:none;">
-          <b>'.$count_rows['prices'].' บาท</b>
+          <b>'.number_format($count_rows['prices'] ?? 0,2,'.',',').' บาท</b>
         </td>
       </tr>
     </table>
@@ -292,7 +295,7 @@ $unique = array_unique($type_customer);
       <div style="float: right;width: 50%;box-sizing: border-box;">
         <div class="doc" style="border:1px solid gray;background-color:#ffb3ff;padding:2%;">
             <b class="label">&nbsp; จำนวนเงินที่จ่าย : </b>
-            <b class="value">'.$order['count_totalpays'].' บาท</b>
+            <b class="value">'.  number_format($order['count_totalpays'] ?? 0,2,'.',',').' บาท</b>
         </div>
       </div>
     </div>
@@ -364,7 +367,7 @@ $unique = array_unique($type_customer);
         </div>
         <div class="doc" style="margin-top:1px;">
             <b class="label" style="font-size:17px;color:red">จำนวนเงินที่ต้องจ่าย :</b>
-            <small class="value" style="text-decoration:underline;color:blue">'.$order['count_totalpays'].' บาท</small>
+            <small class="value" style="text-decoration:underline;color:blue">'.number_format($order['count_totalpays'] ?? 0,2,'.',',').' บาท</small>
         </div>
         
       </div>

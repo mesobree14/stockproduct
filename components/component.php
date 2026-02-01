@@ -84,12 +84,14 @@ function navbar($logo, $path=""){
 }
 
 function tableCapital($number, $capital_id,$balance_capital, $count_capital,$slip, $date_time_ad){
+  $dates = new DateTime($date_time_ad);
+  $set_date = $dates->format('d/m/Y H:i');
   $list = "
     <tr>
       <td></td>
       <td class=\"font-weight-bold\">$balance_capital</td>
       <td class=\"font-weight-bold\">$count_capital</td>
-      <td class=\"font-weight-bold\">$date_time_ad</td>
+      <td class=\"font-weight-bold\">$set_date</td>
 
       <td>
         <div class=\"table-data-feature row\" >
@@ -112,13 +114,15 @@ function tableCapital($number, $capital_id,$balance_capital, $count_capital,$sli
   echo $list;
 }
 function tableWithDraw($number, $withdraw_id, $withdraw_balance, $count_withdraw,$reason,$slip_withdrow, $date_time_ad){
+  $dates = new DateTime($date_time_ad);
+  $set_date = $dates->format('d/m/Y H:i');
   $list = "
     <tr>
       <td></td>
       <td class=\"font-weight-bold\">$withdraw_balance</td>
       <td class=\"font-weight-bold\">$count_withdraw</td>
       
-      <td class=\"font-weight-bold\">$date_time_ad</td>
+      <td class=\"font-weight-bold\">$set_date</td>
       <td>
         <div class=\"table-data-feature row \" >
             <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"pdf\" target=\"_blank\" href=\"details/PDF/PDF_withdraw.php?withdraw_id=$withdraw_id\">
@@ -180,6 +184,8 @@ function setData($titleText, $number){
   }
 
 function tablelistsetOrder ($number, $orderid, $ordername, $totalcost_order, $price_order, $sliptImg, $date_time_order){
+  $dates = new DateTime($date_time_order);
+  $set_date = $dates->format('d/m/Y H:i');
   $listOrder = "
   <form>
     <tr>
@@ -187,7 +193,7 @@ function tablelistsetOrder ($number, $orderid, $ordername, $totalcost_order, $pr
       <td class=\"font-weight-bold\">$ordername</td>
       <td class=\"font-weight-bold\">$totalcost_order บาท</td>
       <td class=\"font-weight-bold\">$price_order รายการ</td> 
-      <td class=\"font-weight-bold\">$date_time_order</td> 
+      <td class=\"font-weight-bold\">$set_date</td> 
       <td>
           <div class=\"account-item account-item--style2 clearfix js-item-menu\">
               <div class=\"image\">
@@ -242,6 +248,8 @@ function tablelistStock ($number, $product_name, $total_order, $total_count, $to
 
 function tableDetailStock($number, $product_id,$productname,$productcount,$productprice, $ordername, $datetime_order){
     $toal_all = $productprice * $productcount;
+    $dates = new DateTime($datetime_order);
+  $set_date = $dates->format('d/m/Y H:i');
     $list_stock = "
         <form>
             <tr>
@@ -251,7 +259,7 @@ function tableDetailStock($number, $product_id,$productname,$productcount,$produ
               <td class=\"font-weight-bold\">$productprice บาท</td> 
               <td class=\"font-weight-bold\">$productcount ชิ้น</td> 
               <td class=\"font-weight-bold\">$toal_all</td> 
-              <td class=\"font-weight-bold\">$datetime_order</td> 
+              <td class=\"font-weight-bold\">$set_date</td> 
             </tr>
         </form>
     ";
@@ -274,6 +282,8 @@ function typecustomse($type){
 
 function tableDetailStockSell($number, $product_id,$productname,$ordername, $productcount,$productprice, $rate_custom, $datetime_order){
     $toal_all = $productprice * $productcount;
+    $dates = new DateTime($datetime_order);
+  $set_date = $dates->format('d/m/Y H:i');
     $list_stock = "
         <form>
             <tr>
@@ -284,7 +294,7 @@ function tableDetailStockSell($number, $product_id,$productname,$ordername, $pro
               <td class=\"font-weight-bold\">$productprice บาท</td> 
               <td class=\"font-weight-bold\">$productcount ชิ้น</td> 
               <td class=\"font-weight-bold\">$toal_all</td> 
-              <td class=\"font-weight-bold\">$datetime_order</td> 
+              <td class=\"font-weight-bold\">$set_date</td> 
             </tr>
         </form>
     ";
