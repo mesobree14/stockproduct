@@ -171,7 +171,7 @@ class ModelPayOffDebt extends HTMLElement {
     let debtpaid_balance = document.getElementById("debtpaid_balance");
     count_paydebt.disabled = true;
     const hiddenCountOrdersell = document.getElementById(
-      "hidden-count-ordersell"
+      "hidden-count-ordersell",
     );
     hiddenCountOrdersell.innerHTML = "";
 
@@ -182,7 +182,7 @@ class ModelPayOffDebt extends HTMLElement {
         {
           method: "GET",
           credentials: "include",
-        }
+        },
       );
       const responsedata = await response.json();
       const optionData = responsedata.data.map((item) => ({
@@ -197,7 +197,7 @@ class ModelPayOffDebt extends HTMLElement {
         $seleted.append(
           `<option value="${item.id}|${item.amount}|${item.text}" data-text="${item.text}" data-amount="${item.amount}">
             ${item.text} <span class="text-danger font-weight-bold">(ค้าง:${item.amount} บาท )</span>
-          </option>`
+          </option>`,
         );
       });
 
@@ -384,7 +384,7 @@ $(document).on("click", "#confirmTrashPayOffDebt", function (e) {
               name: name,
               image: img,
             }),
-          }
+          },
         );
         const responsedata = await responseapi.json();
         if (responsedata.status === 201) {

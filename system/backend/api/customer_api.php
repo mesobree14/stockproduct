@@ -32,8 +32,10 @@
       $data = json_decode(file_get_contents("php://input"), true);
       $id = $data['id'];
       $name = $data['name'];
-      $sql_del = mysqli_query($conn,"DELETE FROM custom_debtpaid WHERE id_debtpaid=$id");
+      $ids = (int)$id;
+      $sql_del = mysqli_query($conn,"DELETE FROM custom_debtpaid WHERE id_debtpaid=$ids");
       if($sql_del){
+        mysqli_query($conn, "DELETE FROM order_was_paid WHERE debtpaid_id=$ids");
         if($data['image'] !== ''){
           if(file_exists(__DIR__ . "/../../../db/slip-paydebt/" . $data['image'])){
             if(unlink(__DIR__ . "/../../../db/slip-paydebt/" . $data['image'])){

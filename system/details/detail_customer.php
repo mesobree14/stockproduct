@@ -77,7 +77,7 @@ if(!isset($_SESSION['users_order'])){
                         boxCustom("จำนวนรายการที่ซื้อ",$rows['count_order'], "ครั้ง");
                         boxCustom("จำนวนหนี้ที่ติด",number_format($rows['count_stuck'] ?? 0,2,'.',','),"บาท");
                         boxCustom("จ่ายหนี้ [ ".number_format($row_pay['total_pay'] ?? 0)." ครั้ง]",number_format($row_pay['count_dabtprice'] ?? 0,2,'.',','),"บาท");
-                        boxCustom("จำนวนเงินที่จ่าย",number_format($rows['prices_pay'] ?? 0,2,'.',','),"บาท");
+                        boxCustom("จำนวนเงินที่จ่ายสด",number_format($rows['prices_pay'] ?? 0,2,'.',','),"บาท");
                         boxCustom("จำนวนเงินทั้งหมด",number_format($rows['prices_sell'] ?? 0,2,'.',','),"บาท");
                         boxCustom("หนี้คงเหลือ",number_format($debtpay_balance ?? 0,2,'.',','),"บาท");
                       ?>

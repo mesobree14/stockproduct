@@ -394,7 +394,7 @@ function listOrderSell($number, $ordersell_id, $ordersell_name,$count_item, $pri
         <td class=\"font-weight-bold\">$price_total บาท</td> 
         <td class=\"font-weight-bold\">$sum_amount_paid บาท</td> 
         <td class=\"font-weight-bold\">$customer_name</td> 
-        <td class=\"font-weight-bold\">$list_typepays</td> 
+        <td class=\"font-weight-bold\">($ordersell_id) $list_typepays</td> 
         <td class=\"font-weight-bold\">$set_date</td> 
         <td class='text-center'>
             <div class=\"table-data-feature\" >
@@ -691,10 +691,10 @@ function listOrderForCustomer($number, $order_id,$order_name,$date_sell,$prices_
       <td></td>
       <td class=\"font-weight-bold\">$number</td>
       <td class=\"font-weight-bold\">$order_name</td>
-      <td class=\"font-weight-bold\">$date_sell</td>
-      <td class=\"font-weight-bold\">$prices_all</td>
-      <td class=\"font-weight-bold\">$price_pay</td>
-      <td class=\"font-weight-bold\">$price_stuck</td>
+      <td class=\"font-weight-bold\">($order_id) $date_sell</td>
+      <td class=\"font-weight-bold\">".number_format($prices_all ?? 0,2,'.',',')."</td>
+      <td class=\"font-weight-bold\">".number_format($price_pay ?? 0,2,'.',',')." </td>
+      <td class=\"font-weight-bold\">".number_format($price_stuck ?? 0,2,'.',',')."</td>
       <td class=\"font-weight-bold\">$count_product</td>
       <td class='text-center'>
           <div class=\"table-data-feature\" >
@@ -714,7 +714,7 @@ function listhistoryPayDebt($number,$id_paydebt,$serial_number,$customer_name,$t
       <td></td>
       <td class=\"font-weight-bold\">$number</td>
       <td class=\"font-weight-bold\">$serial_number</td>
-      <td class=\"font-weight-bold\">$count_paydebt บาท</td>
+      <td class=\"font-weight-bold\">".number_format($count_paydebt ?? 0,2,'.',',')." บาท</td>
       
       <td class=\"font-weight-bold\">$date_pay</td>
       <td class=\"font-weight-bold\">$text_orther</td>
