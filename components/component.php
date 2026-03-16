@@ -394,7 +394,7 @@ function listOrderSell($number, $ordersell_id, $ordersell_name,$count_item, $pri
         <td class=\"font-weight-bold\">$price_total บาท</td> 
         <td class=\"font-weight-bold\">$sum_amount_paid บาท</td> 
         <td class=\"font-weight-bold\">$customer_name</td> 
-        <td class=\"font-weight-bold\">($ordersell_id) $list_typepays</td> 
+        <td class=\"font-weight-bold\">$list_typepays</td> 
         <td class=\"font-weight-bold\">$set_date</td> 
         <td class='text-center'>
             <div class=\"table-data-feature\" >

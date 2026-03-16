@@ -36,34 +36,13 @@ if(!isset($_SESSION['users_order'])){
     <main class="page-content mt-0">
       <?php navbar("ราการขาย"); ?>
       <div class="container-fluid row">
-
-          <div class="ml-auto border">
-            <button class="bd-none au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" 
-                data-target="#modalFormOrderSell"
-            >
-                <i class="fas fa-plus"></i>
-                  เพิ่มรายการขาย
-            </button>
-          </div>
-          <div class="col-md-12 mt-4">
-            <div class="table-responsive table-responsive-data2 mt-2">
-                <table class="table table-data2">
-                    <thead>
-                        <tr>
-                            <th>ลำดับ</th>
-                            <th>ชื่อออเดอร์</th>
-                            <th>รายการสินค้า</th>
-                            <th>ราคาจ่าย</th>
-                            <th>จ่ายไปแล้ว</th>
-                            <th>ชื่อผู้ซื้้อ</th>
-                            <th>สถานะการจ่าย</th>
-                            <th>วันที่-เวลาที่ขาย <i class="fa-solid fa-arrow-up"></i></th>
-                            <th>จัดการ</th>
-                           
-                        </tr>
-                    </thead>
-                    <tbody>
-                      <?php  
+          <?php  
+                          $limit = 10;
+                          $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+                          if($page < 1){
+                            $page = 1;
+                          }
+                          $start = ($page - 1) * $limit;
                           $sql = "SELECT 
                                     O.id_ordersell,
                                     O.ordersell_name,
@@ -99,18 +78,19 @@ if(!isset($_SESSION['users_order'])){
                                     GROUP BY ordersell_id
                                   ) ST_SUM ON ST_SUM.ordersell_id = O.id_ordersell
 
-                                  ORDER BY O.create_at DESC;
+                                  ORDER BY O.create_at DESC LIMIT $start,$limit
                                 ";
-                                  
+                               
                           $query_data = mysqli_query($conn,$sql) or die(mysqli_error($conn));
                           $orders_ass = [];
                           while($rows = mysqli_fetch_assoc($query_data)){
                             $orders_ass[] = $rows;
                           }
+                          $sql_totals = mysqli_query($conn,"SELECT COUNT(*) as total FROM orders_sell");
+                          $row_total = mysqli_fetch_assoc($sql_totals);
+                          $totals = $row_total['total'];
+                          $total_pages = ceil($totals / $limit);
 
-                          // echo "<pre>"; 
-                          //   print_r($orders_ass);
-                          // echo "</pre>";
                         
                           
                           function status_pay($list_typepay,$count_stuck,$sum_amount_paid,$is_totalpay,$count_paydebt,$count_totalpays ){
@@ -144,6 +124,39 @@ if(!isset($_SESSION['users_order'])){
                                   return "<span class='text-secondary'>ไม่มีข้อมูล</span>";
                               }
                           }
+            ?>
+            <div class="ml-auto mx-4 d-flex align-items-center">
+                <p class="mb-0 font-bold">ทั้งหมด <?php echo $totals ?> รายการ</p>
+            </div>
+          <div class="border mx-4">
+            <button class="bd-none au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" 
+                data-target="#modalFormOrderSell"
+            >
+                <i class="fas fa-plus"></i>
+                  เพิ่มรายการขาย
+            </button>
+          </div>
+          <div class="col-md-12 mt-4">
+            <div class="table-responsive table-responsive-data2 mt-2">
+                <table class="table table-data2">
+                    <thead>
+                        <tr>
+                            <th>ลำดับ</th>
+                            <th>ชื่อออเดอร์</th>
+                            <th>รายการสินค้า</th>
+                            <th>ราคาจ่าย</th>
+                            <th>จ่ายไปแล้ว</th>
+                            <th>ชื่อผู้ซื้้อ</th>
+                            <th>สถานะการจ่าย</th>
+                            <th>วันที่-เวลาที่ขาย <i class="fa-solid fa-arrow-up"></i></th>
+                            <th>จัดการ</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                      
+
+                      <?php
                           foreach($orders_ass as $key =>$res){
                               listOrderSell(
                                 ($key+1), $res['id_ordersell'],$res['ordersell_name'],$res['item_count'],
@@ -155,7 +168,62 @@ if(!isset($_SESSION['users_order'])){
                       ?>
                     </tbody>
                 </table> 
-               || <?php echo count($orders_ass); ?>
+
+               <nav class="d-flex justify-content-center align-items-center pb-4">
+                <ul class="pagination my-4">
+                  <?php 
+                    if($page > 1){
+                      echo '
+                        <li class="page-item">
+                          <a class="page-link" href="?page='.($page-1).'">Previous</a>
+                        </li>
+                      ';
+                    }
+                    if($page > 3){
+                        echo '<li class="page-item">
+                        <a class="page-link" href="?page=1">1</a>
+                        </li>';
+
+                        if($page > 4){
+                            echo '<li class="page-item disabled">
+                            <span class="page-link">...</span>
+                            </li>';
+                        }
+                    }
+                    for($i = $page - 2; $i <= $page + 2; $i++){
+
+                        if($i > 0 && $i <= $total_pages){
+
+                            $active = ($i == $page) ? 'active' : '';
+
+                            echo '<li class="page-item '.$active.'">
+                            <a class="page-link" href="?page='.$i.'">'.$i.'</a>
+                            </li>';
+                        }
+
+                    }
+                    if($page < $total_pages - 2){
+
+                        if($page < $total_pages - 3){
+                          echo '<li class="page-item disabled">
+                          <span class="page-link">...</span>
+                          </li>';
+                        }
+
+                        echo '<li class="page-item">
+                        <a class="page-link" href="?page='.$total_pages.'">'.$total_pages.'</a>
+                        </li>';
+
+                    }
+                    if($page < $total_pages){
+                        echo '<li class="page-item">
+                          <a class="page-link" href="?page='.($page+1).'">Next</a>
+                        </li>';
+                    }
+                  ?>
+                </ul>
+               </nav>
+               
             </div>
           </div>
       </div>
